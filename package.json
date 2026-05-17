@@ -1,0 +1,13 @@
+{
+  "name": "hongbing-travel-prompt-generator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static single-page prompt generator for Hongbing travel photoshoot style prompts.",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve ."
+  },
+  "devDependencies": {
+    "serve": "^14.2.5"
+  }
+}
