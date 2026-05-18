@@ -3414,24 +3414,23 @@ document.getElementById("gen-btn").addEventListener("click",async()=>{
 function buildEnglishPrompt(p, customParts, mkDesc, selAngle, txtLine, extras, FACE_LOCK){
   const parts=[];
   const TRAVEL_STYLING_BOOST="Professional travel-portrait styling upgrade: makeup should look like a real paid travel photoshoot makeover, more polished and more visible than everyday makeup, with defined eye makeup, refined eyeliner, curled lashes, layered eyeshadow, blush, contour, luminous base, polished lips, and camera-ready skin while still preserving the uploaded person's original facial structure. Costume styling must feel abundant and ceremonial: layered fabrics, embroidered trims, waist ornaments, earrings, necklaces, bracelets, tassels, hairpins, floral hair inserts, crowns, combs, beads, ribbons, veils, shawls, hand props, and matching accessories. Do not simplify the outfit or leave the hair plain; build a complete head-to-toe travel photoshoot look with rich but coherent accessories.";
+  const UNIVERSAL_NEGATIVES = "low quality, cartoon style, AI art style, cheap look, watermark, face swap, altered facial proportions, disconnected arms, floating limbs, spatial contradiction between face and body, broken pose flow, hidden face";
+
   const addPart=(label,value)=>{
     if(value===undefined||value===null)return;
     const cleaned=cleanEnglishLine(String(value));
     if(cleaned)parts.push(label?`${label}: ${cleaned}`:cleaned);
   };
-  // ① Face lock (English)
-  parts.push("Use the person in the uploaded photo as the only identity reference. Preserve the exact same facial identity, face shape, bone structure, facial proportions, eye shape, nose shape, lip shape, hairline, skin tone, and recognizable personal likeness. Change only the outfit, environment, lighting, styling, and body pose. Makeup must sit on top of the original face; it must not reshape the eyes, nose, lips, jaw, or make the person resemble a different celebrity or character. Keep the face clear and readable, with detailed individual hair strands, and do not let hair, props, veils, masks, heavy shadows, text, or visual effects cover the key facial features.");
-  parts.push("Identity priority: facial identity is more important than fantasy styling, beauty enhancement, costume, makeup, and atmosphere. If any style element conflicts with the uploaded face, keep the uploaded face unchanged and adapt the style around it.");
+  // ① Unified Identity & Pose Lock (v6.51)
+  parts.push("Identity Lock: Use the uploaded photo as the sole identity reference. Preserve exact facial identity, bone structure, and skin tone with complete fidelity. Change ONLY outfit, environment, and body pose. Pose Coherence: Face angle, neck alignment, shoulder rotation, and center of gravity must form one continuous physical pose. Identity override: if style elements conflict with the face, keep the face unchanged. Ensure no props, hair, or effects cover eyes, nose, or lips.");
 
   if(p){
-    addPart("Style core concept",presetEnglishCore(p));
-    addPart("Style completion guide","Build a complete coherent image around this core concept, with matching costume, setting, props, lighting, pose, atmosphere, and cinematic composition. Do not reduce the style to only wings, makeup, background, or a single effect.");
-    addPart("Mood / role aura only, not facial identity",completeEnglishField(p,"char",p.char));
+    addPart("Style Theme",presetEnglishCore(p));
+    addPart("Aura",completeEnglishField(p,"char",p.char));
     addPart("Makeup",mkDesc);
-    addPart("Travel photoshoot makeup and accessory density",TRAVEL_STYLING_BOOST);
+    addPart("Styling Boost",TRAVEL_STYLING_BOOST);
     addPart("Outfit",completeEnglishField(p,"o",p.o));
     addPart("Props",p.prop);
-    if(p.prop || p.cam) parts.push(`Pose lock: follow the described body action, hand placement, props, and composition while keeping the uploaded person's face visible and recognizable. Do not choose a random pose.`);
     addPart("Scene",completeEnglishField(p,"s",p.s));
     addPart("Visual effects",completeEnglishField(p,"fx",p.fx));
     addPart("Lighting",completeEnglishField(p,"l",p.l));
@@ -3441,23 +3440,22 @@ function buildEnglishPrompt(p, customParts, mkDesc, selAngle, txtLine, extras, F
     addPart("Quality",completeEnglishField(p,"q",p.q));
     addPart("",txtLine);
     addPart("Special requirements",extras);
-    addPart("Avoid",`low quality, cartoon style, AI art style, cheap look, watermark, text overlay, face swap, different person, altered facial proportions, changed jawline, changed nose, changed eye shape, deformed hands, wrong pose, hidden face, ${p.neg||""}`);
+    addPart("Avoid", `${UNIVERSAL_NEGATIVES}, ${p.neg||""}`);
   } else {
     if(customParts){
       const get=g=>[...document.querySelectorAll(`.chip.on[data-g="${g}"]`)].map(x=>x.textContent).join(", ")||"not specified";
       parts.push(`Makeup: ${mkDesc}`);
-      parts.push(`Travel photoshoot makeup and accessory density: ${TRAVEL_STYLING_BOOST}`);
+      parts.push(`Styling Boost: ${TRAVEL_STYLING_BOOST}`);
       if(get("location")!=="not specified") parts.push(`Location: ${get("location")}`);
       parts.push(`Scene: ${get("scene")}`);
       if(get("weather")!=="not specified") parts.push(`Weather/atmosphere: ${get("weather")}`);
       parts.push(`Outfit: ${get("outfit")}`);
-      if(get("pose")!=="not specified") parts.push(`Pose lock: ${get("pose")}. The final image must clearly match this selected pose/action, including body direction, hand placement, and camera framing where applicable. Keep the uploaded person's face visible and recognizable unless the selected pose explicitly requires a back view.`);
       parts.push(`Visual effects: ${get("fx")}`);
       parts.push(`Lighting: ${get("light")}`);
       parts.push(`Output size: ${selAngle}`);
       if(txtLine) parts.push(txtLine);
       if(extras) parts.push(`Special requirements: ${extras}`);
-      parts.push("Avoid: low quality, cartoon style, AI art style, cheap look, watermark, text overlay unless requested, face swap, different person, altered facial proportions, changed jawline, changed nose, changed eye shape, deformed hands, wrong pose, hidden face");
+      parts.push(`Avoid: ${UNIVERSAL_NEGATIVES}`);
     }
   }
   return parts.join("\n");

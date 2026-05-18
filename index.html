@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>旅拍大片咒語生成器 v6.47</title>
+<title>旅拍大片咒語生成器 v6.69</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;padding:16px;font-size:14px}
@@ -69,6 +69,8 @@ h2{font-size:18px;font-weight:600;margin-bottom:2px}
   transform:translateY(3px);
 }
 .rbadge{background:rgba(255,255,255,.22);color:#fff;font-size:10px;padding:2px 8px;border-radius:8px;border:1px solid rgba(255,255,255,.3)}
+.random-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(10px);z-index:80;max-width:min(520px,calc(100vw - 32px));padding:10px 14px;border-radius:999px;background:rgba(26,26,26,.92);color:#fff;font-size:12px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.random-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* preset grid */
 .preset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:6px;align-items:stretch}
@@ -76,6 +78,12 @@ h2{font-size:18px;font-weight:600;margin-bottom:2px}
 .preset-card.visible{display:block}
 .preset-card:hover{border-color:#aaa;background:#fafaf8;transform:translateY(-1px)}
 .preset-card.selected{border:1.5px solid #7F77DD;background:#EEEDFE;box-shadow:0 2px 8px rgba(83,74,183,.12)}
+.preset-card{position:relative}
+.fav-btn{position:absolute;top:4px;right:5px;width:18px;height:18px;border:0;border-radius:999px;background:rgba(255,255,255,.86);color:#bbb;font-size:12px;line-height:18px;cursor:pointer;z-index:2;padding:0;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.fav-btn:hover{color:#B88700;background:#FFF7D7}
+.preset-card.favorited .fav-btn{color:#D49A00;background:#FFF2B8}
+.preset-card.favorited{border-color:#E3C35A}
+.preset-card .name{padding-right:16px}
 .preset-card .icon{font-size:13px;margin-bottom:2px;line-height:1}
 .preset-card .name{font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:2px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .preset-card .tags{font-size:10px;color:#888;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -173,6 +181,7 @@ h2{font-size:18px;font-weight:600;margin-bottom:2px}
 .pro-control-card .pc-desc{font-size:10px;color:#888;line-height:1.35}
 .pro-control-card.on .pc-name{color:#3C3489}
 .pro-control-card.wide{grid-column:span 2}
+.quick-output-controls{border:1px solid #ded9f4;background:#fbfaff;border-radius:12px;padding:12px 14px;margin:12px 0 14px}.quick-output-controls .box-section{margin-top:1rem}.quick-output-controls .box-section:first-child{margin-top:0}.quick-output-controls .section-label:first-child{margin-top:0}
 @media (max-width:560px){.pro-control-grid{grid-template-columns:repeat(2,1fr)}.pro-control-card.wide{grid-column:span 1}}
 
 /* angle (keep for compatibility) */
@@ -209,18 +218,32 @@ h2{font-size:18px;font-weight:600;margin-bottom:2px}
 .ldots span:nth-child(2){animation-delay:.15s}
 .ldots span:nth-child(3){animation-delay:.3s}
 .note{font-size:11px;color:#aaa;text-align:center;margin-top:8px}
+/* v6.69 UI：風格選擇優先排列 */
+#tab-preset.active{display:flex;flex-direction:column}
+#tab-preset .random-btn{order:2}
+#tab-preset .cat-tools{order:3}
+#tab-preset #super-cat-bar{order:4}
+#tab-preset #cat-bar{order:5}
+#tab-preset .preset-tools{order:6}
+#tab-preset #preset-grid{order:7}
+#tab-preset .preset-pager{order:8}
+#tab-preset .preset-density{order:9}
+#tab-preset #quick-output-controls{order:10}
+.mk-jump-bar{order:1;text-align:right;padding:4px 0 2px;font-size:12px}
+.mk-jump-btn{padding:3px 12px;background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.35);border-radius:14px;color:#c0392b;font-size:12px;cursor:pointer;text-decoration:none;display:inline-block;line-height:1.8}
+.mk-jump-btn:hover{background:rgba(192,57,43,.22)}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h2>✦ 旅拍大片咒語生成器 <span class="badge">v6.47 · ChatGPT 專版</span></h2>
+  <h2>✦ 旅拍大片咒語生成器 <span class="badge">v6.69 · ChatGPT 專版</span></h2>
   <p class="sub">神話歷史美女 · 隨機靈感 · 圖片文字 · 鎖臉指令一鍵生成</p>
 
   <div class="tip-box">
-    💡 <strong>使用方式：</strong>在 ChatGPT 先上傳你的照片，再把下方生成的咒語貼進去一起發送，咒語已包含保留人臉指令。
+    💡 <strong>使用方式：</strong>在 ChatGPT 同一則訊息先附上本人照片，再貼下方咒語一起送出。若沒有照片，請不要直接出圖；本工具已要求 ChatGPT 先停下來請你補照片。
   </div>
   <div class="core-note">
-    <strong>核心備註：</strong>本工具的咒語排序採「最高優先鎖本人 → 大環境到人」：最前面先鎖臉部、五官、四肢、手指、身體比例與動作姿態安全，不可換臉；全身照使用真實 9 頭身比例，避免大頭。通過這個核心後，關鍵字再依整體風格、大環境、天氣光影、氛圍故事、人物服裝、道具、動作、鏡頭、特效與成片質感組合。風格範例若原本有動作，先抽成 <strong>Action / Gesture</strong> 關鍵字並設為該範例預設值；沒動作的範例，依角色、情景、服裝、道具預先配置適合動作，再交給 ChatGPT 組合成圖。
+    <strong>核心備註：</strong>本工具的咒語排序採「先讀取上傳照片作唯一人物範本 → 最高優先鎖本人 → 大環境到人」。若 ChatGPT 沒有看到照片，必須先要求補照片，不得自創網紅臉。生成時鎖臉部、五官、髮際線、頭型、頭身比例、四肢、手指與動作姿態安全，不可換臉；全身照使用真實 8 頭身比例，避免大頭。
   </div>
 
   <!-- 風格設定 -->
@@ -232,9 +255,182 @@ h2{font-size:18px;font-weight:600;margin-bottom:2px}
 
   <!-- PRESET TAB -->
   <div class="tab-panel active" id="tab-preset">
+    <div class="mk-jump-bar"><a href="#makeup-section" class="mk-jump-btn">💄 跳至妝容設定</a></div>
     <button class="random-btn" id="random-btn">
       🎲 隨機幫我選一個風格 <span class="rbadge">選擇困難專用</span>
     </button>
+    <div class="quick-output-controls" id="quick-output-controls">
+      <div class="section-label" style="margin-top:0">常用輸出控制</div>
+      <!-- 輸出尺寸 -->
+  <div class="box-section size-bg">
+    <div class="box-header" style="margin-bottom:10px">
+      <div class="box-title">📐 輸出尺寸</div>
+    </div>
+    <div class="size-grid">
+      <div class="size-card" data-g="angle" data-v="9:16 vertical full-screen mobile format">
+        <div class="size-icon">📱</div>
+        <div class="size-name">9:16 手機直式</div>
+        <div class="size-desc">手機全螢幕<br>IG 限時動態</div>
+      </div>
+      <div class="size-card on" data-g="angle" data-v="4:5 social portrait format">
+        <div class="size-icon">👤</div>
+        <div class="size-name">4:5 社群人像</div>
+        <div class="size-desc">IG 貼文<br>小紅書封面</div>
+      </div>
+      <div class="size-card" data-g="angle" data-v="3:4 portrait photography format">
+        <div class="size-icon">📷</div>
+        <div class="size-name">3:4 寫真直式</div>
+        <div class="size-desc">旅拍寫真<br>半身全身穩</div>
+      </div>
+      <div class="size-card" data-g="angle" data-v="2:3 vertical poster format">
+        <div class="size-icon">🎞</div>
+        <div class="size-name">2:3 海報直式</div>
+        <div class="size-desc">電影海報<br>完整服裝</div>
+      </div>
+      <div class="size-card" data-g="angle" data-v="16:9 cinematic wide landscape format">
+        <div class="size-icon">🎬</div>
+        <div class="size-name">16:9 電影橫幅</div>
+        <div class="size-desc">大景地標<br>桌布橫版</div>
+      </div>
+      <div class="size-card" data-g="angle" data-v="1:1 square cover format">
+        <div class="size-icon">⬜</div>
+        <div class="size-name">1:1 方形封面</div>
+        <div class="size-desc">IG 貼文<br>社群封面</div>
+      </div>
+      <div class="size-card" data-g="angle" data-v="21:9 ultra wide cinematic panorama format">
+        <div class="size-icon">🎥</div>
+        <div class="size-name">21:9 超寬電影</div>
+        <div class="size-desc">壯闊大景<br>電影橫幅</div>
+      </div>
+      <div class="size-card" data-g="angle" data-v="4:3 classic landscape photography format">
+        <div class="size-icon">🖼</div>
+        <div class="size-name">4:3 經典橫式</div>
+        <div class="size-desc">旅遊照片<br>自然構圖</div>
+      </div>
+      <div class="size-card" data-g="angle" data-v="5:4 premium cover crop format">
+        <div class="size-icon">🧾</div>
+        <div class="size-name">5:4 精緻封面</div>
+        <div class="size-desc">作品集<br>封面裁切</div>
+      </div>
+      <div class="size-card" data-g="angle" data-v="3:2 DSLR landscape format, classic photography horizontal, natural editorial proportion, print-ready">
+        <div class="size-icon">📸</div>
+        <div class="size-name">3:2 相機橫式</div>
+        <div class="size-desc">攝影標準<br>沖洗列印</div>
+      </div>
+      <div class="size-card" data-g="angle" data-v="2:1 wide panoramic banner format, sweeping landscape composition, subject small against grand scene, header or billboard scale">
+        <div class="size-icon">🌐</div>
+        <div class="size-name">2:1 全景橫幅</div>
+        <div class="size-desc">網站橫幅<br>人小景大</div>
+      </div>
+    </div>
+  </div>
+      <div class="section-label">大片控制</div>
+  <div class="box-section">
+    <div class="box-header" style="margin-bottom:10px">
+      <div class="box-title">🎥 鏡頭語言</div>
+      <span class="auto-tag">決定照片像寫真 / 海報 / 大景</span>
+    </div>
+    <div class="pro-control-grid">
+      <div class="pro-control-card on" data-pro="lens" data-v="cinematic full-body or knee-up fashion portrait, camera pulled back enough to keep the head naturally small within the body, face sharp but not enlarged, outfit readable, environment visible, balanced travel-poster framing, avoid close-up beauty-head crop">
+        <div class="pc-icon">👤</div><div class="pc-name">時裝全身距離</div><div class="pc-desc">臉清楚<br>比例不大頭</div>
+      </div>
+      <div class="pro-control-card" data-pro="lens" data-v="full-body environmental portrait, complete head-to-toe outfit visible, strong location depth, clean adult fashion body proportions, smaller natural head-to-body ratio, avoid oversized head">
+        <div class="pc-icon">🧍</div><div class="pc-name">全身大景</div><div class="pc-desc">完整服裝<br>旅拍大片</div>
+      </div>
+      <div class="pro-control-card" data-pro="lens" data-v="close-up beauty portrait, face as the hero, detailed eyes and makeup, soft background depth, no facial obstruction">
+        <div class="pc-icon">💄</div><div class="pc-name">妝容特寫</div><div class="pc-desc">臉部主角<br>妝髮清楚</div>
+      </div>
+      <div class="pro-control-card" data-pro="lens" data-v="low-angle heroic poster shot, powerful silhouette, dramatic costume flow, face still readable">
+        <div class="pc-icon">👑</div><div class="pc-name">低角度女王</div><div class="pc-desc">氣勢強<br>海報感</div>
+      </div>
+      <div class="pro-control-card" data-pro="lens" data-v="wide cinematic establishing shot, subject integrated into a grand location, clear landmark or landscape scale">
+        <div class="pc-icon">🌄</div><div class="pc-name">遠景壯闊</div><div class="pc-desc">地標山河<br>人物融入</div>
+      </div>
+      <div class="pro-control-card" data-pro="lens" data-v="premium magazine cover composition, clean negative space, sharp editorial pose, cover-ready framing">
+        <div class="pc-icon">📰</div><div class="pc-name">雜誌封面</div><div class="pc-desc">留白乾淨<br>封面構圖</div>
+      </div>
+    </div>
+  </div>
+      <!-- 圖片文字 -->
+  <div class="box-section text-bg">
+    <div class="box-header" style="margin-bottom:8px">
+      <div class="box-title" style="color:#633806">✍️ 圖片文字設計</div>
+    </div>
+    <div class="toggle3">
+      <div class="t3btn on" id="tbtn-off" onclick="setTxt('off')">不加文字</div>
+      <div class="t3btn" id="tbtn-zh" onclick="setTxt('zh')">繁體中文</div>
+      <div class="t3btn" id="tbtn-en" onclick="setTxt('en')">英文</div>
+      <div class="t3btn" id="tbtn-ja" onclick="setTxt('ja')">日文</div>
+      <div class="t3btn" id="tbtn-ko" onclick="setTxt('ko')">韓文</div>
+      <div class="t3btn" id="tbtn-fr" onclick="setTxt('fr')">法文</div>
+      <div class="t3btn" id="tbtn-th" onclick="setTxt('th')">泰文</div>
+      <div class="t3btn" id="tbtn-custom" onclick="setTxt('custom')">✎ 自訂文字</div>
+      <div class="t3btn" id="tbtn-zh_en" onclick="setTxt('zh_en')">繁體中文+英文</div>
+    </div>
+    <div class="text-sub" id="text-sub">
+      <div class="section-label" style="margin-top:0;margin-bottom:6px">文字風格</div>
+      <div class="ts-grid">
+        <div class="ts-card selected" data-ts="travel_photo"><div class="ts-name">📷 旅遊寫真</div><div class="ts-desc">自然旅拍 · 清爽標題</div></div>
+        <div class="ts-card" data-ts="movie_title"><div class="ts-name">🎬 電影海報標題</div><div class="ts-desc">大片主標 · 中上方留白</div></div>
+        <div class="ts-card" data-ts="magazine_cover"><div class="ts-name">📰 雜誌封面排版</div><div class="ts-desc">Editorial cover · 時尚排版</div></div>
+        <div class="ts-card" data-ts="decorative_mark"><div class="ts-name">🖌 裝飾書法/印章</div><div class="ts-desc">視覺符號為主 · 不要求可讀</div></div>
+        <div class="ts-card" data-ts="minimal_caption"><div class="ts-name">✦ 極簡角落字</div><div class="ts-desc">小字標籤 · 低干擾</div></div>
+        <div class="ts-card" data-ts="diary_note"><div class="ts-name">📓 心情手扎風格</div><div class="ts-desc">手寫感 · 旅行筆記</div></div>
+        <div class="ts-card" data-ts="ad_style"><div class="ts-name">📣 廣告風格</div><div class="ts-desc">品牌廣告 · 乾淨有力</div></div>
+        <div class="ts-card" data-ts="xianxia_seal"><div class="ts-name">🖌 仙俠水墨印章</div><div class="ts-desc">毛筆書法 · 紅色落款印</div></div>
+        <div class="ts-card" data-ts="neon_sign"><div class="ts-name">💡 霓虹電子招牌</div><div class="ts-desc">發光輪廓字 · 夜景城市感</div></div>
+        <div class="ts-card" data-ts="vintage_poster"><div class="ts-name">🎠 復古海報粗體</div><div class="ts-desc">1920-60s 裝飾藝術感</div></div>
+        <div class="ts-card" data-ts="gold_foil_luxury"><div class="ts-name">✨ 奢華金燙印字</div><div class="ts-desc">金箔燙印 · 深色背景反差</div></div>
+        <div class="ts-card" data-ts="fairy_tale_hand"><div class="ts-name">🧚 童話手繪標題</div><div class="ts-desc">不規則手寫 · 小花裝飾</div></div>
+        <div class="ts-card" data-ts="new_chinese_title"><div class="ts-name">🏮 新中式題字</div><div class="ts-desc">現代漢字美學 · 品牌感</div></div>
+        <div class="ts-card" data-ts="custom_style"><div class="ts-name">✎ 自訂風格</div><div class="ts-desc">輸入想要的文字排版</div></div>
+      </div>
+      <div class="section-label" style="margin-top:8px;margin-bottom:6px">文字位置</div>
+      <div class="toggle3" id="txt-placement-row">
+        <div class="t3btn on" id="tplc-auto" onclick="setTxtPlacement('auto')">自動配置</div>
+        <div class="t3btn" id="tplc-top" onclick="setTxtPlacement('top')">上方大標題</div>
+        <div class="t3btn" id="tplc-bottom" onclick="setTxtPlacement('bottom')">下方字幕</div>
+        <div class="t3btn" id="tplc-corner" onclick="setTxtPlacement('corner')">角落印章</div>
+        <div class="t3btn" id="tplc-side" onclick="setTxtPlacement('side')">側邊直排</div>
+        <div class="t3btn" id="tplc-scene" onclick="setTxtPlacement('scene')">融入場景</div>
+      </div>
+      <div class="section-label" style="margin-top:8px;margin-bottom:6px">文字內容方向 <span style="color:#aaa;font-size:10px">（提示 AI 方向，不強制）</span></div>
+      <div class="toggle3" id="txt-type-row">
+        <div class="t3btn on" id="ttype-theme" onclick="setTxtType('theme')">依場景主題</div>
+        <div class="t3btn" id="ttype-location" onclick="setTxtType('location')">地點名稱</div>
+        <div class="t3btn" id="ttype-quote" onclick="setTxtType('quote')">情感台詞</div>
+        <div class="t3btn" id="ttype-poetry" onclick="setTxtType('poetry')">詩詞古句</div>
+        <div class="t3btn" id="ttype-title" onclick="setTxtType('title')">作品名稱</div>
+        <div class="t3btn" id="ttype-date" onclick="setTxtType('date')">日期年份</div>
+      </div>
+      <div id="custom-txt-wrap" class="text-input-row">
+        <input class="text-input" id="custom-txt-input" type="text" placeholder="輸入你想加入圖片的文字內容...">
+      </div>
+      <div id="custom-style-wrap" class="text-input-row">
+        <input class="text-input" id="custom-style-input" type="text" placeholder="輸入自訂文字風格，例如：復古明信片、霓虹招牌、手寫標籤...">
+      </div>
+      <div id="auto-txt-hint" style="display:none;font-size:11px;color:#888;margin-top:6px;padding:6px 10px;background:#fafaf8;border-radius:6px">✦ 可選擇文字語言與排版風格；不加文字最穩。</div>
+    </div>
+  </div>
+      <div class="section-label">額外備註（選填）</div>
+  <div class="extras"><textarea id="extra-notes" placeholder="特定服裝顏色、道具細節、特殊場景要求..."></textarea></div>
+
+  <button class="gen-btn" id="gen-btn">✦ 生成咒語</button>
+      <!-- RESULT -->
+  <div class="result-box" id="result-box">
+    <!-- 英文版 -->
+    <div class="result-header">
+      <span class="result-label">🇬🇧 英文咒語（貼給 ChatGPT）</span>
+      <div class="result-actions">
+        <button class="copy-btn" id="copy-small-btn">複製</button>
+        <button class="clear-btn" id="clear-result-btn" type="button">清除</button>
+      </div>
+    </div>
+    <div class="result-text" id="result-text"></div>
+    <button class="copy-all" id="copy-all-btn">📋 一鍵複製英文咒語 · 貼進 ChatGPT</button>
+
+  </div>
+    </div>
     <div class="cat-tools">
       <input class="cat-search" id="cat-search" type="search" placeholder="搜尋分類 / 系列...">
       <button class="cat-toggle" id="cat-series-toggle" type="button">只看系列</button>
@@ -249,6 +445,9 @@ h2{font-size:18px;font-weight:600;margin-bottom:2px}
     </div>
     <div class="cat-bar super-hidden" id="cat-bar">
       <div class="cat-btn active" data-cat="all" data-group="all">全部</div>
+      <div class="cat-btn" data-cat="__fav__" data-group="all">⭐ 收藏</div>
+      <div class="cat-btn" data-cat="__recent__" data-group="all">🕐 最近</div>
+      <div class="cat-btn" data-cat="img_ref" data-group="all">📸 圖片參考</div>
       <div class="cat-btn" data-cat="myth" data-group="classical">🐉 神話傳奇</div>
       <div class="cat-btn" data-cat="xianxia" data-group="classical">⚔️ 仙俠劍影</div>
       <div class="cat-btn" data-cat="changxiangsi" data-group="figure">🔥 長相思系列</div>
@@ -763,6 +962,60 @@ h2{font-size:18px;font-weight:600;margin-bottom:2px}
       <div class="preset-card visible" data-pid="underwater_spider" data-cat="underwater">
         <div class="icon">🌺</div><div class="name">水下彼岸花靈境</div>
         <div class="tags">水下場景 · 彼岸花纏繞<br>銀白長髮 · 錦鯉靈異美學</div>
+      </div>
+
+      <!-- 圖片參考轉風格 -->
+      <div class="preset-card visible" data-pid="ref_sky_mirror_blue_gown" data-cat="img_ref">
+        <div class="icon">📸</div><div class="name">藍紗鏡湖旅人 · 天空倒影日出</div>
+        <div class="tags">天空鏡面 · 藍紗禮服<br>圖片參考 · 大景旅拍</div>
+      </div>
+      <div class="preset-card visible" data-pid="ref_white_scarf_lake_goddess" data-cat="img_ref">
+        <div class="icon">📸</div><div class="name">長紗湖岸女神 · 風中白紗荒湖</div>
+        <div class="tags">湖岸長紗 · 風中布料<br>圖片參考 · 自然曠野</div>
+      </div>
+      <div class="preset-card visible" data-pid="ref_polaroid_cafe_date" data-cat="img_ref">
+        <div class="icon">📸</div><div class="name">拍立得咖啡少女 · 即影成像約會</div>
+        <div class="tags">拍立得構圖 · 咖啡暖光<br>圖片參考 · 城市生活</div>
+      </div>
+      <div class="preset-card visible" data-pid="ref_blue_hanfu_beauty_closeup" data-cat="img_ref">
+        <div class="icon">📸</div><div class="name">藍繡漢服仕女 · 花鈿妝造特寫</div>
+        <div class="tags">藍繡漢服 · 妝造特寫<br>圖片參考 · 華服朝華</div>
+      </div>
+      <div class="preset-card visible" data-pid="ref_pink_backlit_flower_muse" data-cat="img_ref">
+        <div class="icon">📸</div><div class="name">粉花紗裙繆斯 · 逆光玫瑰回眸</div>
+        <div class="tags">粉花逆光 · 玫瑰回眸<br>圖片參考 · 夢境童話</div>
+      </div>
+      <div class="preset-card visible" data-pid="ref_beauty_life_cover" data-cat="img_ref">
+        <div class="icon">📸</div><div class="name">白蕾絲美妝女郎 · 生活誌封面</div>
+        <div class="tags">白蕾絲 · 雜誌留白<br>圖片參考 · 品牌大片</div>
+      </div>
+      <div class="preset-card visible" data-pid="ref_crystal_flower_shell" data-cat="img_ref">
+        <div class="icon">📸</div><div class="name">透明花衣仙子 · 森光花瓣靜坐</div>
+        <div class="tags">透明花衣 · 森林光束<br>圖片參考 · 奇幻花境</div>
+      </div>
+      <div class="preset-card visible" data-pid="ref_cute_pet_dessert_cafe" data-cat="img_ref">
+        <div class="icon">📸</div><div class="name">甜點萌寵店長 · 暖燈下午茶派對</div>
+        <div class="tags">甜點萌寵 · 暖燈咖啡<br>圖片參考 · COS 劇場</div>
+      </div>
+      <div class="preset-card visible" data-pid="ref_pink_butterfly_rose" data-cat="img_ref">
+        <div class="icon">📸</div><div class="name">粉蝶玫瑰精靈 · 星光面紗回眸</div>
+        <div class="tags">光蝶玫瑰 · 星光面紗<br>圖片參考 · 夢境童話</div>
+      </div>
+      <div class="preset-card visible" data-pid="ref_mint_hanfu_selfie" data-cat="img_ref">
+        <div class="icon">📸</div><div class="name">青綠漢服少女 · 指尖臉頰自拍</div>
+        <div class="tags">青綠漢服 · 俏皮自拍<br>圖片參考 · 華服朝華</div>
+      </div>
+      <div class="preset-card visible" data-pid="ref_castle_wedding_princess" data-cat="img_ref">
+        <div class="icon">📸</div><div class="name">蕾絲婚紗公主 · 城堡玫瑰日落</div>
+        <div class="tags">城堡婚紗 · 玫瑰日落<br>圖片參考 · 童話婚禮</div>
+      </div>
+      <div class="preset-card visible" data-pid="ref_peach_gold_tang_mask" data-cat="img_ref">
+        <div class="icon">📸</div><div class="name">桃金唐風貴女 · 金面珠鍊花宴</div>
+        <div class="tags">桃金唐風 · 珠鍊花宴<br>圖片參考 · 華服朝華</div>
+      </div>
+      <div class="preset-card visible" data-pid="ref_black_gold_moon_empress" data-cat="img_ref">
+        <div class="icon">📸</div><div class="name">黑金月后神姬 · 龍座掌珠</div>
+        <div class="tags">黑金月后 · 龍座掌珠<br>圖片參考 · 神話王權</div>
       </div>
 
       <!-- myth 補充 -->
@@ -1630,7 +1883,7 @@ h2{font-size:18px;font-weight:600;margin-bottom:2px}
     <div class="kw-group">
       <div class="kw-group-title">🎬 氛圍劇情</div>
       <div class="chips" id="chips-scene">
-        <div class="chip" data-g="scene">霸氣登場</div><div class="chip" data-g="scene">宿命重逢</div><div class="chip" data-g="scene">禁忌契約</div><div class="chip" data-g="scene">戰後沉默</div><div class="chip" data-g="scene">王權壓迫感</div><div class="chip" data-g="scene">甜美心動瞬間</div><div class="chip" data-g="scene">危險誘惑</div><div class="chip" data-g="scene">清冷孤高</div><div class="chip" data-g="scene">神聖降臨</div><div class="chip" data-g="scene">復仇宣言</div><div class="chip" data-g="scene">離別前一刻</div><div class="chip" data-g="scene">秘密任務中</div><div class="chip" data-g="scene">慵懶高級感</div><div class="chip" data-g="scene">逃亡追逐感</div><div class="chip" data-g="scene">儀式感祈願</div><div class="chip" data-g="scene">深夜私語</div><div class="chip" data-g="scene">勝利凱旋</div><div class="chip" data-g="scene">命運轉折點</div><div class="chip" data-g="scene">夢境般溫柔</div><div class="chip" data-g="scene">黑暗童話感</div><div class="chip" data-g="scene">史詩決戰前夕</div><div class="chip" data-g="scene">華麗登台瞬間</div><div class="chip" data-g="scene">戀愛電影感</div><div class="chip" data-g="scene">孤獨守望</div><div class="chip" data-g="scene">女王審判感</div><div class="chip" data-g="scene">魔法覺醒瞬間</div><div class="chip" data-g="scene">節慶熱鬧氛圍</div><div class="chip" data-g="scene">懸疑調查感</div><div class="chip" data-g="scene">公路遠行感</div><div class="chip" data-g="scene">高級廣告感</div>
+        <div class="chip" data-g="scene">霸氣登場</div><div class="chip" data-g="scene">宿命重逢</div><div class="chip" data-g="scene">禁忌誓約</div><div class="chip" data-g="scene">戰後沉默</div><div class="chip" data-g="scene">王權壓迫感</div><div class="chip" data-g="scene">甜美心動瞬間</div><div class="chip" data-g="scene">危險誘惑</div><div class="chip" data-g="scene">清冷孤高</div><div class="chip" data-g="scene">神聖降臨</div><div class="chip" data-g="scene">復仇宣言</div><div class="chip" data-g="scene">離別前一刻</div><div class="chip" data-g="scene">神秘夜巡中</div><div class="chip" data-g="scene">慵懶高級感</div><div class="chip" data-g="scene">遠行追逐感</div><div class="chip" data-g="scene">儀式感祈願</div><div class="chip" data-g="scene">深夜私語</div><div class="chip" data-g="scene">勝利凱旋</div><div class="chip" data-g="scene">命運轉折點</div><div class="chip" data-g="scene">夢境般溫柔</div><div class="chip" data-g="scene">黑暗童話感</div><div class="chip" data-g="scene">史詩決戰前夕</div><div class="chip" data-g="scene">華麗登台瞬間</div><div class="chip" data-g="scene">戀愛電影感</div><div class="chip" data-g="scene">孤獨守望</div><div class="chip" data-g="scene">女王登場感</div><div class="chip" data-g="scene">魔法覺醒瞬間</div><div class="chip" data-g="scene">節慶熱鬧氛圍</div><div class="chip" data-g="scene">懸疑探尋感</div><div class="chip" data-g="scene">公路遠行感</div><div class="chip" data-g="scene">高級廣告感</div>
       </div>
       <div class="custom-row"><input type="text" id="input-scene" placeholder="自訂氛圍劇情..."><button onclick="addC('scene','input-scene')">+ 加入</button></div>
     </div>
@@ -1711,16 +1964,16 @@ h2{font-size:18px;font-weight:600;margin-bottom:2px}
   </div>
 
   <!-- 妝容設定 -->
-  <div class="box-section makeup-bg">
+  <div class="box-section makeup-bg" id="makeup-section">
     <div class="box-header">
       <div class="box-title">💄 妝容設定</div>
       <span class="auto-tag" id="auto-makeup-tag">✦ 自動配妝：紅衣戰姬</span>
     </div>
-    <div class="makeup-note">已細分妝容方向；預設風格會自動配妝，也可以手動切換成更精準的妝感。</div>
+    <div class="makeup-note">已細分妝容方向；預設風格會自動配妝，也可以手動切換成更精準的妝感。素顏模式貼進 ChatGPT 後，可追加：「不要美化臉部，保留真實皮膚質感」。</div>
     <div class="makeup-grid">
       <div class="mk-group-title">基礎寫真 / 日常自然</div>
       <div class="mk-card selected" data-mk="warrior"><div class="mk-icon">🔴</div><div class="mk-name">戰姬妝 · 電影女主</div><div class="mk-desc">大紅唇 · 金箔眼影<br>英氣高飽和妝容</div></div>
-      <div class="mk-card" data-mk="natural_clean"><div class="mk-icon">🍃</div><div class="mk-name">清水素顏妝</div><div class="mk-desc">透亮底妝 · 自然眉<br>日常乾淨感</div></div>
+      <div class="mk-card" data-mk="natural_clean"><div class="mk-icon">🍃</div><div class="mk-name">清水素顏妝</div><div class="mk-desc">真實膚質 · 原臉保留<br>非網紅精修</div></div>
       <div class="mk-card" data-mk="outdoor_glow"><div class="mk-icon">☀️</div><div class="mk-name">戶外光澤妝</div><div class="mk-desc">古銅腮紅 · 珊瑚唇<br>旅拍健康感</div></div>
       <div class="mk-card" data-mk="soft_daily"><div class="mk-icon">🌷</div><div class="mk-name">柔和日系妝</div><div class="mk-desc">粉杏眼影 · 豆沙唇<br>親和溫柔</div></div>
       <div class="mk-card" data-mk="korean_dewy"><div class="mk-icon">💧</div><div class="mk-name">韓系水光妝</div><div class="mk-desc">玻璃肌 · 果凍唇<br>清透偶像感</div></div>
@@ -1803,158 +2056,10 @@ h2{font-size:18px;font-weight:600;margin-bottom:2px}
     </div>
   </div>
 
-  <!-- 圖片文字 -->
-  <div class="box-section text-bg">
-    <div class="box-header" style="margin-bottom:8px">
-      <div class="box-title" style="color:#633806">✍️ 圖片文字設計</div>
-    </div>
-    <div class="toggle3">
-      <div class="t3btn on" id="tbtn-off" onclick="setTxt('off')">不加文字</div>
-      <div class="t3btn" id="tbtn-zh" onclick="setTxt('zh')">繁體中文</div>
-      <div class="t3btn" id="tbtn-en" onclick="setTxt('en')">英文</div>
-      <div class="t3btn" id="tbtn-ja" onclick="setTxt('ja')">日文</div>
-      <div class="t3btn" id="tbtn-ko" onclick="setTxt('ko')">韓文</div>
-      <div class="t3btn" id="tbtn-fr" onclick="setTxt('fr')">法文</div>
-      <div class="t3btn" id="tbtn-th" onclick="setTxt('th')">泰文</div>
-      <div class="t3btn" id="tbtn-custom" onclick="setTxt('custom')">✎ 自訂文字</div>
-      <div class="t3btn" id="tbtn-zh_en" onclick="setTxt('zh_en')">繁體中文+英文</div>
-    </div>
-    <div class="text-sub" id="text-sub">
-      <div class="section-label" style="margin-top:0;margin-bottom:6px">文字風格</div>
-      <div class="ts-grid">
-        <div class="ts-card selected" data-ts="travel_photo"><div class="ts-name">📷 旅遊寫真</div><div class="ts-desc">自然旅拍 · 清爽標題</div></div>
-        <div class="ts-card" data-ts="movie_title"><div class="ts-name">🎬 電影海報標題</div><div class="ts-desc">大片主標 · 中上方留白</div></div>
-        <div class="ts-card" data-ts="magazine_cover"><div class="ts-name">📰 雜誌封面排版</div><div class="ts-desc">Editorial cover · 時尚排版</div></div>
-        <div class="ts-card" data-ts="decorative_mark"><div class="ts-name">🖌 裝飾書法/印章</div><div class="ts-desc">視覺符號為主 · 不要求可讀</div></div>
-        <div class="ts-card" data-ts="minimal_caption"><div class="ts-name">✦ 極簡角落字</div><div class="ts-desc">小字標籤 · 低干擾</div></div>
-        <div class="ts-card" data-ts="diary_note"><div class="ts-name">📓 心情手扎風格</div><div class="ts-desc">手寫感 · 旅行筆記</div></div>
-        <div class="ts-card" data-ts="ad_style"><div class="ts-name">📣 廣告風格</div><div class="ts-desc">品牌廣告 · 乾淨有力</div></div>
-        <div class="ts-card" data-ts="xianxia_seal"><div class="ts-name">🖌 仙俠水墨印章</div><div class="ts-desc">毛筆書法 · 紅色落款印</div></div>
-        <div class="ts-card" data-ts="neon_sign"><div class="ts-name">💡 霓虹電子招牌</div><div class="ts-desc">發光輪廓字 · 夜景城市感</div></div>
-        <div class="ts-card" data-ts="vintage_poster"><div class="ts-name">🎠 復古海報粗體</div><div class="ts-desc">1920-60s 裝飾藝術感</div></div>
-        <div class="ts-card" data-ts="gold_foil_luxury"><div class="ts-name">✨ 奢華金燙印字</div><div class="ts-desc">金箔燙印 · 深色背景反差</div></div>
-        <div class="ts-card" data-ts="fairy_tale_hand"><div class="ts-name">🧚 童話手繪標題</div><div class="ts-desc">不規則手寫 · 小花裝飾</div></div>
-        <div class="ts-card" data-ts="new_chinese_title"><div class="ts-name">🏮 新中式題字</div><div class="ts-desc">現代漢字美學 · 品牌感</div></div>
-        <div class="ts-card" data-ts="custom_style"><div class="ts-name">✎ 自訂風格</div><div class="ts-desc">輸入想要的文字排版</div></div>
-      </div>
-      <div class="section-label" style="margin-top:8px;margin-bottom:6px">文字位置</div>
-      <div class="toggle3" id="txt-placement-row">
-        <div class="t3btn on" id="tplc-auto" onclick="setTxtPlacement('auto')">自動配置</div>
-        <div class="t3btn" id="tplc-top" onclick="setTxtPlacement('top')">上方大標題</div>
-        <div class="t3btn" id="tplc-bottom" onclick="setTxtPlacement('bottom')">下方字幕</div>
-        <div class="t3btn" id="tplc-corner" onclick="setTxtPlacement('corner')">角落印章</div>
-        <div class="t3btn" id="tplc-side" onclick="setTxtPlacement('side')">側邊直排</div>
-        <div class="t3btn" id="tplc-scene" onclick="setTxtPlacement('scene')">融入場景</div>
-      </div>
-      <div class="section-label" style="margin-top:8px;margin-bottom:6px">文字內容方向 <span style="color:#aaa;font-size:10px">（提示 AI 方向，不強制）</span></div>
-      <div class="toggle3" id="txt-type-row">
-        <div class="t3btn on" id="ttype-theme" onclick="setTxtType('theme')">依場景主題</div>
-        <div class="t3btn" id="ttype-location" onclick="setTxtType('location')">地點名稱</div>
-        <div class="t3btn" id="ttype-quote" onclick="setTxtType('quote')">情感台詞</div>
-        <div class="t3btn" id="ttype-poetry" onclick="setTxtType('poetry')">詩詞古句</div>
-        <div class="t3btn" id="ttype-title" onclick="setTxtType('title')">作品名稱</div>
-        <div class="t3btn" id="ttype-date" onclick="setTxtType('date')">日期年份</div>
-      </div>
-      <div id="custom-txt-wrap" class="text-input-row">
-        <input class="text-input" id="custom-txt-input" type="text" placeholder="輸入你想加入圖片的文字內容...">
-      </div>
-      <div id="custom-style-wrap" class="text-input-row">
-        <input class="text-input" id="custom-style-input" type="text" placeholder="輸入自訂文字風格，例如：復古明信片、霓虹招牌、手寫標籤...">
-      </div>
-      <div id="auto-txt-hint" style="display:none;font-size:11px;color:#888;margin-top:6px;padding:6px 10px;background:#fafaf8;border-radius:6px">✦ 可選擇文字語言與排版風格；不加文字最穩。</div>
-    </div>
-  </div>
-  <!-- 輸出尺寸 -->
-  <div class="box-section size-bg">
-    <div class="box-header" style="margin-bottom:10px">
-      <div class="box-title">📐 輸出尺寸</div>
-    </div>
-    <div class="size-grid">
-      <div class="size-card" data-g="angle" data-v="9:16 vertical full-screen mobile format">
-        <div class="size-icon">📱</div>
-        <div class="size-name">9:16 手機直式</div>
-        <div class="size-desc">手機全螢幕<br>IG 限時動態</div>
-      </div>
-      <div class="size-card on" data-g="angle" data-v="4:5 social portrait format">
-        <div class="size-icon">👤</div>
-        <div class="size-name">4:5 社群人像</div>
-        <div class="size-desc">IG 貼文<br>小紅書封面</div>
-      </div>
-      <div class="size-card" data-g="angle" data-v="3:4 portrait photography format">
-        <div class="size-icon">📷</div>
-        <div class="size-name">3:4 寫真直式</div>
-        <div class="size-desc">旅拍寫真<br>半身全身穩</div>
-      </div>
-      <div class="size-card" data-g="angle" data-v="2:3 vertical poster format">
-        <div class="size-icon">🎞</div>
-        <div class="size-name">2:3 海報直式</div>
-        <div class="size-desc">電影海報<br>完整服裝</div>
-      </div>
-      <div class="size-card" data-g="angle" data-v="16:9 cinematic wide landscape format">
-        <div class="size-icon">🎬</div>
-        <div class="size-name">16:9 電影橫幅</div>
-        <div class="size-desc">大景地標<br>桌布橫版</div>
-      </div>
-      <div class="size-card" data-g="angle" data-v="1:1 square cover format">
-        <div class="size-icon">⬜</div>
-        <div class="size-name">1:1 方形封面</div>
-        <div class="size-desc">IG 貼文<br>社群封面</div>
-      </div>
-      <div class="size-card" data-g="angle" data-v="21:9 ultra wide cinematic panorama format">
-        <div class="size-icon">🎥</div>
-        <div class="size-name">21:9 超寬電影</div>
-        <div class="size-desc">壯闊大景<br>電影橫幅</div>
-      </div>
-      <div class="size-card" data-g="angle" data-v="4:3 classic landscape photography format">
-        <div class="size-icon">🖼</div>
-        <div class="size-name">4:3 經典橫式</div>
-        <div class="size-desc">旅遊照片<br>自然構圖</div>
-      </div>
-      <div class="size-card" data-g="angle" data-v="5:4 premium cover crop format">
-        <div class="size-icon">🧾</div>
-        <div class="size-name">5:4 精緻封面</div>
-        <div class="size-desc">作品集<br>封面裁切</div>
-      </div>
-      <div class="size-card" data-g="angle" data-v="3:2 DSLR landscape format, classic photography horizontal, natural editorial proportion, print-ready">
-        <div class="size-icon">📸</div>
-        <div class="size-name">3:2 相機橫式</div>
-        <div class="size-desc">攝影標準<br>沖洗列印</div>
-      </div>
-      <div class="size-card" data-g="angle" data-v="2:1 wide panoramic banner format, sweeping landscape composition, subject small against grand scene, header or billboard scale">
-        <div class="size-icon">🌐</div>
-        <div class="size-name">2:1 全景橫幅</div>
-        <div class="size-desc">網站橫幅<br>人小景大</div>
-      </div>
-    </div>
-  </div>
+  
+  
 
-  <div class="section-label">大片控制</div>
-  <div class="box-section">
-    <div class="box-header" style="margin-bottom:10px">
-      <div class="box-title">🎥 鏡頭語言</div>
-      <span class="auto-tag">決定照片像寫真 / 海報 / 大景</span>
-    </div>
-    <div class="pro-control-grid">
-      <div class="pro-control-card on" data-pro="lens" data-v="cinematic three-quarter portrait, face sharp, outfit readable, environment visible, balanced travel-poster framing">
-        <div class="pc-icon">👤</div><div class="pc-name">三分之二人像</div><div class="pc-desc">臉清楚<br>服裝場景都穩</div>
-      </div>
-      <div class="pro-control-card" data-pro="lens" data-v="full-body environmental portrait, complete head-to-toe outfit visible, strong location depth, clean adult fashion body proportions, smaller natural head-to-body ratio, avoid oversized head">
-        <div class="pc-icon">🧍</div><div class="pc-name">全身大景</div><div class="pc-desc">完整服裝<br>旅拍大片</div>
-      </div>
-      <div class="pro-control-card" data-pro="lens" data-v="close-up beauty portrait, face as the hero, detailed eyes and makeup, soft background depth, no facial obstruction">
-        <div class="pc-icon">💄</div><div class="pc-name">妝容特寫</div><div class="pc-desc">臉部主角<br>妝髮清楚</div>
-      </div>
-      <div class="pro-control-card" data-pro="lens" data-v="low-angle heroic poster shot, powerful silhouette, dramatic costume flow, face still readable">
-        <div class="pc-icon">👑</div><div class="pc-name">低角度女王</div><div class="pc-desc">氣勢強<br>海報感</div>
-      </div>
-      <div class="pro-control-card" data-pro="lens" data-v="wide cinematic establishing shot, subject integrated into a grand location, clear landmark or landscape scale">
-        <div class="pc-icon">🌄</div><div class="pc-name">遠景壯闊</div><div class="pc-desc">地標山河<br>人物融入</div>
-      </div>
-      <div class="pro-control-card" data-pro="lens" data-v="premium magazine cover composition, clean negative space, sharp editorial pose, cover-ready framing">
-        <div class="pc-icon">📰</div><div class="pc-name">雜誌封面</div><div class="pc-desc">留白乾淨<br>封面構圖</div>
-      </div>
-    </div>
-  </div>
+  
 
   <div class="box-section">
     <div class="box-header" style="margin-bottom:10px">
@@ -2003,24 +2108,6 @@ h2{font-size:18px;font-weight:600;margin-bottom:2px}
       </div>
       <div class="pro-control-card" data-pro="action" data-v="battle aftermath heroine pose, standing still after combat with weapon lowered, wind moving hair and costume, sparks or dust behind, calm powerful expression, cinematic silence">
         <div class="pc-icon">🔥</div><div class="pc-name">戰後回眸</div><div class="pc-desc">戰後靜止<br>帥氣收招</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="box-section">
-    <div class="box-header" style="margin-bottom:10px">
-      <div class="box-title">🧬 保臉強度</div>
-      <span class="auto-tag">控制像本人或角色化</span>
-    </div>
-    <div class="pro-control-grid">
-      <div class="pro-control-card on" data-pro="identity" data-v="maximum identity preservation, highest priority identity lock, keep the uploaded person's face, facial features, limbs, anatomy, and body proportions structurally normal and unchanged; no face swap, no face morphing, no facial deformation, no identity replacement, only beautify skin texture and lighting subtly">
-        <div class="pc-icon">🔒</div><div class="pc-name">保臉最強</div><div class="pc-desc">最像本人<br>只換服景</div>
-      </div>
-      <div class="pro-control-card" data-pro="identity" data-v="natural beautification while preserving identity, refine skin, makeup, and lighting only, keep facial proportions, facial structure, age impression, and personal likeness unchanged, no face morphing, no face swap">
-        <div class="pc-icon">🌷</div><div class="pc-name">自然美化</div><div class="pc-desc">漂亮一點<br>仍像本人</div>
-      </div>
-      <div class="pro-control-card" data-pro="identity" data-v="moderate character styling, allow stronger costume and makeup transformation, but facial identity, bone structure, facial proportions, and recognizable likeness must remain intact, no face replacement, no facial deformation">
-        <div class="pc-icon">🎭</div><div class="pc-name">角色化</div><div class="pc-desc">造型更強<br>臉不換人</div>
       </div>
     </div>
   </div>
@@ -2082,77 +2169,149 @@ h2{font-size:18px;font-weight:600;margin-bottom:2px}
       <span class="auto-tag">手臉衣服穩定</span>
     </div>
     <div class="pro-control-grid">
-      <div class="pro-control-card on wide" data-pro="guard" data-v="strict core body guard: one main person only, exact facial identity, normal facial features, correct anatomy, natural hands with five fingers, correct limb count, coherent adult body proportions, realistic smaller head-to-body ratio for full-body shots, symmetrical readable eyes, no facial deformation, no face replacement, no changed facial structure, no oversized head, no childlike chibi ratio, no asymmetric warped eyes, no extra limbs, no duplicated face, no broken fabric, no warped background">
+      <div class="pro-control-card on wide" data-pro="guard" data-v="strict core body guard: one main person only, exact facial identity, normal facial features, correct anatomy, natural hands with five fingers, correct limb count, coherent adult body proportions, adult editorial runway proportion for full-body and knee-up shots, head around one-eighth of body height when full-body is visible, long balanced neck and limbs, realistic shoulder width, do not enlarge the head to preserve the face, no bobblehead, no oversized head, no short torso, no compressed body, symmetrical readable eyes, no facial deformation, no face replacement, no changed facial structure, no childlike chibi ratio, no asymmetric warped eyes, no extra limbs, no duplicated face, no broken fabric, no warped background">
         <div class="pc-icon">🛡</div><div class="pc-name">標準防崩</div><div class="pc-desc">手臉衣服背景全部檢查</div>
       </div>
       <div class="pro-control-card" data-pro="guard" data-v="extra face and hand guard: face must remain unobstructed, original facial identity must stay unchanged, both eyes readable and not warped, natural teeth and lips if smiling, hands anatomically correct, fingers not fused or extra, no face swap">
         <div class="pc-icon">✋</div><div class="pc-name">手臉加強</div><div class="pc-desc">近景適合<br>手指穩</div>
       </div>
-      <div class="pro-control-card" data-pro="guard" data-v="full outfit and body guard: complete head-to-toe clothing visible when requested, correct adult fashion body proportions, realistic nine-head proportion when appropriate, avoid oversized head and short-body distortion, no cropped feet, no broken skirt, no tangled sleeves, no floating accessories">
+      <div class="pro-control-card" data-pro="guard" data-v="full outfit and body guard: complete head-to-toe clothing visible when requested, correct adult fashion body proportions, realistic eight-head proportion when appropriate, avoid oversized head and short-body distortion, no cropped feet, no broken skirt, no tangled sleeves, no floating accessories">
         <div class="pc-icon">👗</div><div class="pc-name">全身服裝</div><div class="pc-desc">長裙漢服<br>全身穩</div>
       </div>
-      <div class="pro-control-card" data-pro="guard" data-v="strict anti-big-head full-body guard: for full-body, three-quarter body, wide epic, and environmental portraits, keep the head naturally smaller relative to the body, use adult model proportions, long balanced neck and limbs, realistic shoulder width, head-to-body ratio around eight to nine heads when appropriate, no enlarged head, no short torso, no childlike chibi body, no cute doll proportions">
+      <div class="pro-control-card" data-pro="guard" data-v="strict anti-big-head full-body guard: for full-body, three-quarter body, wide epic, and environmental portraits, keep the head naturally smaller relative to the body, use adult model proportions, long balanced neck and limbs, realistic shoulder width, head-to-body ratio around eight heads when appropriate, no enlarged head, no short torso, no childlike chibi body, no cute doll proportions">
         <div class="pc-icon">📏</div><div class="pc-name">防大頭比例</div><div class="pc-desc">全身大景<br>頭身更穩</div>
       </div>
     </div>
   </div>
-  <div class="section-label">額外備註（選填）</div>
-  <div class="extras"><textarea id="extra-notes" placeholder="特定服裝顏色、道具細節、特殊場景要求..."></textarea></div>
+  
 
-  <button class="gen-btn" id="gen-btn">✦ 生成咒語</button>
-
-  <!-- RESULT -->
-  <div class="result-box" id="result-box">
-    <!-- 英文版 -->
-    <div class="result-header">
-      <span class="result-label">🇬🇧 英文咒語（貼給 ChatGPT）</span>
-      <div class="result-actions">
-        <button class="copy-btn" id="copy-small-btn">複製</button>
-        <button class="clear-btn" id="clear-result-btn" type="button">清除</button>
-      </div>
-    </div>
-    <div class="result-text" id="result-text"></div>
-    <button class="copy-all" id="copy-all-btn">📋 一鍵複製英文咒語 · 貼進 ChatGPT</button>
-
-  </div>
+  
   <p class="note">專為 ChatGPT 優化 · 神話歷史系列 · 鎖臉指令 · 圖片文字設計</p>
 </div>
 
 <script>
 const MK={
-  warrior:"cinematic warrior heroine makeup, crimson red lips, gold foil eyeshadow, sharp black eyeliner, vivid blush, flawless high-definition base, heroic and intense screen presence",
-  natural_clean:"natural clean beauty makeup, sheer luminous skin, softly defined brows, bare-skin effect, pale pink tinted balm, minimal visible eyeshadow, fresh Korean-style everyday elegance",
-  outdoor_glow:"outdoor radiant makeup, sun-kissed bronze blush, coral-orange lips, waterproof luminous base, healthy travel-photo glow, natural active beauty under sunlight",
-  soft_daily:"soft Japanese daily makeup, peach-pink eyeshadow, gentle brown eyeliner, muted rose-beige lips, light translucent base, approachable warm feminine mood",
-  korean_dewy:"Korean dewy glass-skin makeup, glossy hydrated complexion, soft straight brows, subtle champagne shimmer, jelly pink lips, clean idol-like radiance",
-  noir_minimal:"low-saturation minimalist makeup, matte porcelain base, taupe-brown eyeshadow, tight thin eyeliner, nude beige lips, cool distant editorial elegance",
-  fox:"alluring fox-spirit makeup, gold-red gradient eyeshadow, elongated upward eyeliner, vermilion bitten lips, porcelain dewy base, gold inner-corner accents, alluring mythic charm",
-  moon:"cold moon-goddess makeup, ice-blue pearlescent eyeshadow, silver-white luminous base, soft lavender lips, delicate brows, serene and distant celestial beauty",
-  tang:"high Tang dynasty court makeup, diagonal crimson blush eyeshadow, golden huadian forehead ornament, peony-red full lips, luminous ivory base, ornate imperial glamour",
-  xianxia:"ethereal xianxia makeup, pearl-white translucent base, cool blue-purple gradient eyeshadow, soft pink fairy lips, feather-light glow, immortal heroine atmosphere",
-  gongting:"Chinese palace consort makeup, saturated red eyeshadow, elongated phoenix eyeliner, cinnabar forehead dot, coral-red lips, refined aristocratic court beauty",
-  wuxia_sharp:"sharp wuxia heroine makeup, clean polished base, strong heroic brows, precise thin eyeliner, natural lips, disciplined gaze, agile swordswoman elegance",
+  warrior:[
+    "cinematic warrior heroine makeup, crimson red lips, gold foil eyeshadow, sharp black eyeliner, vivid blush, flawless high-definition base, heroic and intense screen presence",
+    "battle-worn warrior heroine makeup, deep burgundy velvet lips, smoky bronze-gold eyeshadow, metallic copper highlights, sharp defined eyeliner, resilient fierce cinematic presence",
+    "imperial warrior queen makeup, blood-red full lips, gold-dust shimmer eyeshadow, bold sculpted brows, luminous battle-finish base, commanding mythic royal intensity"
+  ],
+  natural_clean:[
+    "true bare-face reference-photo realism, preserve the uploaded person's original skin texture, pores, natural unevenness, real brow shape, real lip color, real eye shape, no beauty filter, no influencer styling",
+    "plain no-makeup documentary portrait look, keep the exact face from the uploaded photo, natural skin texture and facial asymmetry visible, no glass-skin effect, no Korean idol face, no clean-girl makeover",
+    "authentic natural face from the uploaded photo, minimal grooming only, real complexion, real under-eye texture, real cheeks and jawline, no reshaping, no smoothing, no glam retouching"
+  ],
+  outdoor_glow:[
+    "outdoor radiant makeup, sun-kissed bronze blush, coral-orange lips, waterproof luminous base, healthy travel-photo glow, natural active beauty under sunlight",
+    "natural adventure glow makeup, warm peach flush blush, terracotta soft lips, clear healthy skin finish, light bronzer, effortless outdoors editorial freshness",
+    "golden-hour outdoor makeup, deep coral satin lips, bronze shimmer highlighter, lightweight matte protective base, vibrant sun-kissed energy, free-spirited travel radiance"
+  ],
+  soft_daily:[
+    "soft everyday makeup, light peachy blush, natural brown mascara, tinted moisturizer finish, pinky-nude lips, approachable daily freshness",
+    "gentle daily glow makeup, sheer foundation, soft rose-coral blush, clear glossy lips, light feather brows, comfortable natural radiance",
+    "minimal everyday dewy makeup, light coverage satin base, warm nude blush, barely-there brown liner, soft pink lip tint, effortless everyday warmth"
+  ],
+  korean_dewy:[
+    "Korean dewy glass-skin makeup, glossy hydrated complexion, soft straight brows, subtle champagne shimmer, jelly pink lips, clean idol-like radiance",
+    "Korean water-glow skin makeup, translucent dewy base, brushed-up natural brows, sheer coral-pink lips, barely-there eye shimmer, luminous fresh idol glow",
+    "Korean milky skin shine makeup, ultra-smooth porcelain base, soft feather brows, glossy rosy-nude lips, inner-corner highlight, soft-focus flawless clarity"
+  ],
+  noir_minimal:[
+    "low-saturation minimalist makeup, matte porcelain base, taupe-brown eyeshadow, tight thin eyeliner, nude beige lips, cool distant editorial elegance",
+    "monochrome noir minimal makeup, cool grey-taupe eyeshadow wash, barely-there brow, translucent matte base, greige nude lips, understated Tokyo editorial stillness",
+    "wabi-sabi minimal makeup, unfinished soft taupe shadow, no liner, natural skin texture, ash-rose lips, refined imperfection, quiet avant-garde mood"
+  ],
+  fox:[
+    "alluring fox-spirit makeup, gold-red gradient eyeshadow, elongated upward eyeliner, vermilion bitten lips, porcelain dewy base, gold inner-corner accents, alluring mythic charm",
+    "seductive nine-tailed fox makeup, crimson-gold blended eyeshadow, dramatic winged liner with tail-tip accent, deep cherry-bitten lips, luminous warm ivory base, gold filigree inner-corner sparkle, ancient forest mystic allure",
+    "ethereal white fox immortal makeup, moonbeam silver-white eyeshadow, delicate elongated eyeliner, pale rose petal lips, translucent cool base, silver fox-fire shimmer, otherworldly serene beauty"
+  ],
+  moon:[
+    "cold moon-goddess makeup, ice-blue pearlescent eyeshadow, silver-white luminous base, soft lavender lips, delicate brows, serene and distant celestial beauty",
+    "waning crescent moon makeup, deep navy-silver gradient eyeshadow, cold porcelain matte base, pale silver-mauve lips, fine arched brows, melancholy ethereal moonlit presence",
+    "blood moon enchantress makeup, crimson-violet smoky eye with lunar shimmer, pale luminous base, deep rose-red bitten lips, dramatic moon-phase mystique"
+  ],
+  tang:[
+    "high Tang dynasty court makeup, diagonal crimson blush eyeshadow, golden huadian forehead ornament, peony-red full lips, luminous ivory base, ornate imperial glamour",
+    "Tang peony consort makeup, diagonal rosy-peach eyeshadow, peony-shaped huadian ornament, soft full red lips, warm luminous pearl base, luxurious tender palace beauty",
+    "Tang Hu-dance court performer makeup, golden-orange sparkling eyeshadow, bright inner-corner highlight, vivid coral-red lips, jeweled hair ornament accent, lively Silk Road glamour"
+  ],
+  xianxia:[
+    "ethereal xianxia makeup, pearl-white translucent base, cool blue-purple gradient eyeshadow, soft pink fairy lips, feather-light glow, immortal heroine atmosphere",
+    "romantic xianxia fairy makeup, warm peach-rose eyeshadow, translucent dewy base, soft coral fairy lips, rose-gold inner shimmer, tender immortal maiden softness",
+    "cold xianxia ice deity makeup, silver-white frozen base, icy lavender-blue eyeshadow, pale translucent lips with cool gloss, crystal shimmer, distant untouchable celestial purity"
+  ],
+  gongting:[
+    "Chinese palace consort makeup, saturated red eyeshadow, elongated phoenix eyeliner, cinnabar forehead dot, coral-red lips, refined aristocratic court beauty",
+    "Song dynasty inner-court consort makeup, soft powder-rose eyeshadow, gentle arched brows, pale refined red lips, translucent porcelain base, poetic inner-court elegance",
+    "Ming dynasty noblewoman makeup, warm rouge diagonal blush, willow-leaf refined brows, coral-red full lips, clean ivory luminous base, cloud-collar aristocratic grace"
+  ],
+  wuxia_sharp:[
+    "sharp wuxia warrior makeup, blade-thin black eyeliner, cool ivory matte base, deep ink-black brows, muted rose lips, fierce disciplined martial elegance",
+    "xia sect swordsman makeup, precise angular eyeliner flick, porcelain cool base, strong straight brows, dusty plum lips, dangerous composed energy",
+    "wandering hero wuxia makeup, weathered matte skin, bold straight brows, tapered eyeliner, muted earth-tone lips, world-weary and resolute presence"
+  ],
   dunhuang_gold:"Dunhuang flying-apsera makeup, golden-orange eyeshadow, radiant temple highlights, ornate huadian forehead detail, warm red lips, mural-inspired desert glow",
   qing_court:"Qing palace portrait makeup, delicate narrow brows, soft rouge cheeks, restrained crimson lips, smooth porcelain base, dignified classical court elegance",
   republic_qipao:"Republic-era qipao makeup, vintage red lips, slender arched brows, soft brown smoky eyes, satin matte skin, old Shanghai jazz-age cinematic charm",
-  cinematic:"cinematic celebrity portrait makeup, ultra-clean HD base, natural brows, rose or nude lips, sculpted but realistic contours, premium actor publicity-still polish",
-  editorial:"high-fashion editorial makeup, flawless airbrush base, sculpted highlights, clean graphic eyeliner, polished nude or glossy lips, Vogue-cover luxury finish",
-  hk_film:"Hong Kong film-noir makeup, deep smoky eyeshadow, dark wine-red lipstick, high-contrast skin finish, moody gaze, nostalgic cinematic film-grain glamorousity",
-  y2k:"Y2K neon idol makeup, pastel purple-pink eyeshadow, glossy pearl lip gloss, cat-eye liner, cheek glitter, holographic millennium pop-star energy",
-  runway_supermodel:"runway supermodel makeup, razor-sharp cheek contour, metallic eyeshadow, brushed-up brows, nude glossy lips, powerful fashion-week confidence",
-  luxury_glam:"luxury jewelry campaign makeup, diamond-like highlighter, champagne-gold eyeshadow, velvet red or nude lips, immaculate skin, expensive red-carpet radiance",
-  retro_hollywood:"classic Hollywood glamour makeup, precise black cat eyeliner, sculpted red lips, softly powdered skin, defined waves-friendly styling, 1940s movie-star elegance",
-  gothic:"gothic dark glamour makeup, heavy black smoky eyes, deep burgundy lips, pale porcelain skin, dramatic lashes, luxurious castle-night drama",
+  cinematic:[
+    "cinematic editorial portrait makeup, ultra-clean HD base, natural brows, rose or nude lips, sculpted but realistic contours, premium portrait finish",
+    "dramatic cinematic screen makeup, controlled smoky eye, sculpted cheekbones, deep wine or warm nude lips, premium film actress confidence and scene depth",
+    "soft cinematic leading lady makeup, peach-gold luminous base, warm satin rose lips, natural brows, soft dewy glow, intimate close-up scene-ready beauty"
+  ],
+  editorial:[
+    "high-fashion editorial makeup, flawless airbrush base, sculpted highlights, clean graphic eyeliner, polished nude or glossy lips, Vogue-cover luxury finish",
+    "minimalist editorial beauty makeup, bare-skin luminous base, precisely brushed brows, thin clean liner, warm sand-nude lips, architectural polished restraint",
+    "bold editorial maximalist makeup, heavy metallic eyeshadow, dramatic sculpted contour, statement graphic brow, bold glossy or matte lips, runway-commanding high-impact finish"
+  ],
+  hk_film:[
+    "Hong Kong film-noir makeup, deep smoky eyeshadow, dark wine-red lipstick, high-contrast skin finish, moody gaze, nostalgic cinematic film-grain glamour",
+    "1980s Hong Kong cinema diva makeup, cool-toned smoky eye, retro coral-red lips, matte porcelain base, vintage heavy mascara lashes, cheongsam-era film elegance",
+    "New Wave Hong Kong film makeup, asymmetric dark shadow accent, bold red-brown lips, angular brows, cool satin skin, underground cinematic avant-garde mood"
+  ],
+  y2k:[
+    "Y2K neon idol makeup, pastel purple-pink eyeshadow, glossy pearl lip gloss, cat-eye liner, cheek glitter, holographic millennium pop-star energy",
+    "early 2000s cyber rave makeup, electric blue shimmer eyeshadow, glossy clear lip with holographic tint, bold graphic liner, face gems, millennial club-kid maximalism",
+    "Y2K princess pop makeup, bubblegum pink shadow blended to lavender, glossy plump lips in candy pink, star-shaped face gems, silver micro-glitter highlight, sweet futuristic femme fantasy"
+  ],
+  runway_supermodel:[
+    "runway supermodel makeup, razor-sharp cheek contour, metallic eyeshadow, brushed-up brows, nude glossy lips, powerful fashion-week confidence",
+    "avant-garde runway makeup, graphic cut-crease eyeshadow in bronze-gold, architectural contour, matte nude lips, razor-defined brows, high-fashion editorial power",
+    "couture runway makeup, extreme sculpted bone contour, deep-set shadow illusion, bleached brushed-up brows, pale silk lips, otherworldly high-fashion severity"
+  ],
+  luxury_glam:[
+    "luxury jewelry campaign makeup, diamond-like highlighter, champagne-gold eyeshadow, velvet red or nude lips, immaculate skin, expensive red-carpet radiance",
+    "black-tie luxury gala makeup, deep smoky champagne eye, flawless luminous base, deep berry-wine lips, striking diamond highlight, opulent evening glamour",
+    "high-jewelry editorial makeup, silver-gold duochrome eyeshadow, porcelain luminous skin, bordeaux lips, precision brows, rare gem-inspired timeless luxury"
+  ],
+  retro_hollywood:[
+    "classic Hollywood glamour makeup, precise black cat eyeliner, sculpted red lips, softly powdered skin, defined waves-friendly styling, 1940s movie-star elegance",
+    "golden-era Hollywood makeup, deep winged cat-eye, carmine red full lips, matte ivory skin, defined arch brow, 1950s silver-screen classic radiance",
+    "noir Hollywood femme fatale makeup, dramatic black smoke liner, deep crimson-plum lips, high-contrast matte skin, bold arched brow, 1940s mystery and danger"
+  ],
+  gothic:[
+    "gothic dark glamour makeup, heavy black smoky eyes, deep burgundy lips, pale porcelain skin, dramatic lashes, luxurious castle-night drama",
+    "velvet gothic romanticism makeup, wine-purple smoky eye, cold ivory base, dark mauve satin lips, dramatic voluminous lashes, candlelit dark elegance",
+    "silver gothic luxury makeup, silver-white metallic smoky eyeshadow, icy pale matte base, blackened silver lips, jeweled lash accent, moonlit gothic couture glamour"
+  ],
   beast_dark:"dark beast-girl makeup, red-gold animalistic eye accents, extended smoky eyeliner, deep red lips, strong contrast base, wild alluring fantasy energy",
   demon_lord:"demon-lord makeup, extremely dark black-purple smoky eyes, arcane black eyeliner shapes, deep purple-black lips, pale commanding base, forehead demonic mark, overwhelming evil aura",
   fallen_angel:"fallen-angel makeup, asymmetric light-and-shadow eyeshadow with gold-white on one side and black-purple on the other, torn-wing eyeliner, dark violet-red lips, translucent tragic beauty",
-  succubus_alluring:"succubus seduction makeup, wet glossy crimson lips, razor-sharp cat eyeliner, smoky plum eyeshadow, luminous sculpted skin, subtle infernal red highlights, glamorous supernatural temptation",
+  succubus_alluring:[
+    "succubus seduction makeup, wet glossy crimson lips, razor-sharp cat eyeliner, smoky plum eyeshadow, luminous sculpted skin, subtle infernal red highlights, glamorous supernatural temptation",
+    "infernal court succubus makeup, jewel-toned garnet smoky eye, liquid-sharp extended eyeliner, blood-velvet full lips, polished sculpted luminous skin, deep rose-crimson crown shimmer, aristocratic demonic glamour",
+    "twilight succubus enchantment makeup, rose-gold to deep violet gradient eyeshadow, smoldering cat-eye liner, glossy dark berry lips, glass-skin dewy luminous base, ethereal supernatural feminine power"
+  ],
   vampire_lady:"vampire noblewoman makeup, pale satin base, blood-red lips, smoked burgundy eyeshadow, long elegant lashes, cold aristocratic gaze, luxurious gothic seduction",
   dark_boudoir:"dark boudoir portrait makeup, soft smoky eyes, rose-nude glossy lips, sculpted cheekbones, satin skin, mature glamorous studio-photography mood",
   elf_magic:"elven mage makeup, cool blue-silver gradient eyeshadow, pointed upward eyeliner, pale violet lips, luminous cool-white base, magical forest mystery",
   magic_girl:"magical girl makeup, pink and lavender big-eye eyeshadow, voluminous curled lashes, watery pink lip gloss, sparkling blush, sweet fantasy heroine charm",
   angel_holy:"holy angel makeup, luminous white base, gold pearlescent eyeshadow, delicate precise eyeliner, nude or pale-pink lips, small golden forehead highlight, sacred purity",
-  snow_pure:"snow-queen pure makeup, icy porcelain base, cool pink eyeshadow, nude rose lips, clean refined brows, crystalline blue-white winter elegance",
+  snow_pure:[
+    "snow-queen pure makeup, icy porcelain base, cool pink eyeshadow, nude rose lips, clean refined brows, crystalline blue-white winter elegance",
+    "porcelain snow bride makeup, ultra-pale luminous matte base, white pearlescent eyeshadow, barely-there pink lips, delicate silver shimmer lash, ethereal winter purity",
+    "winter fairy frost makeup, cool mint-tinted translucent base, frosted pale eyeshadow, glossy nude lips, white-silver highlighter, crystalline cold-morning elegance"
+  ],
   mermaid_pearl:"deep-sea mermaid makeup, blue-green pearlescent eyeshadow, wet luminous skin, pearl highlights, soft aqua shimmer, glossy coral lips, underwater bioluminescent beauty",
   white_tiger_glow:"white-tiger moonlight makeup, silver-white highlighter, cool taupe eyeshadow, delicate feline liner, pale rose lips, guardian-beast celestial glow",
   flower_fairy:"flower fairy makeup, petal blush across the cheeks, translucent pink eyeshadow, glossy blossom lips, tiny floral shimmer, fresh spring fantasy softness",
@@ -2242,7 +2401,7 @@ const P={
     q:"cinematic fantasy illustration with photorealistic beauty detail, Unreal Engine 5 rendering style, Octane Render quality, 8K HDR, ultra detailed, high-art fantasy dream world",
     neg:"sharp pointed chin, V-shaped face, overly exposed styling, plastic skin, cartoon, low quality, messy text, watermark"},
   vogue_spider_spirit:{n:"蜘蛛精高訂封面",mk:"editorial",
-    char:"adult professional slender fashion model aura, sharp deep gaze, refined East Asian beauty, realistic skin texture, visible pores, natural imperfections, polished high-fashion confidence",
+    char:"adult professional, sharp confident gaze, realistic skin texture, visible pores, natural imperfections, polished high-fashion confidence",
     s:"clean minimalist professional studio, pale gray-white gradient backdrop, glossy black-white-gold marble floor reflection, a giant asymmetrical marble plinth with black, white, and gold veining placed in the center",
     o:"white-gold couture outfit merging Journey to the West spider-spirit costume elements with modern luxury street fashion: one-shoulder cape, jade pendant, ornate crown, glass beads, dragon embroidery, metallic accessories, watch, necklace, designer handbag, traditional robe structure fused with contemporary tailoring",
     prop:"relaxed asymmetrical seated pose on the giant marble plinth, one knee raised high with one hand naturally resting on the knee, the other leg bent forward and extended, effortless attitude and fashion authority",
@@ -2396,7 +2555,7 @@ const P={
     q:"ultra realistic fairycore floral goddess photography, luxury editorial portrait, detailed petals and vines, natural skin texture, 8K",
     neg:"nudity, exposed private areas, ordinary clothes, heavy dark makeup, neon colors, plastic skin, gothic horror, cartoon, messy background, watermark"},
   cappadocia_red_convertible:{n:"卡帕紅車熱氣球",mk:"modern",
-    char:"adult glamorous travel model with relaxed confident smile, polished vacation makeup, wind-swept long hair",
+    char:"adult relaxed and confident, polished vacation styling, wind-swept long hair",
     s:"Cappadocia-style rocky valley at sunset, vintage red convertible parked on a scenic viewpoint, distant hot-air balloons floating in the orange sky",
     o:"dramatic flowing red dress with elegant slit, gold earrings, delicate bracelets, styled hair, luxury resort travel accessories",
     prop:"sitting gracefully on the hood or side of the convertible, one leg extended elegantly, looking toward sunset or camera",
@@ -2506,7 +2665,7 @@ const P={
     q:"ultra realistic white kimono swordswoman portrait, cinematic travel editorial, detailed fabric and blade, natural skin texture, 8K",
     neg:"violent blood, unsafe action, cheap costume, distorted sword, plastic skin, cartoon, watermark"},
   y2k_pink_magazine:{n:"粉色Y2K雜誌美學",mk:"modern",
-    char:"adult playful fashion model, glossy lips, bright eyes, confident cute expression, polished idol-style makeup",
+    char:"adult playful expression, glossy lips, bright eyes, confident cute expression, polished colorful makeup",
     s:"sparkly pastel magazine cover backdrop, pink and lavender watercolor textures, chrome stickers, stars, hearts, barcode and fashion graphics as decorative elements",
     o:"pink metallic jacket, white star crop top, layered silver necklaces, charm choker, ruffled pink skirt, chunky sneakers, shiny handbag, hair styled with soft bangs",
     prop:"standing in fashion pose, one hand holding bag strap, wind-blown long hair, magazine cover composition",
@@ -2517,7 +2676,7 @@ const P={
     q:"high-end Y2K fashion magazine aesthetic, ultra detailed editorial illustration-photo hybrid, polished accessories, 8K",
     neg:"messy unreadable typography, low-quality collage, distorted face, plastic skin, overly childish styling, watermark"},
   shinjuku_sakura_sweet_street:{n:"新宿櫻花甜系街拍",mk:"modern",
-    char:"adult cheerful East Asian travel model, sweet relaxed smile, bright clear eyes, glossy natural lips, soft peach blush, fresh idol-style daytime makeup, airy bangs and long brown hair with a pale pink ribbon",
+    char:"adult cheerful expression, sweet relaxed smile, bright clear eyes, glossy natural lips, soft peach blush, fresh daytime makeup, airy bangs and long brown hair with a pale pink ribbon",
     s:"Tokyo Shinjuku daytime street crossing, lively commercial signs, red lantern food stalls, tall city billboards, blue sky, blooming sakura trees along the sidewalk, realistic crowd in the background kept slightly blurred",
     o:"soft pink floral chiffon mini dress with layered ruffles and delicate bow details, light nude platform sandals, small woven straw handbag with pink ribbon, dainty necklace and subtle earrings, polished sweet vacation styling",
     prop:"holding an iced drink or a small takoyaki skewer, walking or posing with one arm raised, playful peace sign, natural tourist snapshot energy while keeping the face sharp",
@@ -2787,10 +2946,10 @@ const P={
     prop:"one finger gently touching the lips or one hand resting on the chest jewelry, relaxed confident posture, direct gaze toward the camera",
     fx:"large black demon wings fully spread behind her, purple-red alluring demonic aura, black rose petals floating, faint magical halo, subtle smoky tendrils around the body",
     l:"low warm lava rim light from below, purple-red ambient glow, soft face key light, alluring dark fantasy lighting, cinematic shadow contrast",
-    q:"ultra realistic adult succubus queen portrait, dark glamorous fantasy editorial, premium detailed skin texture, 8K HDR, cinematic realism",
-    cam:"vertical half-body or three-quarter portrait, wings clearly visible behind the body, face sharp and readable, elegant powerful composition",
+    q:"ultra realistic adult succubus queen full-body dark glamorous fantasy editorial, premium detailed skin texture, realistic adult fashion body proportions, head naturally small relative to body, 8K HDR, cinematic realism",
+    cam:"vertical full-body environmental fashion portrait, camera pulled back enough to show complete head-to-toe outfit and legs, wings clearly visible behind the body, face sharp and readable but not enlarged, realistic eight-head adult runway proportion, long neck and balanced shoulders, elegant powerful composition",
     col:"black, deep burgundy, dark purple, ruby red, warm lava gold, high contrast alluring palette",
-    neg:"childlike look, overly exposed styling, vulgar pose, cheap costume, cute innocent mood, cartoon, anime, low quality, plastic skin, hidden face, watermark"},
+    neg:"childlike look, overly exposed styling, vulgar pose, cheap costume, cute innocent mood, cartoon, anime, low quality, plastic skin, hidden face, watermark, oversized head, bobblehead proportions, giant face, short torso, compressed body, close-up beauty crop, head-dominant portrait"},
 
   // ── 異世界系列 ──
   isekai_demon_lord:{n:"異世界魔王 · 絕對霸權",mk:"demon_lord",
@@ -5238,7 +5397,65 @@ const DARK_ROYAL_SERIES=[
     ["dr_succubus_velvet_lounge","絲絨酒廊魅魔","紅絲絨酒廊 · 玫瑰黑裙","wine-red velvet couture dress, black lace gloves, rose-gold choker, elegant small horn hairpiece","luxury velvet lounge, red curtains, crystal glasses, candlelit tables"],
     ["dr_succubus_cabaret_star","夜色歌舞魅魔","復古歌舞廳 · 黑紅亮片","black-red cabaret gown with tasteful sparkle, feather fan, jewel headpiece","vintage cabaret stage, golden spotlight, velvet seats, smoky air"],
     ["dr_succubus_moon_garden","月下花園魅魔","月夜花園 · 黑玫瑰披紗","black rose evening gown, translucent shawl, thorn jewelry, glossy burgundy lips","moonlit rose garden, wrought-iron gate, mist, silver-blue moonlight"],
-    ["dr_succubus_luxury_ad","香水廣告魅魔","香水大片 · 漆光黑裙","glossy black couture mini-gown with long coat, ruby earrings, perfume bottle prop","dark luxury perfume ad set, reflective black glass, crimson vapor and softbox glow"]
+    ["dr_succubus_luxury_ad","香水廣告魅魔","香水大片 · 漆光黑裙","glossy black couture mini-gown with long coat, ruby earrings, perfume bottle prop","dark luxury perfume ad set, reflective black glass, crimson vapor and softbox glow"],
+    ["scs_mirror_hall","鏡廳魅魔","無盡鏡廊 · 紅唇倒影","black structured corset gown with dramatic train, elbow-length gloves, jeweled collar choker","infinite mirror hall, black marble floor, crystal chandeliers, crimson reflections multiplied endlessly"],
+    ["scs_blood_maple","楓紅林魅魔","深秋楓林 · 血色飛葉","wine-dark silk evening gown, dark fur stole, thorn-branch headpiece, deep red matte lips","deep autumn maple forest, blood-red fallen leaves blanketing ground, low slanted golden light, mist between dark trunks"],
+    ["scs_neon_city","霓虹夜城魅魔","霓虹雨街 · 紅光玻璃幕","black high-fashion tailored long coat with crimson lining, structured dress underneath, sharp stiletto boots","rainy midnight city, wet reflective asphalt, red and violet neon signs on glass towers, rain streaks in light"],
+    ["scs_ice_palace","冰宮魅魔","黑冰宮殿 · 寒光幽影","black ice-queen couture gown with crystal shard edging and silver trim, dark veil, frost-encrusted jewelry","dark ice palace, obsidian frozen columns, pale blue crystalline floor, icy mist rising, cold dramatic back light"],
+    ["scs_infernal_throne","熾焰王座魅魔","暗焰王座 · 帝王紅黑","black and crimson structured gown with flame-textured hem, obsidian crown, dramatic long sleeves","infernal throne room, lava channels below, black obsidian columns, ember particles, deep crimson torchlight atmosphere"],
+    ["scs_poison_greenhouse","毒蔓溫室魅魔","毒薔薇溫室 · 白衣暗紋","white couture gown with subtle dark botanical embroidery pattern, crimson thorn crown, serpent bangle bracelet","black iron glass greenhouse, overgrown dark roses and exotic plants, dramatic contrast light through glass panels above"],
+    ["scs_black_gold_ballroom","黑金夜宴魅魔","黑金舞廳 · 霸氣女王","black sequin floor-length gown, long opera gloves, chandelier drop earrings, red lips, black rose held delicately","luxury night ballroom interior, golden overhead light, emerald velvet tables, crystal decor, blurred tuxedoed figures as backdrop"],
+    ["scs_rain_trench","雨夜街頭魅魔","午夜雨街 · 濕光紅唇","glossy black trench coat with structured shoulders, bodycon dress visible, thigh-high boots, red umbrella held aside","empty midnight street in heavy rain, shimmering wet asphalt reflecting purple and red neon, dramatic puddle reflection"],
+    ["scs_opera_diva","黑夜歌劇魅魔","歌劇院夜宴 · 紅幕黑羽","black feather-trim floor gown, red opera gloves, dramatic large feather headpiece, dark jeweled choker","grand opera house interior, crimson velvet curtain backdrop, ornate gold balcony railing, theatrical single spotlight"],
+    ["scs_crystal_cave","水晶洞魅魔","地底水晶窟 · 紫光魅影","dark amethyst-purple structured couture gown, crystal-embedded trim, oversized amethyst jewelry, smoky eye","underground crystal cave, violet glowing crystal formations, reflective cave floor, otherworldly purple light emanating from walls"],
+    ["scs_floating_island","浮空島嶼魅魔","暗空浮島 · 星際女王","black flowing couture gown with dramatic wide sleeves, obsidian crown set with void-black gems, cosmic fabric trim","dark floating island in deep cosmic void, purple nebula sky, edge of island dropping into starfield, atmospheric mist"],
+    ["scs_penthouse_night","深夜頂樓魅魔","頂樓俯瞰 · 夜城璀璨","black backless floor gown with side slit, rose-gold minimal accessories, glossy red lip","luxury skyscraper rooftop, full city panorama at night below, glass safety railing, golden-to-dark night sky gradient"],
+    ["scs_desert_queen","星漠儀式魅魔","星空大漠 · 紅黑長紗","black structured desert queen gown, long crimson shawl like wings, gold desert jewelry with crescent motif, kohl eye","vast desert dunes at night under full star sky, distant ritual firelight, wind-blown red fabric dramatic"],
+    ["scs_forbidden_library","禁忌書庫魅魔","古老圖書館 · 燭光禁書","dark burgundy velvet gown with large jeweled brooch, gloves, mysterious dark academic aesthetic","ancient gothic library, floor-to-ceiling dark shelves, multiple candelabras, golden dust motes, forbidden atmosphere"],
+    ["scs_black_swan_lake","黑天鵝湖魅魔","黑天鵝湖 · 白月倒影","black feathered tutu-inspired couture gown, dark tiara with onyx stones, dramatic dark eye makeup, ballerina arms","dark lake at moonlit night, white feathers on black water surface, silver moon reflection, dark trees framing edge"],
+    ["scs_dark_museum","夜間博物館魅魔","博物館深夜 · 雕像對話","black structured blazer dress, minimal dark glam accessories, long gloves, sleek and editorial","empty art museum after hours, dramatic under-lit sculptures, long marble gallery with shadows, echoing monumental space"],
+    ["scs_poison_jungle","異域毒境魅魔","異域毒花秘境 · 暗紫叢","dark plum draped asymmetric gown, exotic dark flower crown, poison-purple accessories, deep jewel tones","fantastical toxic jungle, oversized dark fantasy flowers, bioluminescent plants in teal and violet, mysterious night-garden"],
+    ["scs_steampunk_empress","蒸汽帝后魅魔","蒸汽宮殿 · 銅製王座","Victorian-inspired dark corset gown with copper gear detailing, leather gloves, goggles as dramatic headpiece","steampunk grand hall, copper pipes and spinning gears, billowing steam, industrial-gothic vaulted architecture, amber warmth"],
+    ["scs_winter_ballroom","冬宮舞會魅魔","冬夜宮廷舞會 · 黑冰紅唇","black and silver ballgown with ice-crystal embroidery, elbow gloves, diamond tiara, red lips","winter palace ballroom, ice-sculpted chandeliers, grand mirrored staircase, frost on arched windows, cold blue meets candlelight"],
+    ["scs_abyss_pool","深淵水鏡魅魔","深淵之鏡 · 黑水倒影","ink-black flowing gown that dissolves at the hem, minimal dark jewelry, pale dramatic skin, dark lip","dark underground reflective pool, mirror-like black water surface, single dramatic overhead spotlight creating perfect reflection"],
+    ["scs_final_curtain","謝幕舞台魅魔","謝幕舞台 · 最後聚光","dramatic black performance gown with crimson underlining and dramatic collar, theatrical dark makeup, rose bouquet","empty theater stage after final curtain, single spotlight, scattered rose petals on stage floor, dark audience void behind"],
+    ["scs_orient_express","午夜列車魅魔","東方特快 · 夜車廂","dark luxury travel ensemble with fur-trimmed coat, jeweled brooch, black elbow gloves, small hat with dark veil","Orient Express style luxury train compartment, deep mahogany paneling, brass warm lamps, dark window with countryside night streaming past"],
+    ["scs_dark_shrine","暗夜神祠魅魔","月夜神祠 · 紅燈石階","black silk draped gown with red obi-sash inspired detail, dark kanzashi hair pieces, Japanese dark beauty aesthetic","Japanese stone torii shrine at moonlit night, red stone lanterns, moss-covered stone steps ascending, cedar forest darkness behind"],
+    ["scs_blood_moon_forest","血月深林魅魔","血月林間 · 魅影穿梭","dark crimson velvet gown with fur stole trim, elaborate dark hair with blood roses, blood-moon jewelry pieces","deep ancient forest under blood-red full moon, dark twisted tree silhouettes, crimson light filtering through leaves, ground mist"],
+    ["scs_void_cosmos","虛空宇宙魅魔","虛空宇宙 · 星際女王","black gown that blends into the cosmos with silver galaxy-dust trim, star-map shoulder detail, celestial crown","vast dark cosmos setting, swirling nebula far background, floating dark asteroid platform, stars and galaxy as environment"],
+    ["scs_dark_rose_throne","黑玫瑰御座魅魔","黑玫瑰宮苑 · 御座夜宴","black rose-embroidered gown with dramatic structured collar, midnight gemstone accessories, smoky crimson lip","moonlit palace garden overgrown with dark roses, vine-covered stone throne, torchlight creating warm pockets in gothic darkness"]
+  ]}
+  ,{cat:"dark_gothic",icon:"🪽",mk:"fallen_angel",tag2:"墮天使系列 / 光暗墜落",char:"adult fallen angel heroine, tragic sacred beauty, dark majestic grace, conflicted gaze between holiness and ruin, face clear and recognizable",fx:"black and white feathers, cracked halo glow, ash rain, moonlit mist, subtle sacred symbols fading into darkness",l:"split divine-and-shadow cinematic light, clear face key, silver moon rim light, soft crimson or gold accent",col:"black, white, tarnished gold, silver, crimson, ash grey",items:[
+    ["fa_lucifer_cathedral","路西法聖堂","破碎聖堂 · 黑翼初醒","black-and-gold fallen archangel gown, cracked halo crown, wide dark wing mantle, tarnished holy jewelry","ruined cathedral with broken stained glass, moonlight shafts, black feathers scattered across marble"],
+    ["fa_ashen_confession","灰羽告解","告解室暗光 · 灰羽低語","ash-grey angel dress with black feather cape, silver rosary belt, smoky veil","old confession booth in a dark chapel, candlelight, dust motes, narrow beam of cold moonlight"],
+    ["fa_crimson_halo","猩紅光環","血色光環 · 聖像崩落","white sacred gown stained with crimson gradient, broken red halo, black lace gloves","collapsed shrine with fallen saint statues, red backlight, drifting ash and cracked marble floor"],
+    ["fa_chained_sanctuary","鎖鏈聖域","鎖鏈聖域 · 失翼祈願","white-black chained angel gown, metal waist chains, torn wing-like sleeves, pale gold collar","abandoned sanctuary filled with hanging chains, dim golden altar, cold blue windows"],
+    ["fa_black_feather_altar","黑羽祭壇","黑羽祭壇 · 月下凝望","black ceremonial angel gown, feather crown, dark pearl ornaments, long wing-shaped cape","moonlit stone altar on a cliff, black feathers circling, distant storm clouds and silver sea"],
+    ["fa_twilight_exile","暮光放逐","暮光邊境 · 天界流放","ivory-to-charcoal exile gown, weathered gold shoulder pieces, cracked halo hair ornament","heavenly border at twilight, endless cloud bridge, golden gate closing far behind, violet dusk"],
+    ["fa_paradise_lost","失樂天堂","裂縫天堂 · 金光暗影","white-to-black gradient angel gown, cracked gold halo crown, one white wing one black wing implied","heaven at the moment of falling, golden floor cracking open with darkness below, divine light on one side, dark void on other side"],
+    ["fa_burning_transform","熾焰翼殤","熾翼焚化 · 白轉黑瞬","white angel dress burning and transforming to black at wing edges and hem, mid-transformation aesthetic","dramatic transformation moment in dark temple, fire consuming white transforming to black, divine light above infernal light below"],
+    ["fa_blood_moon_cliff","血月懸崖","血月懸崖 · 展翼孤影","black layered gothic gown with wing-like dramatic sleeves, obsidian crown, minimal dark jewelry","high cliff against blood-red full moon, wide shot silhouette, dark crashing sea far below, wind tearing at fabric and hair"],
+    ["fa_dark_coronation","暗黑加冕","暗黑加冕 · 獲罪之冕","elaborate black and tarnished gold angel gown, cracked gold crown being replaced with obsidian one, formal but corrupted","dark fallen throne room of heaven, angelic court in dark robes as witnesses, single shaft of divine light on the moment of crowning"],
+    ["fa_stigma_stone","聖痕告白","石柱月光 · 聖痕顯現","white flowing gown with visual stigmata-mark detail on hands, pale luminous skin, barefoot grace","ancient stone cathedral interior, moonlight shaft on marble floor, kneeling but with dignity, single candle in vast dark space"],
+    ["fa_blizzard_wings","凜冬黑翼","暴雪曠野 · 黑翼凜冬","black angel gown with fur-trimmed edges, large black wings covered in frost and snow, desolate winter queen","vast empty snowfield in blizzard, dark wings spread against pure white storm wall, solitary tragic figure in white-out conditions"],
+    ["fa_ocean_descent","深海沉落","深海神殿 · 沉落幽境","white angel gown flowing underwater-aesthetic, dark blue cracked halo, silver chains around wrists and ankles","vast dark underwater space, sunken cathedral ruins, bioluminescent particles surrounding, peaceful and mournful descent"],
+    ["fa_eclipse_ceremony","日蝕禮拜","日蝕禮拜堂 · 光暗同在","half-white half-black angel gown, eclipse halo (white on one side black on other), split identity styling","small chapel at total solar eclipse, half the space in divine light half in darkness, dramatic split-light photography"],
+    ["fa_crystal_prison","水晶囚牢","天界水晶牢 · 透明困獸","pure white dress, arms reaching outward through crystal bars, large dark wings unable to spread, desperate grace","crystal-clear floating prison suspended in heaven's light, white light saturating all sides, wings pressed against transparent walls, tragic and beautiful"],
+    ["fa_ash_rain_city","灰燼雨城","灰燼雨夜 · 碎羽飛落","charcoal-grey angel dress, broken and bent dark halo, black wings with missing feathers, rain-soaked tragic","dark city rooftop in rain, black feathers falling from above like ash, city lights blurred below, dark clouds, alone on the ledge"],
+    ["fa_void_queen","虛空女王","虛空王座 · 絕世女王","absolute dark angel couture, black structured gown with massive spread wing silhouette, cosmic obsidian crown","floating obsidian throne in cosmic void, stars and nebula all directions, absolute dark queen scale, cinematic epic"],
+    ["fa_dark_sakura","暗夜櫻墮","暗夜垂櫻 · 黑翼白花","black angel gown with white cherry blossom embroidery trim, dark twisted sakura branch crown, elegant sorrowful beauty","dark cherry blossom garden at night, white petals falling contrasting with black wings spread wide, blue moonlight"],
+    ["fa_divine_mirror","善惡之鏡","天鏡倒影 · 善惡兩面","white angel dress on viewer's side but dark fallen reflection in mirror, split identity at the threshold","standing at an enormous ancient divine mirror, reflection shows the dark angel she has become, grand metaphysical architecture"],
+    ["fa_war_banner_last","旌旗最後","末日旌旗 · 孤軍聖戰","damaged and battle-worn angel armor in black and tarnished gold, torn wings, sword of judgment held aloft","apocalyptic battlefield, dark sky with falling stars, torn war banners, ruins of the celestial realm, last defiant stand"],
+    ["fa_moonlit_ruin_peace","月光廢墟","月光廢墟 · 安靜墮落","soft white-to-grey gradient angel gown with dark edges, gentle fallen wings barely visible, peaceful tragic presence","ancient overgrown garden ruin at full moon, silver moonlight on moss and stone, fallen among flowering ruins, quiet sorrow"],
+    ["fa_nova_fall","星辰隕落","星辰崩裂 · 墜落刹那","white dress exploding into darkness at the edges and wings, mid-fall dynamic composition, hair and fabric in free fall","outer space, exploding star as backdrop, mid-fall descent through cosmos, light-to-dark transformation in motion, epic celestial scale"],
+    ["fa_grief_lily","哀慟花葬","黑百合花葬 · 淚染白羽","white funeral-aesthetic angel dress with black lily crown and wreath, tears crystallizing, white feathers gathering at feet","dark flower field of black lilies and white roses mixed, pale moonlight, white feathers on ground, beautifully mournful atmosphere"],
+    ["fa_heaven_gate_last","天門最後","天門邊緣 · 最後回望","white and tarnished gold angel dress at the moment of final departure, one hand on ancient gate, looking back over shoulder","heaven's gate viewed from outside, golden divine light spilling through the gate, she is on the dark threshold side, farewell moment"],
+    ["fa_feather_storm","羽翼風暴","羽翼風暴 · 萬羽飛雪","black and white mixed gown with wings mid-explosion state, feathers flying all directions, dynamic powerful center","explosive moment of black and white feathers in dark space, feathers filling the frame, she is the calm eye of the feather storm"],
+    ["fa_sorrow_throne","哀嘆王座","哀嘆王座 · 悲劇女王","dark regal fallen angel queen gown, seated throne pose, large folded dark wings framing the throne, dignified sorrow","dark stone throne room, cracked and fallen columns, moonlight from collapsed ceiling above, haunted but majestic atmosphere"],
+    ["fa_condemned_court","落羽之刻","神聖殿堂 · 落羽一刻","white ceremonial angel dress, head slightly bowed, wings pressed downward, restrained dignity under divine light","celestial hall with harsh divine light from above, dark witness shadows around the edges, moment of falling feathers, cinematic"],
+    ["fa_prayer_ruin_war","廢城祈禱","廢城聖堂 · 最後祈禱","tattered angel gown, kneeling posture, worn cracked halo barely hovering, wings draped like a protective cloak, prayer hands","bombed-out cathedral in aftermath of celestial war, rubble and broken stained glass, single shaft of light on her praying form"],
+    ["fa_stars_weeping","星河泣落","星河泣落 · 天上人間","silver-white gown with crystalline tear details that appear to fall and become stars, ethereal cosmic angel","cosmic setting, galaxy below like an ocean, she stands on a cloud-bridge between worlds, crystal star-tears falling away as new stars"],
+    ["fa_dark_halo_boundary","墮落光環","光暗邊界 · 半聖半魔","elegant angel dress with cracked halo that glows crimson inside instead of gold, poised at spiritual boundary","dramatic split environment, one half heavenly white light, one half infernal red glow, she stands exactly at the invisible dividing line"]
   ]}
 ];
 DARK_ROYAL_SERIES.forEach(group=>{
@@ -5270,7 +5487,16 @@ const CHANGXIANGSI_SERIES=[
     ["cxs_xian_small_wild_goose_memory","長相思 · 小雁塔舊夢","小雁塔庭院 · 舊夢回聲","Xi'an Small Wild Goose Pagoda outdoor courtyard, old brick pagoda, cypress trees, fallen leaves, quiet twilight memory mood","turning back under ancient trees, red skirt brushing fallen leaves, one hand touching a ribbon token, nostalgic expression"],
     ["cxs_xian_furong_garden_blood_oath","長相思 · 芙蓉血誓","大唐芙蓉園 · 血色花誓","Tang Paradise outdoor garden in Xi'an, palace lake, moon gate, red flowers, lantern reflections, grand romantic drama atmosphere","standing by the lake with sword angled downward, crimson robe and ribbons flying, vow of blood and protection"],
     ["cxs_xian_huaqing_pool_parting","長相思 · 華清離歌","華清池宮苑 · 溫泉離歌","Huaqing Palace outdoor hot spring garden near Xi'an, stone pools, palace corridors, steam, mountain night, Tang romantic tragedy mood","walking away from warm steam with red dress trailing, looking back over shoulder, parting-before-dawn emotion"],
-    ["cxs_xian_ming_wall_snow","長相思 · 明城雪守","西安明城牆 · 雪夜守城","Xi'an Ming city wall in falling snow, cold blue night, lanterns glowing under eaves, white snow on dark bricks, lonely guard post mood","standing on snowy wall in crimson hanfu cloak, sword held vertically, red fabric cutting through white snow"]
+    ["cxs_xian_ming_wall_snow","長相思 · 明城雪守","西安明城牆 · 雪夜守城","Xi'an Ming city wall in falling snow, cold blue night, lanterns glowing under eaves, white snow on dark bricks, lonely guard post mood","standing on snowy wall in crimson hanfu cloak, sword held vertically, red fabric cutting through white snow"],
+    ["cxs_yellow_river_crossing","長相思 · 黃河渡口","黃河渡口 · 紅裙踏浪","Yellow River at dusk, vast rushing dark water, ancient stone ferry dock, golden-red sky reflected in river, lonely crossing mood","standing at river's edge with red skirt hem grazing the water, sword raised toward far shore, hair whipped by river wind, tragic side profile"],
+    ["cxs_plum_winter_farewell","長相思 · 冬梅別離","宮牆冬梅 · 殘雪別離","ancient palace garden in winter, red plum blossoms against white snow on palace wall, cold blue morning light, parting atmosphere","standing under flowering red plum tree, one sleeve-covered hand touching a snow-laden branch, skirt sweeping white ground, farewell expression"],
+    ["cxs_lotus_pond_memory","長相思 · 荷塘月色","荷塘月色 · 蓮影紅衣","ancient summer palace lotus pond at full moon, pink lotus blossoms and broad leaves, stone arch bridge, still reflective water, melancholic memory","standing at center of stone bridge, red sleeves hanging, one hand holding a dried lotus seedpod, long reflection in water below"],
+    ["cxs_bamboo_canyon","長相思 · 竹林縛心","竹影深谷 · 紅衣困間","dense towering bamboo grove, narrow shaft of golden light filtering down, suffocating lush green, trapped and hidden mood","standing between two thick bamboo poles with both hands lightly touching them, red robe contrasting deep green, dignified but caged"],
+    ["cxs_silk_road_exile","長相思 · 絲路放逐","絲路大漠 · 孤影西行","ancient Silk Road desert, endless golden dunes, camel caravan silhouette far in distance, dusk gradient sky, exile and longing mood","walking alone into vast desert, crimson robe and long sleeves trailing in dry wind, small footprints behind, not looking back"],
+    ["cxs_burning_palace_escape","長相思 · 宮殿大火","宮殿烈火 · 紅衣逃生","burning ancient palace in chaos, flames and black smoke, falling burning timbers, crimson firelight painting everything red, war and tragedy","running from collapsing burning hall, red skirt matching the firelight, looking back one last time, extreme dynamic motion"],
+    ["cxs_final_duel","長相思 · 最後決戰","荒原決戰 · 紅袖揚劍","vast empty plain at blood-red sunset, dust rising, battle aftermath on the horizon, single dramatic duel scale, epic cinematic","sword raised high in both hands overhead, red skirt and sleeves exploding outward in sudden burst of wind, final determined battle cry expression, low wide angle shot"],
+    ["cxs_thousand_year_reunion","長相思 · 跨越千年","千年重逢 · 淚崩一刻","ancient palace garden in golden afternoon light, cherry blossoms or autumn leaves falling, emotionally saturated calm, timeless reunion setting","reaching forward with both arms fully extended, red sleeves spread like wings, tears streaming, face full of recognition and longing, the most emotionally raw moment"],
+    ["cxs_river_lantern_vow","長相思 · 江燈誓言","夜江放燈 · 一燈一諾","dark river at night with hundreds of floating river lanterns, ancient town lights reflecting on water, mist on the surface, vow and memory","kneeling at water's edge releasing a lantern, one hand on water surface, red robe spread around her, lantern light illuminating face upward"]
   ]}
 ];
 CHANGXIANGSI_SERIES.forEach(group=>{
@@ -5375,13 +5601,13 @@ const PRESET_CORE_OVERRIDES={
   gongting:"oriental palace editorial portrait, black-gold court gown, symmetrical temple architecture, imperial luxury",
   hanfu:"Tang palace hanfu editorial, red columns, carved palace interior, soft warm window light, elegant historical fashion",
   desert:"Dunhuang Silk Road desert epic, golden sand, flowing ribbons, western-region fantasy travel portrait",
-  y2k:"Y2K neon idol poster, holographic glitter, pastel purple-pink fashion, playful modern magazine energy",
-  cinematic:"European cinematic travel portrait, old city street, film color grading, celebrity editorial mood",
+  y2k:"Y2K neon pop poster, holographic glitter, pastel purple-pink fashion, playful modern magazine energy",
+  cinematic:"European cinematic travel portrait, old city street, film color grading, cinematic editorial mood",
   editorial:"luxury haute couture fantasy editorial, celestial palace, god rays, floating particles, Vogue-level fashion",
   gothic:"dark gothic fashion portrait, medieval castle, black lace, burgundy velvet, candlelit romantic shadows",
   cyberpunk:"cyberpunk Asian megacity portrait, neon rain, futuristic outfit, Blade Runner night atmosphere",
   lotus:"pink lotus moon goddess fantasy, giant full moon, lotus pond, soft dreamy eastern fairy atmosphere",
-  wedding:"dreamy luxury wedding gown advertisement, Mediterranean garden, moonlight, romantic bridal editorial",
+  wedding:"dreamy luxury wedding gown editorial, Mediterranean garden, moonlight, romantic bridal portrait",
   beast_guardian:"divine beast guardian xianxia poster, celestial platform, white tiger or dragon spirit behind the subject",
   starry_travel:"Milky Way lakeside travel portrait, campfire glow, mountain lake reflection, cozy astrophotography mood",
   princess_palace:"fairy-tale luxury princess palace portrait, ornate gown, grand interior, dreamy royal elegance",
@@ -5504,7 +5730,7 @@ createMissingSimilarExtensions();
 const CATEGORY_FILL_V608=[
   {cat:"myth",icon:"🐉",mk:"oracle_gold",need:18,label:"神話傳說",themes:["伏羲八卦神女","精衛填海少女","洛水河伯祭女","山海經青鳥使","玄鳥降臨王女","燭龍日夜司辰","白澤瑞獸書姬","九色鹿神女","崑崙玉女守門","西王母瑤池侍者","東海龍宮明珠姬","蓬萊仙島採藥女","巫山雲雨神女","月桂樹下仙使","黃河水神女將","赤水玄珠少女","天鼓雷神樂姬","扶桑日出神使"]},
   {cat:"oriental",icon:"🏯",mk:"oriental",need:23,label:"東方古典",themes:["竹影琴室雅集","青瓷茶席仕女","朱門雪落回廊","黑瓦白牆庭院","金箔屏風肖像","蘭亭曲水流觴","松下棋局貴女","牡丹窗格晨光","玉蘭庭前白衣","宣紙水墨書房","香爐煙霧宮燈","古琴月窗側影","翠竹屏風青衣","漆器紅桌晚宴","青綠山水屏前","蓮花香案祈福","桂花石階秋色","水墨扇面人像","龍紋柱廊正影","梅枝雪窗半身","金魚池畔團扇","古寺鐘聲晨霧","玉佩流蘇近景"]},
-  {cat:"dramanovel",icon:"🎭",mk:"cinematic",need:6,label:"影劇小說",themes:["民國女探案卷","宮廷謀士紅袖","江湖醫女藥箱","豪門繼承人夜宴","古偶亡國公主","諜戰舞會密信"]},
+  {cat:"dramanovel",icon:"🎭",mk:"cinematic",need:6,label:"影劇小說",themes:["民國女探雨夜","宮廷謀士紅袖","江湖醫女藥箱","豪門繼承人夜宴","古偶亡國公主","舞會花箋重逢"]},
   {cat:"modern",icon:"✨",mk:"editorial",need:18,label:"現代時尚",themes:["銀色電梯時裝大片","精品櫥窗黑裙","美術館白西裝","紅毯珠寶短片","機場風衣街拍","高樓落地窗剪影","香檳派對金裙","設計師工作室肖像","黑白極簡封面","粉色甜酷天台雜誌","海邊度假品牌照","跑車廣告女主","高級餐廳晚宴","復古唱片店造型","白色公寓晨光","銀河派對亮片","花店門口生活感","城市天橋風衣"]},
   {cat:"citywalk",icon:"🌆",mk:"hk_film",need:25,label:"都市街拍",themes:["雨夜便利店門口","天橋霓虹回眸","地下鐵月台風衣","老街招牌巷弄","咖啡外帶轉角","夜市燈牌人像","公車站透明傘","斑馬線低角度","書店櫥窗倒影","唱片行紅燈","電影院門口復古","屋頂曬衣場夕陽","河岸自行車道","城市玻璃帷幕","深夜拉麵店外","公寓樓梯間光影","彩色塗鴉牆","百貨櫥窗冷光","出租車旁側影","天台風大衣襬","雨後水窪倒影","黃昏街角花店","夜色停車場光","電扶梯時裝照","港風茶餐廳窗邊"]},
   {cat:"studio",icon:"📷",mk:"runway_supermodel",need:10,label:"棚拍商業",themes:["白棚護膚品廣告","黑棚鑽石項鍊","香水玻璃反射","紅唇彩妝封面","銀色科技美妝","金色珠寶大片","柔粉婚紗棚拍","運動品牌形象照","腕錶西裝廣告","高訂帽飾肖像"]},
@@ -5585,10 +5811,10 @@ Object.assign(MK,{
 
 const CATEGORY_EXPANSION_V611=[
   {cat:"myth",label:"神話歷史",icon:"🐉",mks:["v611_myth","oracle_gold","dragon_lady"],k:["女媧補天聖像","伏羲八卦祭司","后羿射日王女","嫦娥月桂神女","西王母瑤池天后","山海經異獸使","河洛圖書巫女","九州青銅女君","上古雷火神姬","蓬萊仙山靈使"],s:["青銅神殿","雲海祭壇","黃河古渡","崑崙雪門","扶桑日出","月宮桂影","龍宮水階","山海經密林","星斗石陣","古戰場烽煙"]},
-  {cat:"xianxia",label:"仙俠古風",icon:"⚔️",mks:["v611_xianxia","xianxia","wuxia_sharp"],k:["青霜劍仙","紫電御劍女俠","白鶴雲門仙子","玄冰禁術師姐","桃花劫散仙","蓮台渡劫女尊","星河陣法師","靈狐契約仙姬","雪峰閉關劍主","天書守卷仙官"],s:["仙門石階","雲海劍台","雪山洞府","桃林秘境","蓮池月夜","懸崖古松","天宮廊橋","竹林劍陣","星河法壇","靈泉霧谷"]},
+  {cat:"xianxia",label:"仙俠古風",icon:"⚔️",mks:["v611_xianxia","xianxia","wuxia_sharp"],k:["青霜劍仙","紫電御劍女俠","白鶴雲門仙子","玄冰禁術師姐","桃花劫散仙","蓮台渡劫女尊","星河陣法師","靈狐誓約仙姬","雪峰閉關劍主","天書守卷仙官"],s:["仙門石階","雲海劍台","雪山洞府","桃林秘境","蓮池月夜","懸崖古松","天宮廊橋","竹林劍陣","星河法壇","靈泉霧谷"]},
   {cat:"hanfu",label:"漢服朝代",icon:"👘",mks:["v611_hanfu","tang","song_pearl_lady"],k:["周禮玄端王女","漢代曲裾宮姬","魏晉竹林才女","北魏石窟供養人","盛唐石榴裙貴妃","宋代點茶娘子","明制雲肩貴女","清宮雪景格格","敦煌飛天仕女","江南花朝節少女"],s:["長安朱雀街","洛陽牡丹園","汴京茶肆","臨安西湖畫舫","蘇州園林","敦煌壁畫廊","紫禁紅牆","江南雨巷","書院花窗","元宵燈市"]},
   {cat:"oriental",label:"東方古典",icon:"🏯",mks:["v611_oriental","oriental","jiangnan_ink"],k:["青瓷茶席美人","水墨屏風仕女","蘭亭曲水才女","金箔宮燈貴女","竹影古琴少女","梅雪窗前白衣","牡丹團扇佳人","宣紙書房女史","玉佩流蘇雅姬","香爐煙霞宮人"],s:["白牆黑瓦庭院","青綠山水屏前","古寺鐘聲晨霧","蓮花香案","松下棋局","石橋流水","雕花窗格","紅漆回廊","桂花石階","竹林茶亭"]},
-  {cat:"dramanovel",label:"影劇小說",icon:"🎭",mks:["v611_drama","cinematic","palace_drama_fav"],k:["民國女探密案","宮廷紅袖謀士","江湖醫女藥箱","豪門夜宴繼承人","亡國公主逃亡","諜戰舞會密信","古偶白月光女主","復仇千金雨夜","仙門虐戀師姐","年代戲歌舞皇后"],s:["民國公館","宮牆長巷","江湖客棧","豪宅宴會廳","戰火城門","上海舞廳","雪夜碼頭","古橋燈影","報社暗房","戲院後台"]},
+  {cat:"dramanovel",label:"影劇小說",icon:"🎭",mks:["v611_drama","cinematic","palace_drama_fav"],k:["民國女探雨夜","宮廷紅袖謀士","江湖醫女藥箱","豪門夜宴繼承人","亡國公主遠行","舞會花箋重逢","古偶白月光女主","復仇千金雨夜","仙門虐戀師姐","年代戲歌舞皇后"],s:["民國公館","宮牆長巷","江湖客棧","豪宅宴會廳","戰火城門","上海舞廳","雪夜碼頭","古橋燈影","報社暗房","戲院後台"]},
   {cat:"modern",label:"現代時尚",icon:"✨",mks:["v611_modern","editorial","luxury_glam"],k:["銀色電梯時裝大片","精品櫥窗黑裙女主","美術館白西裝","紅毯珠寶封面","機場風衣街拍","高樓落地窗剪影","香檳派對金裙","設計師工作室肖像","黑白極簡雜誌","跑車廣告女主"],s:["精品商圈","玻璃辦公樓","美術館展廳","高級餐廳","城市天橋","白色公寓","唱片店門口","海邊度假酒店","攝影棚白牆","夜色停車場"]},
   {cat:"citywalk",label:"都市街拍",icon:"🌆",mks:["v611_city","hk_film","cyberpunk"],k:["雨夜便利店女主","天橋霓虹回眸","地下鐵月台風衣","老街招牌巷弄","咖啡外帶轉角","夜市燈牌人像","公車站透明傘","斑馬線低角度","書店櫥窗倒影","港風茶餐廳窗邊"],s:["霓虹巷口","地鐵出口","老城騎樓","雨後水窪街道","屋頂曬衣場","河岸自行車道","出租車旁","百貨櫥窗","停車場冷光","天台晚風"]},
   {cat:"studio",label:"棚拍商業",icon:"📷",mks:["v611_studio","runway_supermodel","luxury_glam"],k:["白棚護膚品廣告","黑棚鑽石項鍊","香水玻璃反射","紅唇彩妝封面","銀色科技美妝","金色珠寶大片","柔粉婚紗棚拍","運動品牌形象照","腕錶西裝廣告","高訂帽飾肖像"],s:["無縫白棚","黑色反光地台","鏡面商業棚","柔粉背景紙","金屬銀幕棚","高光珠寶台","運動品牌燈牆","香水水波台","腕錶極簡台","高訂帽飾背景"]},
@@ -5600,7 +5826,7 @@ const CATEGORY_EXPANSION_V611=[
   {cat:"nature",label:"自然曠野",icon:"🌿",mks:["v611_nature","outdoor_glow","forest"],k:["高山花海晨霧少女","峽灣湖面倒影旅人","紅岩荒漠落日女主","雨林木棧道白裙","瀑布前飄紗人像","草原風車遠景","海邊礁石浪花","雪松森林木屋","銀河湖畔露營","秋日楓林斗篷"],s:["高山花海","峽灣湖岸","紅岩荒漠","雨林木棧道","瀑布水霧","草原丘陵","礁石海岸","雪松森林","星空湖畔","楓林小徑"]},
   {cat:"bigscene",label:"大景史詩",icon:"🌄",mks:["v611_bigscene","dragon_epic","battle_scar"],k:["萬軍城門史詩女王","巨龍環城紅裙","雪山聖殿遠景","沙漠神殿日食","海上風暴女將","天空浮城公主","火山熔岩戰姬","星際方舟指揮官","遠古巨像祭司","長城烽火英雄"],s:["巨型城門","龍影雲海","雪山聖殿","沙漠神殿","暴風海岸","天空浮城","火山熔岩台","星際方舟","巨像廢墟","烽火長城"]},
   {cat:"fantasy",label:"奇幻夢境",icon:"🌙",mks:["v611_fantasy","flower_fairy","magic_girl"],k:["雲端水晶圖書館少女","漂浮糖果星球公主","螢火森林花冠女主","鏡中花園白裙","彩虹泡泡城堡旅人","星河旋轉木馬少女","水晶蘑菇秘境仙子","月亮船夜航旅人","夢境羽毛階梯","玻璃玫瑰溫室女王"],s:["雲端圖書館","糖果星球","螢火森林","鏡面花園","彩虹城堡","星河遊樂園","水晶蘑菇林","月亮船甲板","羽毛階梯","玫瑰溫室"]},
-  {cat:"myth_angel",label:"神話天使",icon:"🪽",mks:["v611_angel","angel_holy","celestial_pearl"],k:["晨曦白翼守門人","金色聖光天使長","雲端號角女神","水晶聖殿白羽姬","星辰祈禱天使","月白治癒聖女","銀翼審判女神","花冠和平天使","彩窗教堂光使","天界書庫守護者"],s:["雲端聖門","金色光柱","水晶聖殿","星辰祭壇","月白花園","彩窗教堂","天空階梯","聖泉池畔","羽毛雲海","天界書庫"]},
+  {cat:"myth_angel",label:"神話天使",icon:"🪽",mks:["v611_angel","angel_holy","celestial_pearl"],k:["晨曦白翼守門人","金色聖光天使長","雲端號角女神","水晶聖殿白羽姬","星辰祈禱天使","月白治癒聖女","銀翼聖裁女神","花冠和平天使","彩窗教堂光使","天界書庫守護者"],s:["雲端聖門","金色光柱","水晶聖殿","星辰祭壇","月白花園","彩窗教堂","天空階梯","聖泉池畔","羽毛雲海","天界書庫"]},
   {cat:"darkfantasy",label:"暗黑奇幻",icon:"🐺",mks:["v611_darkfantasy","gothic","demon_lord"],k:["黑森林狼月女王","詛咒鐘樓新娘","灰燼王國逃亡者","幽暗水晶礦洞魔女","血月荒堡看守","黑羽獵魔人","暗影馬車旅人","毒蘑菇森林女巫","古井幽光少女","禁書塔黑袍法師"],s:["黑森林月夜","詛咒鐘樓","灰燼王城","水晶礦洞","血月荒堡","暗影馬車道","毒菇密林","古井石庭","禁書高塔","墓園霧路"]},
   {cat:"dark_gothic",label:"暗黑性感哥德",icon:"🖤",mks:["v611_darkgothic","vampire_lady","succubus_alluring"],k:["吸血女伯爵紅絨裙","黑蕾絲古堡夫人","玫瑰墓園夜后","燭光哥德新娘","暗紅天鵝絨歌姬","黑水晶王座女王","午夜假面舞會貴女","銀髮墮落聖女","荊棘禮服魔女","黑羽大教堂女主"],s:["古堡宴會廳","玫瑰墓園","燭光長廊","黑水晶王座","午夜舞會廳","破碎教堂","天鵝絨劇院","荊棘花園","月光露台","暗紅寢宮"]},
   {cat:"underwater",label:"水境花海",icon:"🌊",mks:["v611_underwater","mermaid_pearl","spirit_water"],k:["藍色水族館珍珠少女","水下白紗漂浮女主","透明泳池陽光旅拍","夜蓮螢光池仙女","雨簾玻璃棚白裙","珊瑚花園王冠人魚","海浪洞穴剪影女神","水晶瀑布花裙","霧氣溫泉浴衣","深海水母藍光公主"],s:["水族館藍廊","水下光束","透明泳池","夜蓮池","雨簾玻璃棚","珊瑚花園","海浪洞穴","水晶瀑布","霧氣溫泉","水母深海"]},
@@ -5631,10 +5857,10 @@ const CATEGORY_STYLE_DIRECTIONS_V612=[
 ];
 const CATEGORY_STORY_NAMES_BY_CAT_V616={
   myth:["崑崙開天祭","瑤池血月宴","龍宮封印夜","蓬萊渡海誓","扶桑日出令","巫山雲雨約","山海異獸盟","黃河祭鼎聲","星斗石陣醒","月桂孤影誓","玄鳥王朝起","赤水尋珠路","雷鼓天門戰","青鳥傳書夜","古神歸位時","天河斷橋願","神木守魂燈","雪嶺問天命","滄海立誓壇","雲夢澤回聲"],
-  xianxia:["桃林誓約","雲海御劍別","雪峰守心劫","蓮池月下盟","竹林劍雨夜","靈泉重逢時","天宮廊橋決","懸崖祭風台","星河法陣醒","仙門石階跪","狐火契約夜","山門封印破","劍台一眼萬年","風雪歸宗路","落花渡劫身","雲舟遠行令","古松斷情約","靈塔尋魂燈","寒潭照舊誓","天書燃盡時"],
+  xianxia:["桃林誓約","雲海御劍別","雪峰守心劫","蓮池月下盟","竹林劍雨夜","靈泉重逢時","天宮廊橋決","懸崖祭風台","星河法陣醒","仙門石階跪","狐火誓約夜","山門封印破","劍台一眼萬年","風雪歸宗路","落花渡劫身","雲舟遠行令","古松斷情約","靈塔尋魂燈","寒潭照舊誓","天書燃盡時"],
   hanfu:["長安花燈夜","洛陽牡丹宴","汴京點茶局","臨安畫舫約","蘇園雨巷別","敦煌壁前誓","朱雀街回眸","上巳水邊祈","花朝簪花令","元宵燈市尋","宮牆雪夜守","書院窗下讀","秦淮夜泊歌","西湖橋上等","錦官花街遇","茶山晨霧行","石窟供養願","梨花寒食約","秋庭桂影思","鳳冠霞帔夜"],
   oriental:["青瓷茶席約","水墨屏前立","蘭亭曲水宴","竹影琴聲晚","梅雪窗前等","牡丹團扇遮","宣紙書房雨","香爐宮燈夜","石橋流水別","古寺鐘聲晨","桂花石階望","松下棋局局","蓮花香案願","金魚池畔信","雕窗月影深","紅漆回廊誓","玉佩流蘇響","青綠山水夢","白牆黑瓦雨","古琴一曲終"],
-  dramanovel:["民國雨夜查案","宮牆密信夜","江湖藥箱救人","豪門晚宴翻局","亡國城門逃","諜戰舞會換信","戲院後台決裂","雪夜碼頭相認","報社暗房證據","古橋燈影訣別","客棧風雪夜","公館樓梯回眸","茶樓暗號局","戰火長街奔逃","旗袍舞會重逢","宮宴毒酒局","梨園上妝前","祠堂真相夜","雨巷追車後","書房遺書開封"],
+  dramanovel:["民國雨夜探案","宮牆花箋夜","江湖藥箱救人","豪門晚宴轉身","亡國城門遠行","舞會花箋重逢","戲院後台決裂","雪夜碼頭相認","報社暗房線索","古橋燈影訣別","客棧風雪夜","公館樓梯回眸","茶樓眼神局","戰火長街奔逃","旗袍舞會重逢","宮宴酒盞局","梨園上妝前","祠堂真相夜","雨巷追車後","書房舊箋展開"],
   modern:["精品櫥窗夜","銀梯高訂登場","美術館白西裝","紅毯珠寶光","機場風衣轉身","高樓窗前決定","香檳派對錯過","設計室封面夜","跑車廣告回眸","黑白棚前定格","唱片店雨後","花店門口初遇","海邊飯店晨光","高級餐廳晚宴","天橋風衣夜","白色公寓午後","珠寶櫃前沉默","夜色停車場","雜誌拍攝間隙","城市玻璃倒影"],
   citywalk:["便利店雨夜","地鐵月台錯身","天橋霓虹回頭","茶餐廳窗邊","公車站透明傘","斑馬線風衣步","書店櫥窗倒影","夜市燈牌尋人","屋頂夕陽風","出租車旁別離","電影院門口等","唱片行紅燈","塗鴉牆下笑","停車場冷光","電扶梯時裝瞬間","河岸單車夜","花店街角再遇","雨後水窪影","老街招牌巷","天台大風吹"],
   studio:["白棚護膚廣告","黑棚鑽石主視覺","香水水波反射","紅唇彩妝封面","銀色科技美妝","金色珠寶定格","柔粉婚紗主圖","運動品牌形象","腕錶西裝海報","帽飾高訂肖像","鏡面棚影雙生","玻璃花房商拍","絲絨背景珠寶","黑白硬光大片","透明椅姿態","花牆春妝視覺","水霧香氛鏡頭","高光唇釉近景","品牌發表主照","封面收工前"],
@@ -5646,9 +5872,9 @@ const CATEGORY_STORY_NAMES_BY_CAT_V616={
   nature:["高山花海晨霧","峽灣湖面倒影","紅岩荒漠落日","雨林棧道尋光","瀑布白裙水霧","草原風車遠望","礁石海岸浪花","雪松木屋守夜","銀河湖畔露營","楓林秋日信","薰衣草山坡風","竹林小徑雨","櫻花河岸跑","沙丘月夜影","冰川藍湖誓","野花牧場午後","霧谷吊橋等","森林木屋燈","海岬日出願","雪原足跡回頭"],
   bigscene:["萬軍城門誓","巨龍環城夜","雪山聖殿開門","沙漠神殿日食","海上風暴歸航","天空浮城墜光","火山熔岩戰歌","星際方舟啟程","遠古巨像甦醒","長城烽火令","王城加冕戰","冰原軍旗夜","荒城最後一舞","雲海天門開","龍巢紅裙誓","神殿裂光時","戰船靠岸前","星河戰場靜默","古國崩塌日","黎明凱旋門"],
   fantasy:["雲端書庫迷路","糖果星球私奔","螢火森林約定","鏡中花園遇見","彩虹城堡舞會","星河木馬夜","水晶蘑菇祕語","月亮船遠航","羽毛階梯祈願","玻璃玫瑰溫室","漂浮茶會午後","精靈湖畔信","夢境鐘樓倒轉","流星花園奔跑","泡泡海岸等人","魔法列車月台","星塵郵局寄信","花瓣雲橋相見","月光糖霜街","水晶雨夜告白"],
-  myth_angel:["雲端聖門誓","金光天梯降臨","水晶聖殿祈禱","星辰祭壇守夜","月白花園治癒","彩窗教堂回聲","聖泉池畔祝禱","羽毛雲海別離","天界書庫醒","白翼審判時","晨曦號角響","落羽人間路","金環聖光夜","銀翼守門人","雪白花冠願","天堂橋上等","星雨降福時","破曉聖女行","光羽信使歸","雲城鐘聲起"],
+  myth_angel:["雲端聖門誓","金光天梯降臨","水晶聖殿祈禱","星辰祭壇守夜","月白花園治癒","彩窗教堂回聲","聖泉池畔祝禱","羽毛雲海別離","天界書庫醒","白翼凝望時","晨曦號角響","落羽人間路","金環聖光夜","銀翼守門人","雪白花冠願","天堂橋上等","星雨降福時","破曉聖女行","光羽信使歸","雲城鐘聲起"],
   darkfantasy:["黑森林狼月","詛咒鐘樓婚","灰燼王城逃亡","水晶礦洞魔女","血月荒堡守門","黑羽獵魔夜","暗影馬車路","毒菇森林低語","古井幽光回望","禁書高塔開封","墓園霧路花束","月蝕城門約","烏鴉橋上信","黑湖倒影笑","荊棘王座醒","灰霧教堂鐘","亡靈市集夜","裂谷火光前","冰棺玫瑰醒","夜霧船塢別"],
-  dark_gothic:["吸血古堡晚宴","黑蕾絲月門","玫瑰墓園獻花","燭光新娘逃亡","天鵝絨劇院夜","黑水晶王座","午夜假面舞會","銀髮墮聖落羽","荊棘禮服花園","黑羽教堂宣誓","紅酒地窖密約","古堡樓梯回眸","墓園雨夜重逢","月下血色花窗","歌劇終幕親吻","暗紅寢宮守夜","黑玫瑰陽台","十字窗前告別","幽暗宴會邀請","古鐘敲響時"],
+  dark_gothic:["吸血古堡晚宴","黑蕾絲月門","玫瑰墓園獻花","燭光新娘遠行","天鵝絨劇院夜","黑水晶王座","午夜假面舞會","銀髮墮聖落羽","荊棘禮服花園","黑羽教堂花誓","紅酒地窖花約","古堡樓梯回眸","墓園雨夜重逢","月下血色花窗","歌劇終幕親吻","暗紅寢宮守夜","黑玫瑰陽台","十字窗前告別","幽暗宴會邀舞","古鐘敲響時"],
   underwater:["水族館藍廊","水下白紗誓","透明泳池日光","夜蓮螢光池","雨簾玻璃棚","珊瑚王冠花園","海浪洞穴剪影","水晶瀑布長裙","霧氣溫泉別","深海水母藍光","湖心白鷺倒影","潮池鏡面回眸","珍珠貝殼王座","海底花園尋人","雨後花園水窪","藍洞光束祈願","水面玫瑰漂流","月下蓮池告白","海邊礁石守望","泉眼霧光醒"],
   animegame:["魔法學院入學夜","賽博偶像終演","龍騎士山巔誓","機甲屋頂狙擊","星艦橋上指令","蒸汽工坊爆炸","偶像舞台中心","格鬥場女王登場","幻想牧場黃昏","像素城堡冒險","地下城寶箱前","學院鐘樓決鬥","電競雨夜街區","魔王城門挑戰","精靈商店委託","太空港離別","機械神殿醒來","遊戲主線終章","魔法列車逃亡","終極 Boss 前夜"],
   cos_fantasy:["魔法郵局急件","星際甜點舖夜","蒸汽偵探案發","海盜船寶石圖","塔羅直播預言","鍊金教室失控","龍娘咖啡店雨","機械天使修理","月兔遊園會","幽靈劇場開幕","女僕魔王城班","花妖攝影棚","狐狸祭典巡遊","小惡魔便利店","銀河偶像後台","貓耳偵探巷口","公主騎士訓練","魔女藥水市集","玩具兵團舞會","夢境主持人登場"]
@@ -5670,7 +5896,7 @@ const CATEGORY_PERSONA_NAMES_BY_CAT_V616={
   nature:["白裙曠野少女","斗篷森林旅人","紅裙荒漠女主","登山披肩女郎","草原風中少女","湖畔露營旅人","雪地毛呢美人","雨林探險女主","花海晨霧少女","海岬長裙旅人"],
   bigscene:["紅裙史詩女王","鎧甲戰場女將","白袍聖殿守護者","黑金王權女主","龍騎士公主","星際指揮官","火山戰姬","雪山聖女","荒城孤王女","烽火長城英雄"],
   fantasy:["花冠夢境少女","水晶公主","月亮船旅人","糖果星球女主","精靈森林少女","玻璃玫瑰女王","星河魔法少女","羽毛階梯仙子","泡泡城堡旅人","螢火花園女主"],
-  myth_angel:["白翼守門人","金冠天使長","聖光祈禱少女","銀翼審判女神","月白治癒聖女","花冠和平天使","彩窗教堂光使","天界書庫守護者","落羽人間信使","白金聖袍女主"],
+  myth_angel:["白翼守門人","金冠天使長","聖光祈禱少女","銀翼聖裁女神","月白治癒聖女","花冠和平天使","彩窗教堂光使","天界書庫守護者","落羽人間信使","白金聖袍女主"],
   darkfantasy:["黑森林女巫","血月荒堡女王","禁書塔法師","黑羽獵魔人","灰燼王國公主","暗影馬車旅人","毒菇森林魔女","古井幽光少女","荊棘王座女主","夜霧墓園花束少女"],
   dark_gothic:["吸血女伯爵","黑蕾絲古堡夫人","哥德紅裙新娘","銀髮墮落聖女","午夜假面貴女","黑水晶王座女王","玫瑰墓園夜后","燭光歌劇名伶","暗紅天鵝絨女主","黑羽教堂女王"],
   underwater:["珍珠水境少女","水下白紗女主","珊瑚王冠人魚","藍色水族館美人","夜蓮螢光仙女","水晶瀑布花裙","霧氣溫泉浴衣少女","深海水母公主","湖心白鷺女主","潮池鏡面旅人"],
@@ -5716,15 +5942,15 @@ const SERIES_NAMING_PACKS_V622=[
   {re:/龍騎士|火山|長城|烽火|鎧甲|戰場|戰姬|荒城|雪山|英雄/,theme:"史詩征途",stories:["龍影降臨","城門出征","烽火誓言","雪線守望","火山封印","戰旗落日","荒城歸來","鐵甲回眸","斷橋決戰","山巔宣戰","長城暮色","烈焰登場","古道奔襲","黑城破曉","龍骨荒原","旌旗獵風","雷雲開陣","王城終章","戰後歸途","凱旋入城"]},
   {re:/牧場|花海|花園|森林|曠野|草原|湖畔|海岬|雨林|荒漠|登山|露營|公路|海岸|檸檬|長靴/,theme:"戶外旅拍",stories:["晨霧初遇","黃昏遠行","風中回眸","星光露營","花徑私語","雨後啟程","湖畔守候","山路逆光","海風長裙","荒野誓約","月下帳篷","日落歸途","霧林尋光","溪畔停留","雪地來信","草坡奔赴","遠山剪影","風暴前夜","晨光背影","旅途終章"]},
   {re:/魔女|法師|鍊金|占星|塔羅|禁書|天書|書庫|藥水|魔法|學院|御劍|劍仙|陣法|仙|聖女|祈禱|守護|光使|天使|白翼|銀翼|白袍|聖殿/,theme:"魔法主線",stories:["月夜入門","禁書開封","星圖預言","鐘樓試煉","水晶召喚","祕藥完成","符文覺醒","聖光誓言","雲端授命","花冠祈願","銀月結界","天窗降光","古塔守夜","羽光回信","神殿回眸","魔法列車","終章開門","雨夜占卜","晨鐘告別","星河加冕"]},
-  {re:/寶箱|冒險|海盜|獵人|偵探|女探|諜戰|復仇|繼承人|快遞|旅人|旅行|遠行|漫遊|背包|城市|地標|橋上|傘下/,theme:"冒險電影",stories:["密道開箱","港口接頭","古橋追光","雨夜任務","地圖展開","巷口回眸","月台離別","祕寶現身","城門奔赴","沙塵追逐","船艙密約","鐘聲警報","街角轉身","天台暗號","晨光集合","遺跡尋路","水岸告別","火車將發","終點揭曉","海風凱旋"]},
+  {re:/寶箱|冒險|海盜|獵人|偵探|女探|諜戰|復仇|繼承人|快遞|旅人|旅行|遠行|漫遊|背包|城市|地標|橋上|傘下/,theme:"冒險電影",stories:["密道開箱","港口重逢","古橋追光","雨夜行動","地圖展開","巷口回眸","月台離別","祕寶現身","城門奔赴","沙塵追逐","船艙花約","鐘聲響起","街角轉身","天台風鈴","晨光集合","遺跡尋路","水岸告別","火車將發","終點揭曉","海風凱旋"]},
   {re:/星艦|星際|機甲|機械|賽博|科技|指揮官|狙擊|都市|霓虹|電梯|跑車|偶像|舞台|模特|廣告|封面|珠寶|香水|品牌|工作室|紅毯|派對|高訂/,theme:"未來大片",stories:["霓虹登場","終演回眸","指令下達","玻璃倒影","艦橋紅警","天台狙擊","銀幕開場","廣告主視覺","賽道啟動","秀場定格","電梯逆光","城市封面","藍光實驗","夜航登入","紅毯閃光","香檳告別","鏡面轉身","終端覺醒","雨城追光","主角定妝"]},
   {re:/女王|王權|王女|女君|天后|公主|貴女|貴妃|名伶|王座|加冕|金冠|黑金|黑水晶|瑤池|宮|后|女主|紅裙|黑裙|白裙|金裙/,theme:"王權劇照",stories:["王座加冕","宮門回朝","花窗誓約","金殿回眸","夜宴開場","長廊密令","月台告別","城牆登臨","冠冕降臨","燭光獨白","戰後歸來","雪夜守城","花園盟約","水榭私語","紅毯出場","宮燈微醺","暗門密會","雨中封后","晨光宣言","終局凝望"]},
   {re:/戰|將|英雄|騎士|龍騎士|火山|長城|烽火|鎧甲|荒城|雪山|龍紋|異獸|玄鳥|雷鼓|紫電|孤劍|戰袍/,theme:"史詩戰場",stories:["城門出征","戰後歸來","烽火誓言","雪線守望","龍影降臨","斷橋決戰","旌旗獵風","烈焰登場","黑城破曉","山巔宣戰","古道奔襲","雷雲開陣","荒原對峙","王城終章","長城暮色","火山封印","鐵甲回眸","戰旗落日","龍骨荒原","凱旋入城"]},
   {re:/和服|浴衣|韓服|格格|漢|明|清|唐|宋|周|魏晉|敦煌|鳳冠|霞帔|江南|青瓷|水墨|竹影|牡丹|宮燈|宣紙|玉佩|茶席|書房|回廊|梅雪|石榴裙/,theme:"古典畫境",stories:["庭院晨光","月門回眸","茶席初坐","花影低語","雪窗執扇","水榭聽雨","宮燈夜行","書房展卷","長橋別離","竹林琴聲","牡丹屏前","紅牆側影","煙雨撐傘","金步搖影","畫舫微風","石階落花","春宴入席","燈市尋人","古寺鐘聲","畫中歸來"]},
   {re:/印度|紗麗|沙漠|市集|藍磚|香料|彩粉|湖宮|珠寶|面具|民俗|民族|海島|草原星空|織毯|披肩|中東|異域|波西米亞/,theme:"異域旅拍",stories:["市集金光","宮殿晚宴","沙丘日落","藍牆回眸","香料巷口","彩粉節慶","湖面燈影","星空帳篷","面具舞會","花環海岸","鼓聲入場","織毯屋頂","駱駝遠行","神廟晨祭","珠寶試戴","月夜露台","風沙轉身","水邊祈願","古城門前","節慶終幕"]},
   {re:/水下|水晶瀑布|夜蓮|珊瑚|珍珠|深海|水母|湖心|潮池|水族館|溫泉|白鷺|海|泉|蓮/,theme:"水境幻景",stories:["藍廊漫步","水下誓約","蓮池發光","珊瑚加冕","珍珠覺醒","水母夜航","湖心回眸","潮池鏡影","瀑布花裙","溫泉霧光","月下漂流","海洞尋光","雨後水鏡","貝殼王座","海風祈願","水面玫瑰","藍洞降光","白鷺掠影","深海私語","晨霧離水"]},
-  {re:/吸血|墓園|哥德|黑羽|古堡|蕾絲|夜后|墮落|暗紅|燭光|毒菇|灰燼|血月|黑森林|暗影|荊棘|亡國|幽靈|劇場|假面/,theme:"暗黑劇場",stories:["午夜邀約","古堡誓約","墓園獻花","燭光終幕","黑羽祈禱","血月回眸","荊棘開門","假面舞會","灰燼加冕","暗影馬車","毒菇森林","古井映光","劇場開幕","紅酒密約","月窗告別","黑水晶審判","玫瑰囚籠","雪夜召喚","禁室低語","終局微笑"]},
-  {re:/月亮船|水晶|羽毛|泡泡|花冠|星河|玻璃|精靈|糖果|螢火|夢境|兔|遊園會|像素|城堡/,theme:"夢境童話",stories:["月船啟航","水晶階梯","羽光降落","泡泡城門","花冠晚宴","星河旋舞","玻璃玫瑰","精靈小徑","糖果星夜","螢火花園","遊園會終場","城堡存檔","雲端邀請","蘑菇燈路","旋轉木馬","銀河許願","晨霧醒來","彩窗告白","夢境列車","童話終章"]}
+  {re:/吸血|墓園|哥德|黑羽|古堡|蕾絲|夜后|墮落|暗紅|燭光|毒菇|灰燼|血月|黑森林|暗影|荊棘|亡國|幽靈|劇場|假面/,theme:"暗黑劇場",stories:["午夜邀舞","古堡誓約","墓園獻花","燭光終幕","黑羽祈禱","血月回眸","荊棘開門","假面舞會","灰燼加冕","暗影馬車","毒菇森林","古井映光","劇場開幕","紅酒花約","月窗告別","黑水晶王令","玫瑰囚籠","雪夜花陣","禁室低語","終局微笑"]},
+  {re:/月亮船|水晶|羽毛|泡泡|花冠|星河|玻璃|精靈|糖果|螢火|夢境|兔|遊園會|像素|城堡/,theme:"夢境童話",stories:["月船啟航","水晶階梯","羽光降落","泡泡城門","花冠晚宴","星河旋舞","玻璃玫瑰","精靈小徑","糖果星夜","螢火花園","遊園會終場","城堡留影","雲端花路","蘑菇燈路","旋轉木馬","銀河許願","晨霧醒來","彩窗告白","夢境列車","童話終章"]}
 ];
 const SERIES_DEFAULT_THEME_BY_CAT_V622={
   myth:"神話遠征",xianxia:"仙俠篇章",hanfu:"漢服故事",oriental:"東方雅集",dramanovel:"影劇主線",modern:"時裝大片",
@@ -5784,8 +6010,8 @@ const SERIES_POLISH_PACKS_V623=[
   {re:/和服|浴衣|韓服|格格|漢|明|清|唐|宋|周|魏晉|敦煌|鳳冠|霞帔|江南|青瓷|水墨|竹影|牡丹|宮燈|宣紙|玉佩|茶席|書房|回廊|梅雪|石榴裙/,theme:"古典畫境篇",stories:["庭院晨光","月門回眸","茶席初坐","花影低語","雪窗執扇","水榭聽雨","宮燈夜行","書房展卷","長橋別離","竹林琴聲","牡丹屏前","紅牆側影","煙雨撐傘","金步搖影","畫舫微風","石階落花","春宴入席","燈市尋人","古寺鐘聲","畫中歸來"]},
   {re:/印度|紗麗|沙漠|市集|藍磚|香料|彩粉|湖宮|面具|民俗|民族|海島|草原星空|織毯|披肩|中東|異域|波西米亞/,theme:"異域風物篇",stories:["市集金光","宮殿晚宴","沙丘日落","藍牆回眸","香料巷口","彩粉節慶","湖面燈影","星空帳篷","面具舞會","花環海岸","鼓聲入場","織毯屋頂","駱駝遠行","神廟晨祭","珠寶試戴","月夜露台","風沙轉身","水邊祈願","古城門前","節慶終幕"]},
   {re:/水下|水晶瀑布|夜蓮|珊瑚|珍珠|深海|水母|湖心|潮池|水族館|溫泉|白鷺|海|泉|蓮/,theme:"水光幻境篇",stories:["藍廊漫步","水下誓約","蓮池發光","珊瑚加冕","珍珠覺醒","水母夜航","湖心回眸","潮池鏡影","瀑布花裙","溫泉霧光","月下漂流","海洞尋光","雨後水鏡","貝殼王座","海風祈願","水面玫瑰","藍洞降光","白鷺掠影","深海私語","晨霧離水"]},
-  {re:/吸血|墓園|哥德|黑羽|古堡|蕾絲|夜后|墮落|暗紅|燭光|毒菇|灰燼|血月|黑森林|暗影|荊棘|亡國|幽靈|劇場|假面/,theme:"夜色劇場篇",stories:["午夜邀約","古堡誓約","墓園獻花","燭光終幕","黑羽祈禱","血月回眸","荊棘開門","假面舞會","灰燼加冕","暗影馬車","毒菇森林","古井映光","劇場開幕","紅酒密約","月窗告別","黑水晶審判","玫瑰囚籠","雪夜召喚","禁室低語","終局微笑"]},
-  {re:/月亮船|水晶|羽毛|泡泡|花冠|星河|玻璃|精靈|糖果|螢火|夢境|兔|遊園會|城堡/,theme:"夢境童話篇",stories:["月船啟航","水晶階梯","羽光降落","泡泡城門","花冠晚宴","星河旋舞","玻璃玫瑰","精靈小徑","糖果星夜","螢火花園","遊園會終場","城堡存檔","雲端邀請","蘑菇燈路","旋轉木馬","銀河許願","晨霧醒來","彩窗告白","夢境列車","童話終章"]}
+  {re:/吸血|墓園|哥德|黑羽|古堡|蕾絲|夜后|墮落|暗紅|燭光|毒菇|灰燼|血月|黑森林|暗影|荊棘|亡國|幽靈|劇場|假面/,theme:"夜色劇場篇",stories:["午夜邀舞","古堡誓約","墓園獻花","燭光終幕","黑羽祈禱","血月回眸","荊棘開門","假面舞會","灰燼加冕","暗影馬車","毒菇森林","古井映光","劇場開幕","紅酒花約","月窗告別","黑水晶王令","玫瑰囚籠","雪夜花陣","禁室低語","終局微笑"]},
+  {re:/月亮船|水晶|羽毛|泡泡|花冠|星河|玻璃|精靈|糖果|螢火|夢境|兔|遊園會|城堡/,theme:"夢境童話篇",stories:["月船啟航","水晶階梯","羽光降落","泡泡城門","花冠晚宴","星河旋舞","玻璃玫瑰","精靈小徑","糖果星夜","螢火花園","遊園會終場","城堡留影","雲端花路","蘑菇燈路","旋轉木馬","銀河許願","晨霧醒來","彩窗告白","夢境列車","童話終章"]}
 ];
 const SERIES_DEFAULT_POLISH_THEME_V623={
   myth:"神話序章篇",xianxia:"仙劍流光篇",hanfu:"華服風雅篇",oriental:"東方雅集篇",dramanovel:"劇本女主篇",modern:"摩登封面篇",
@@ -5815,16 +6041,16 @@ function polishAutoSeriesNamesV623(){
 polishAutoSeriesNamesV623();
 
 const FEATURED_MYTH_HISTORY_SERIES_V617=[
-  {cat:"succubus_series",icon:"🖤",mk:"succubus_alluring",tag:"魅魔系列",o:"dark crimson and black couture dress, elegant horn-like gold hair ornament, layered lace sleeves, jeweled waist chain, long flowing train, refined supernatural glamour",char:"adult glamorous succubus queen aura, alluring but regal, dangerous eye contact, clear recognizable face",fx:"crimson mist, black feather particles, subtle infernal glow, fabric trails moving like smoke",items:[
-    ["v617_succubus_01","魅魔 · 血月契約","血月古堡 · 紅黑誓約","moonlit gothic castle terrace under a blood moon, black roses, wet stone, crimson candles, distant mountains","standing at the terrace edge holding a red contract ribbon, dress train swirling in wind"],
-    ["v617_succubus_02","魅魔 · 黑羽夜宴","古堡宴會廳 · 午夜邀約","dark banquet hall, black chandeliers, velvet curtains, silver goblets, masked guests blurred far behind","sitting on a high-backed chair, one hand lifting a glass, black feathers drifting around"],
-    ["v617_succubus_03","魅魔 · 玫瑰囚籠","荊棘玫瑰園 · 禁忌邀請","overgrown rose garden at night, iron cage arch, red roses, moonlit fog, thorn shadows","standing inside the iron rose arch, fingers touching thorns, soft dangerous smile"],
+  {cat:"succubus_series",icon:"🖤",mk:"succubus_alluring",tag:"魅魔系列",o:"dark crimson and black couture dress, elegant horn-like gold hair ornament, layered lace sleeves, jeweled waist chain, long flowing train, refined supernatural glamour",char:"adult glamorous succubus queen aura, alluring but regal, dangerous eye contact, clear recognizable face, head naturally small relative to full body, eight-head runway proportion, no oversized head, no bobblehead distortion",fx:"crimson mist, black feather particles, subtle infernal glow, fabric trails moving like smoke",items:[
+    ["v617_succubus_01","魅魔 · 血月誓約","血月古堡 · 紅黑花誓","moonlit gothic castle terrace under a blood moon, black roses, wet stone, crimson candles, distant mountains","standing at the terrace edge holding a crimson silk ribbon, dress train swirling in wind"],
+    ["v617_succubus_02","魅魔 · 黑羽夜宴","古堡宴會廳 · 午夜邀舞","dark banquet hall, black chandeliers, velvet curtains, silver goblets, masked guests blurred far behind","sitting on a high-backed chair, one hand lifting a glass, black feathers drifting around"],
+    ["v617_succubus_03","魅魔 · 玫瑰囚籠","荊棘玫瑰園 · 禁忌花誓","overgrown rose garden at night, iron cage arch, red roses, moonlit fog, thorn shadows","standing inside the iron rose arch, fingers touching thorns, soft dangerous smile"],
     ["v617_succubus_04","魅魔 · 鏡廳誘惑","破碎鏡廳 · 雙影凝望","abandoned palace mirror hall, cracked mirrors, candle reflections, crimson velvet floor","walking between broken mirrors, multiple reflections, face clear in the central mirror"],
     ["v617_succubus_05","魅魔 · 暗香舞會","假面舞會 · 燭光旋身","masked gothic ballroom, candlelit staircases, red smoke, black marble floor","turning mid-dance with flowing dress and lace sleeves, mask held near lips"],
     ["v617_succubus_06","魅魔 · 教堂低語","廢墟教堂 · 黑翼祈禱","ruined chapel, broken stained glass, moonbeam, black roses on altar, ash in the air","kneeling beside the altar with black wing-shaped fabric spread behind"],
     ["v617_succubus_07","魅魔 · 地獄花冠","熔岩花園 · 金紅花冠","infernal flower garden, glowing lava cracks, red lilies, obsidian stones, smoky horizon","standing among glowing lilies, gold-red crown shining, hand reaching toward camera"],
-    ["v617_succubus_08","魅魔 · 夜港交易","黑船港口 · 霧中密約","old foggy harbor at night, black ship, lantern reflections, wet wooden pier","walking along the pier with cloak and skirt trailing, secret letter in hand"],
-    ["v617_succubus_09","魅魔 · 紫焰王座","紫焰宮殿 · 王座審判","dark palace throne room, purple flames, obsidian throne, red carpet, gothic columns","seated on obsidian throne, one leg crossed elegantly, purple flame halo behind"],
+    ["v617_succubus_08","魅魔 · 夜港遠行","黑船港口 · 霧中花誓","old foggy harbor at night, black ship, lantern reflections, wet wooden pier","walking along the pier with cloak and skirt trailing, rose brooch in hand"],
+    ["v617_succubus_09","魅魔 · 紫焰王座","紫焰宮殿 · 王座威壓","dark palace throne room, purple flames, obsidian throne, red carpet, gothic columns","seated on obsidian throne, one leg crossed elegantly, purple flame halo behind"],
     ["v617_succubus_10","魅魔 · 雪夜召喚","雪中古堡 · 紅裙召喚","snow-covered gothic courtyard, cold blue night, red candles arranged in circle, castle gate","standing in a candle circle, red dress blazing against snow, summoning gesture"]
   ]},
   {cat:"queen_series",icon:"👑",mk:"imperial_empress",tag:"女王系列",o:"majestic queen couture, structured royal gown, jeweled crown, embroidered cape, ceremonial jewelry, powerful silhouette",char:"adult sovereign queen, commanding calm gaze, noble authority, clear recognizable face",fx:"gold dust, banners, throne glow, ceremonial wind through cape",items:[
@@ -5832,7 +6058,7 @@ const FEATURED_MYTH_HISTORY_SERIES_V617=[
     ["v617_queen_02","女王 · 雪境宣誓","雪國城門 · 白金誓言","snow fortress gate, white banners, icy stone bridge, winter sky","holding a scepter at the city gate, cape and hair blown by snow wind"],
     ["v617_queen_03","女王 · 海港登基","王國海港 · 艦隊歸來","royal harbor, ships with banners, golden sunset on water, cheering silhouettes","standing on harbor steps, crown shining, fleet behind her"],
     ["v617_queen_04","女王 · 沙漠王座","沙漠宮殿 · 金紗命令","desert palace terrace, carved arches, golden dunes, warm wind","seated on a portable throne, gold veil and cape flowing across the sand"],
-    ["v617_queen_05","女王 · 黑曜審判","黑曜王殿 · 靜默審判","dark obsidian palace, red carpet, high throne, cold torchlight","standing at the top of black stairs, looking down with calm authority"],
+    ["v617_queen_05","女王 · 黑曜王令","黑曜王殿 · 靜默威壓","dark obsidian palace, red carpet, high throne, cold torchlight","standing at the top of black stairs, looking down with calm authority"],
     ["v617_queen_06","女王 · 花冠和平","王家花園 · 和平盟約","royal garden, white flowers, fountain, treaty table under trees","holding a sealed treaty, soft but firm expression, flower crown and silk cape"],
     ["v617_queen_07","女王 · 星河議會","星空議事殿 · 銀冠決策","celestial council hall, star map ceiling, silver columns, blue cosmic light","standing at a round star-map table, silver crown glowing"],
     ["v617_queen_08","女王 · 紅牆回朝","古都紅牆 · 凱旋回朝","ancient red palace walls, wide stone road, ceremonial guards blurred behind","walking back into the palace, embroidered cape trailing dramatically"],
@@ -5847,7 +6073,7 @@ const FEATURED_MYTH_HISTORY_SERIES_V617=[
     ["v617_demon_lord_05","魔王 · 烈焰王冠","熔岩王座 · 火冠降臨","lava throne chamber, molten rivers, black stone columns","seated on lava-lit throne, flame crown hovering above"],
     ["v617_demon_lord_06","魔王 · 禁書開封","禁書塔頂 · 暗法覺醒","forbidden tower library, floating dark books, storm window","opening an ancient black book, symbols reflecting on face"],
     ["v617_demon_lord_07","魔王 · 龍骨戰場","龍骨荒原 · 黑翼戰後","dragon bone wasteland, ash sky, giant ribs, red dusk","standing among dragon bones, cape and skirt moving in ash wind"],
-    ["v617_demon_lord_08","魔王 · 夜港收割","黑船夜港 · 靈魂契約","dark harbor, black ship, ghost lanterns, foggy water","walking down the pier, contract scroll glowing red"],
+    ["v617_demon_lord_08","魔王 · 夜港王令","黑船夜港 · 靈魂誓約","dark harbor, black ship, ghost lanterns, foggy water","walking down the pier, crimson sigil glowing red"],
     ["v617_demon_lord_09","魔王 · 月蝕婚禮","月蝕教堂 · 黑紅婚誓","ruined cathedral during eclipse, black flowers, red candles","standing at altar in black-red wedding armor gown, sword as vow"],
     ["v617_demon_lord_10","魔王 · 王城終焉","崩塌王城 · 最後命令","collapsing demon city, falling embers, broken towers","standing before collapsing skyline, giving final command with calm gaze"]
   ]},
@@ -5873,7 +6099,7 @@ const FEATURED_MYTH_HISTORY_SERIES_V617=[
     ["v617_ninefox_07","九尾狐 · 桃花劫夢","桃花妖林 · 情劫幻境","peach blossom forest with red fog, old bridge, floating ribbons","standing under petal storm, nine tails hinted through silk trails"],
     ["v617_ninefox_08","九尾狐 · 禁宮夜舞","禁宮舞殿 · 金鈴魅影","forbidden palace dance hall, golden bells, red silk curtains","dancing with long sleeves and bell ornaments, fox-fire circling"],
     ["v617_ninefox_09","九尾狐 · 青丘封印","青丘祭壇 · 古印破裂","Qingqiu altar, cracked seal stones, moonlit grassland, fox statues","standing before broken seal, tails of light opening behind"],
-    ["v617_ninefox_10","九尾狐 · 血色婚契","妖狐婚殿 · 紅燭誓言","fox demon wedding hall, red candles, black-gold screens, crimson veil","holding wedding veil and contract ribbon, eyes glowing softly"]
+    ["v617_ninefox_10","九尾狐 · 血色婚誓","妖狐婚殿 · 紅燭誓言","fox demon wedding hall, red candles, black-gold screens, crimson veil","holding wedding veil and crimson silk ribbon, eyes glowing softly"]
   ]},
   {cat:"change_series",icon:"🌕",mk:"moon",tag:"嫦娥神話",o:"moon-white and pale blue celestial hanfu, flowing gauze sleeves, jade moon hair ornament, pearl belt, soft luminous veil",char:"adult Chang'e moon goddess, cold ethereal grace, lonely immortal beauty, clear recognizable face",fx:"moonlight particles, jade rabbit silhouette, silver mist, floating petals",items:[
     ["v617_change_01","嫦娥 · 廣寒月階","廣寒宮 · 玉兔相伴","Guanghan Palace moon steps, jade pillars, giant moon, jade rabbit near the hem","standing on moon palace steps, white sleeves floating in silver light"],
@@ -6075,13 +6301,13 @@ const CATEGORY_TOPUP_STORY_BANKS_V624={
     ["花燈夜奔","lantern festival street, blurred crowd, river reflections, old rooftops","running through lantern light with long fabric trailing behind"],
     ["城樓守望","ancient city tower, dusk clouds, flags, distant mountains","standing on the tower edge, looking over the old city"],
     ["水榭私語","waterside pavilion, silk curtains, lotus reflections, moonlight","leaning beside the pavilion rail, hiding a secret emotion"],
-    ["長廊密信","palace corridor, candle shadows, carved screens, quiet tension","holding a folded secret letter close to the sleeve"],
+    ["長廊花箋","palace corridor, candle shadows, carved screens, quiet tension","holding a folded floral note close to the sleeve"],
     ["桃林重逢","peach blossom grove, soft mist, stone steps, warm spring light","turning back in the peach forest at the moment of reunion"],
     ["戰後歸城","ancient gate after battle, smoke far away, torn banners","returning through the gate with calm heroic sorrow"],
     ["雪夜離宮","palace road in night snow, lanterns fading, empty courtyard","walking away from the palace with restrained emotion"]
   ],
   dark:[
-    ["血月邀約","gothic terrace under blood moon, black roses, stone arches","standing beneath the blood moon with a dangerous invitation"],
+    ["血月花誓","gothic terrace under blood moon, black roses, stone arches","standing beneath the blood moon with a dangerous rose vow"],
     ["古堡密宴","castle banquet hall, dark chandeliers, red velvet, silver goblets","posing beside the banquet table as if the feast hides a secret"],
     ["黑羽祈禱","ruined chapel, broken stained glass, black feathers, candle smoke","kneeling near the altar with wing-like fabric spread behind"],
     ["荊棘王座","thorn-covered throne room, crimson haze, obsidian floor","standing before the thorn throne with one hand on the crown"],
@@ -6136,7 +6362,7 @@ const CATEGORY_TOPUP_STORY_BANKS_V624={
     ["艦橋紅警","starship bridge, red alert lights, giant window to space","commanding the bridge during a crisis moment"],
     ["屋頂狙擊","future city rooftop, wind, distant neon towers","holding a precise lookout pose on the rooftop"],
     ["齒輪開場","steampunk workshop, brass gears, steam, blueprint table","starting a machine as gears awaken behind the subject"],
-    ["魔法列車","fantasy train platform, sparks, luggage, glowing ticket","boarding a magical train with adventure energy"],
+    ["魔法列車","fantasy train platform, sparks, luggage, glowing luggage tag","boarding a magical train with adventure energy"],
     ["Boss 前夜","final gate, ominous glow, empty road, dramatic sky","standing before the final challenge with calm tension"],
     ["傳說達成","victory scene, glowing emblem, falling particles","holding the final pose after completing a legendary quest"]
   ]
@@ -6151,14 +6377,14 @@ const CATEGORY_TOPUP_SAFE_EXTRA_STORIES_V624=[
   ["霧中相逢","low mist, gate or bridge silhouette, gentle backlight","meeting someone unseen in the mist while keeping the face clear"],
   ["金光轉身","golden side light, textured wall, soft haze, cinematic polish","turning through a shaft of gold light with the outfit fully readable"],
   ["孤影長街","empty old street, textured ground, distant lamps, atmospheric depth","walking alone down the street with a decisive heroine mood"],
-  ["風鈴暗號","hanging chimes or small ornaments, quiet wind, close environmental detail","touching a small signal object as if receiving a message"],
+  ["風鈴回聲","hanging chimes or small ornaments, quiet wind, close environmental detail","touching a small wind chime as if hearing a memory"],
   ["長亭別信","wayside pavilion, folded letter, open landscape, emotional stillness","holding a farewell letter beside the pavilion"],
   ["雲門初開","high gate in clouds or mist, vertical architecture, bright opening light","standing before a newly opened gate with awe and resolve"],
   ["河岸約定","riverbank path, reflected light, reeds or flowers, evening air","standing beside the river as if keeping an old promise"],
   ["古樹祈願","ancient tree, ribbons or leaves, filtered light, sacred quiet","placing a wish beneath the ancient tree"],
   ["玉階回望","pale stone steps, elegant railing, calm background depth","looking back from the jade-like steps with refined emotion"],
   ["暮色歸航","dusk harbor or riverside, warm lamps, distant boat shapes","waiting for a return at dusk with fabric moving in wind"],
-  ["山門試煉","large mountain gate, stone guardians, dramatic sky","standing before a trial gate with determined posture"],
+  ["山門考驗","large mountain gate, stone guardians, dramatic sky","standing before a mountain gate with determined posture"],
   ["夜燈微雨","light rain, warm lamps, wet stone, soft reflections","holding still in rain as lights shimmer around the figure"],
   ["破曉宣言","dawn horizon, wide scene, symbolic object raised or held","standing at daybreak with a quiet declaration energy"],
   ["終卷合上","story-ending interior or courtyard, closed book or token, fading light","closing the final token of the story with unforgettable eye contact"]
@@ -6389,14 +6615,160 @@ const BIG_SCENE_PRESETS_V646={
 };
 Object.entries(BIG_SCENE_PRESETS_V646).forEach(([id,p])=>{if(!P[id])P[id]=p});
 
+const IMAGE_REFERENCE_PRESETS_V652={
+  ref_sky_mirror_blue_gown:{n:"藍紗鏡湖旅人 · 天空倒影日出",cat:"img_ref",mk:"v611_bigscene",
+    char:"adult elegant travel heroine, long dark hair, calm confident gaze, clear natural face, graceful tall posture",
+    o:"pale blue backless chiffon evening gown, light translucent hem, delicate silver earrings, barefoot or simple nude heels, fabric catching dawn breeze",
+    s:"vast mirror-like salt flat at sunrise, endless sky reflected on shallow water, low mountains on the horizon, golden sun near the waterline, cloud reflections forming a surreal vertical world",
+    prop:"standing in the center of the reflection, body turned slightly back toward camera, one shoulder glance, relaxed hands, dress hem touching the water",
+    fx:"perfect sky-water reflection, dawn mist, soft sun flare, tiny ripples only around feet, airy cloud depth",
+    l:"warm sunrise backlight with soft blue fill, readable face key light, glowing rim light around hair and dress",
+    cam:"full-body vertical wide shot, horizon low-to-middle, figure small but face readable, realistic eight-head body proportion",
+    col:"sky blue, pearl white, sunrise gold, mist gray",
+    q:"ultra realistic cinematic travel editorial, mirror lake fashion portrait, natural skin texture, elegant body proportion, 8K HDR",
+    neg:"oversized head, distorted reflection, strong ripples, hidden face, warped feet, duplicate body, messy horizon, watermark"},
+  ref_white_scarf_lake_goddess:{n:"長紗湖岸女神 · 風中白紗荒湖",cat:"img_ref",mk:"celestial_pearl",
+    char:"adult serene, clear recognizable face, gentle distant expression, wind-touched hair",
+    o:"simple white flowing gown, extra-long silk scarf and gauze train, pearl hair accessory, bare shoulders styled tastefully, soft natural jewelry",
+    s:"remote alpine lake shore, driftwood sculpture, rocky beach, deep blue sky, white cloud wall, distant mountains",
+    prop:"standing beside driftwood while holding one edge of the long white scarf, fabric streaming dramatically across the sky",
+    fx:"huge wind-lifted gauze arc, clean cloud contrast, lake sparkle, fabric motion frozen like a wave",
+    l:"crisp high-altitude daylight, soft face fill, bright white fabric highlights, controlled contrast",
+    cam:"wide horizontal cinematic travel shot, environment dominates, person integrated into landscape, face still readable",
+    col:"white, lake blue, cloud silver, stone gray",
+    q:"ultra realistic outdoor fashion travel portrait, wind fabric drama, clean natural location, 8K",
+    neg:"messy cloth covering face, broken fabric, distorted hands, low quality, cartoon, watermark"},
+  ref_polaroid_cafe_date:{n:"拍立得咖啡少女 · 即影成像約會",cat:"img_ref",mk:"soft_daily",
+    char:"adult sweet cafe portrait girl, soft smile, clear eyes, natural face identity, warm approachable expression",
+    o:"cream knit top or soft casual blouse, natural long hair, delicate manicure, minimal jewelry, cozy date styling",
+    s:"warm city cafe table at night, instant camera in foreground, printed photo being held close to lens, coffee cups on both sides, soft window bokeh",
+    prop:"the scene is framed through an instant photo print in the foreground, the main portrait appears inside the photo, hands holding the print, camera above it",
+    fx:"instant film border, warm cafe bokeh, shallow depth of field, nostalgic snapshot layering",
+    l:"warm cafe practical lights, soft beauty light on the printed portrait, gentle amber background glow",
+    cam:"close-up lifestyle composition, foreground instant photo sharp, cafe background softly blurred, no readable brand logos",
+    col:"cream, coffee brown, warm amber, soft black",
+    q:"ultra realistic lifestyle cafe portrait, instant film aesthetic, cozy cinematic date mood, natural skin, 8K",
+    neg:"visible brand logo, distorted printed face, extra fingers, warped camera, messy text, watermark"},
+  ref_blue_hanfu_beauty_closeup:{n:"藍繡漢服仕女 · 花鈿妝造特寫",cat:"img_ref",mk:"v611_hanfu",
+    char:"adult classical hanfu beauty, clear symmetrical face, soft thoughtful gaze, elegant hand-under-chin pose",
+    o:"pale blue embroidered hanfu with gold thread, layered white inner collar, ornate pearl-and-gold hair crown, dangling hair ornaments, forehead flower ornament",
+    s:"studio floral portrait set with deep rose-pink backdrop, blurred purple flowers in foreground, refined classical beauty atmosphere",
+    prop:"seated close to camera, one hand gently supporting chin, flowers framing the lower foreground, shoulders angled gracefully",
+    fx:"foreground flower blur, pearl sparkle, delicate gold embroidery highlights, soft powder haze",
+    l:"soft studio beauty light, gentle catchlights in eyes, warm highlight on ornaments, even skin detail",
+    cam:"close-up beauty portrait, face as main focus, costume and hair jewelry readable, shallow depth of field",
+    col:"pale blue, rose pink, pearl white, soft gold",
+    q:"ultra realistic classical Chinese beauty portrait, detailed hanfu embroidery, refined makeup, natural face identity, 8K",
+    neg:"face morphing, over-smoothed skin, deformed fingers, cheap costume, messy floral blur, watermark"},
+  ref_pink_backlit_flower_muse:{n:"粉花紗裙繆斯 · 逆光玫瑰回眸",cat:"img_ref",mk:"v611_fantasy",
+    char:"adult romantic flower muse, clear face, luminous eyes, soft dreamy expression, natural recognizable facial structure",
+    o:"pale pink translucent floral gown with beadwork straps, flower hairpins, delicate earrings, sheer shoulder wrap, romantic garden styling",
+    s:"sunlit pink rose garden in full bloom, dreamy haze, backlit flowers surrounding the figure, soft pastel fantasy atmosphere",
+    prop:"turning over one shoulder while holding a pale rose stem gently near the lips, body angled through flowers",
+    fx:"pink petal bokeh, glittering bead highlights, soft flare, flower haze, dreamy shallow depth",
+    l:"strong warm backlight softened by floral haze, gentle face fill, glowing hair rim, pastel bloom",
+    cam:"three-quarter romantic beauty portrait, shoulders and upper body readable, face sharp, flowers framing edges",
+    col:"blush pink, champagne gold, pearl, soft green",
+    q:"ultra realistic romantic flower fantasy portrait, pastel cinematic bloom, detailed floral gown, 8K",
+    neg:"overexposed face, rose stem deforming mouth, hidden eyes, distorted hands, watermark"},
+  ref_beauty_life_cover:{n:"白蕾絲美妝女郎 · 生活誌封面",cat:"img_ref",mk:"editorial",
+    char:"adult confident soft gaze, clear face, polished editorial presence, healthy realistic proportions",
+    o:"white lace beauty dress or delicate lace slip styled as fashion editorial, black pointed high heels, pearl earrings, clean glossy manicure",
+    s:"bright white beauty studio or skincare room, sunlight through window, glass block wall, clean cosmetic counter, airy lifestyle magazine set",
+    prop:"standing in a refined magazine-cover pose with one hand near waist and one knee softly bent, generous negative space for optional typography",
+    fx:"clean editorial layout, sun patches on floor, glass reflections, soft cosmetic glow, cover-ready spacing",
+    l:"bright soft daylight, white bounce fill, polished skin highlights, high-key beauty lighting",
+    cam:"full-body vertical magazine cover framing, long legs natural perspective, realistic head-to-body ratio, no forced text unless text mode is enabled",
+    col:"white, cream, champagne gold, black accents",
+    q:"ultra realistic beauty lifestyle magazine cover portrait, elegant high-key studio, natural anatomy, 8K",
+    neg:"messy unreadable text, oversized head, distorted legs, extra fingers, visible brand logos, watermark"},
+  ref_crystal_flower_shell:{n:"透明花衣仙子 · 森光花瓣靜坐",cat:"img_ref",mk:"celestial_pearl",
+    char:"adult ethereal flower fairy, peaceful closed-eye expression, clear natural facial structure, delicate profile",
+    o:"transparent glossy petal-shell bodysuit styled tastefully over nude-toned inner layer, embedded pink blossoms, pearl hairpiece, soft bun hairstyle",
+    s:"green forest clearing with morning light beams, grass floor, pink blossoms drifting, spring garden quiet atmosphere",
+    prop:"sitting curled gracefully on grass, arms folded around knees, head lowered in a calm prayer-like rest",
+    fx:"transparent glass-petal material, floating petals, sunlight shafts, dew sparkle, soft floral reflections",
+    l:"morning forest god rays, gentle top backlight, soft face shadow, luminous translucent highlights",
+    cam:"medium vertical portrait, seated pose, face readable in profile, transparent costume details clear",
+    col:"clear pearl, blush pink, grass green, morning white",
+    q:"ultra realistic fantasy garden portrait, translucent floral couture, serene cinematic light, coherent anatomy, 8K",
+    neg:"nude explicit look, plastic body, distorted seated anatomy, broken transparent material, watermark"},
+  ref_cute_pet_dessert_cafe:{n:"甜點萌寵店長 · 暖燈下午茶派對",cat:"img_ref",mk:"character_pop",
+    char:"adult cheerful dessert cafe hostess, warm bright smile, clear friendly face, soft curly hair, playful and warm personality",
+    o:"pastel camisole dress or soft cafe apron styling, flower hair clip, delicate necklace, cute dessert shop fashion",
+    s:"cozy fantasy dessert cafe, warm string lights, flower vases, cakes, macarons, bubble tea cups, plush animal friends gathered around the table",
+    prop:"resting chin on one hand behind a dessert table, smiling toward camera, surrounded by cute plush-like mascots and cakes",
+    fx:"warm fairy lights, creamy bokeh, cute mascot sparkle, dessert gloss, soft peach haze",
+    l:"golden cafe lights, flattering front softbox, warm background glow, clean face lighting",
+    cam:"vertical lifestyle fantasy cafe portrait, table foreground rich with desserts, main face unobstructed",
+    col:"peach, cream, warm gold, strawberry pink",
+    q:"ultra realistic cute fantasy dessert cafe portrait, cozy commercial styling, detailed desserts, natural skin, 8K",
+    neg:"copyright mascot exact copy, distorted animal faces, messy food, hidden face, extra fingers, watermark"},
+  ref_pink_butterfly_rose:{n:"粉蝶玫瑰精靈 · 星光面紗回眸",cat:"img_ref",mk:"night_flower",
+    char:"adult rose fairy muse, clear intense eyes, romantic mysterious expression, recognizable face preserved",
+    o:"pink translucent ruffled gown, lace eye mask, crystal hair chains, rose earrings, sparkling ribbon veil",
+    s:"night rose garden glowing with magenta lights, luminous butterflies, deep floral tunnel, fantasy editorial atmosphere",
+    prop:"turning over shoulder with a red rose gently held between lips, one hand gathering the translucent ribbon near the shoulder",
+    fx:"glowing butterflies, sparkling ribbon trails, magenta rose bokeh, star-like light dust, romantic night haze",
+    l:"pink-violet cinematic rim light, soft clear face key light, glowing butterfly highlights, dark floral contrast",
+    cam:"close three-quarter fantasy portrait, face sharp, shoulders and ribbon readable, rich floral background",
+    col:"magenta, rose pink, violet, crystal white",
+    q:"ultra realistic luminous rose fairy portrait, high-detail sparkle effects, cinematic fantasy beauty, 8K",
+    neg:"rose stem deforming mouth, hidden eyes, overdone sparkles covering face, plastic skin, watermark"},
+  ref_mint_hanfu_selfie:{n:"青綠漢服少女 · 指尖臉頰自拍",cat:"img_ref",mk:"soft_daily",
+    char:"adult playful hanfu portrait girl, clear cute face, bright eyes, gentle playful expression, natural facial identity",
+    o:"mint green embroidered hanfu, half-up long black hairstyle, gold-and-jade hair ornaments, small pendant necklace, delicate bracelet",
+    s:"clean bright indoor floral corner, white wall, pale blue flowers in vase, soft daylight selfie studio atmosphere",
+    prop:"close portrait with both index fingers touching cheeks lightly, playful but elegant pose, shoulders square to camera",
+    fx:"clean soft background, delicate embroidery shine, jade pendant highlight, gentle beauty filter look without changing face",
+    l:"bright diffused window light, even face illumination, soft catchlights, low contrast",
+    cam:"upper-body selfie-style portrait, face dominant and sharp, hands visible and natural",
+    col:"mint green, white, pale blue, jade gold",
+    q:"ultra realistic cute hanfu selfie portrait, clean studio daylight, detailed hair ornaments, natural hands, 8K",
+    neg:"childlike body, deformed fingers, over-smoothed face, cheap costume, watermark"},
+  ref_castle_wedding_princess:{n:"蕾絲婚紗公主 · 城堡玫瑰日落",cat:"img_ref",mk:"wedding",
+    char:"adult fairy-tale bridal princess, clear soft smile, long wavy hair, graceful over-shoulder gaze",
+    o:"champagne white lace ball gown, off-shoulder bodice, jeweled tiara, long embroidered veil, crystal earrings",
+    s:"storybook castle garden at sunset, rose-lined staircase, warm glowing windows, petals floating through golden air",
+    prop:"seated or kneeling gently on the staircase, turning over shoulder toward camera, veil flowing across rose path",
+    fx:"petal rain, veil sparkle, castle window bokeh, golden fairy-tale haze, romantic light dust",
+    l:"golden sunset backlight, soft face fill, warm veil rim light, high-end bridal glow",
+    cam:"vertical bridal editorial portrait, gown volume readable, castle background majestic, face sharp",
+    col:"champagne, rose pink, warm gold, ivory",
+    q:"ultra realistic fairy-tale bridal castle portrait, luxury wedding editorial, detailed lace, 8K",
+    neg:"messy text overlay, distorted gown, oversized head, hidden face, extra fingers, watermark"},
+  ref_peach_gold_tang_mask:{n:"桃金唐風貴女 · 金面珠鍊花宴",cat:"img_ref",mk:"imperial_empress",
+    char:"adult Tang-inspired noble beauty, clear elegant face, soft confident eyes, refined royal presence",
+    o:"peach-orange embroidered Tang-style hanfu, off-shoulder shawl layer, gold floral crown, dangling pearl tassels, delicate gold face chain mask, layered necklace",
+    s:"warm golden garden or palace flower banquet, amber bokeh, peach blossoms, luxury classical celebration atmosphere",
+    prop:"three-quarter beauty pose, one hand gently touching the necklace, head slightly tilted toward camera",
+    fx:"gold jewelry sparkle, warm flower bokeh, silk embroidery shimmer, subtle petal drift",
+    l:"rich golden-hour beauty light, soft face key light, warm rim light on crown and tassels",
+    cam:"close-to-medium classical fashion portrait, face and jewelry sharp, costume texture readable",
+    col:"peach orange, gold, pearl, warm amber",
+    q:"ultra realistic Tang-style luxury beauty portrait, ornate jewelry, warm palace garden light, 8K",
+    neg:"mask covering identity, messy jewelry, distorted hands, over-bright gold, watermark"},
+  ref_black_gold_moon_empress:{n:"黑金月后神姬 · 龍座掌珠",cat:"img_ref",mk:"imperial_empress",
+    char:"adult black-gold mythic empress, powerful calm gaze, regal posture, clear recognizable face, commanding presence",
+    o:"black and antique-gold imperial fantasy gown, structured corset bodice, ornate gold crown, long black silk robe, gold ankle jewelry, elegant heels",
+    s:"dark celestial throne chamber, enormous golden moon disc behind the head, sculpted cloud ornaments, dragon statue curling at the foreground, black water floor reflection",
+    prop:"seated on a throne with one leg crossed tastefully, one hand holding a glowing golden orb, other hand resting on the armrest",
+    fx:"gold moon halo, dragon-scale highlights, floating cloud filigree, black-gold mist, throne-room volumetric light",
+    l:"dramatic black-gold cinematic key light, clear face highlight, moon backlight, deep luxury shadows",
+    cam:"vertical epic throne portrait, low-angle queen composition, face sharp, body proportions realistic, no oversized head",
+    col:"obsidian black, antique gold, deep jade, moonlight amber",
+    q:"ultra realistic mythic empress throne portrait, high-end dark fantasy couture, detailed gold ornament, 8K HDR",
+    neg:"overly explicit pose, distorted legs, face swap, hidden face, broken dragon anatomy, watermark"}
+};
+Object.entries(IMAGE_REFERENCE_PRESETS_V652).forEach(([id,p])=>{if(!P[id])P[id]=p});
+
 const ALL_IDS=Object.keys(P);
 let selPID="warrior",selMK="warrior",selAngle="4:5 social portrait format",activeTab="preset",manualMK=false,txtMode="off",txtStyle="travel_photo",txtPlacement="auto",txtType="theme";
 const proControls={
-  lens:"cinematic three-quarter portrait, face sharp, outfit readable, environment visible, balanced travel-poster framing",
+  lens:"cinematic full-body or knee-up fashion portrait, camera pulled back enough to keep the head naturally small within the body, face sharp but not enlarged, outfit readable, environment visible, balanced travel-poster framing, avoid close-up beauty-head crop",
   action:"use the style example's Action / Gesture field as the clean physical action source; if the style has no action field, generate one from the character role, location, costume, and prop",
-  identity:"maximum identity preservation, highest priority identity lock, keep the uploaded person's face, facial features, limbs, anatomy, head size, neck length, shoulder width, and body proportions structurally normal and unchanged; no face swap, no face morphing, no facial deformation, no identity replacement, only beautify skin texture and lighting subtly",
   finish:"premium cinematic travel portrait finish, realistic skin, rich but controlled color grading, natural lens depth, high-end photoshoot polish",
-  guard:"strict core body guard: one main person only, exact facial identity, normal facial features, correct anatomy, natural hands with five fingers, correct limb count, coherent adult body proportions, realistic smaller head-to-body ratio for full-body shots, long balanced neck and limbs, realistic shoulder width, symmetrical readable eyes, no facial deformation, no face replacement, no changed facial structure, no oversized head, no childlike chibi ratio, no asymmetric warped eyes, no extra limbs, no duplicated face, no broken fabric, no warped background"
+  guard:"strict core body guard: one main person only, exact facial identity, normal facial features, correct anatomy, natural hands with five fingers, correct limb count, coherent adult body proportions, adult editorial runway proportion for full-body and knee-up shots, head around one-eighth of body height when full-body is visible, long balanced neck and limbs, realistic shoulder width, do not enlarge the head to preserve the face, no bobblehead, no oversized head, no short torso, no compressed body, symmetrical readable eyes, no facial deformation, no face replacement, no changed facial structure, no childlike chibi ratio, no asymmetric warped eyes, no extra limbs, no duplicated face, no broken fabric, no warped background"
 };
 
 function appendMegaMakeupCards(){
@@ -6486,16 +6858,16 @@ function presetCardMeta(id,p){
 }
 
 const SUCCUBUS_STYLE_EXPANSION_V633=[
-  ["v633_succubus_01","魅魔 · 緋夜女公爵","black-crimson velvet duchess gown, sculpted corset bodice, ruby choker, lace gloves, small gold horn hairpiece, long court train","moonlit gothic manor balcony, red roses climbing stone railings, distant storm sky","leaning on the balcony rail with one hand holding a sealed black invitation, dress train falling down the steps","crimson rose petals, candle bokeh, subtle wing-shaped shadow, velvet night haze"],
+  ["v633_succubus_01","魅魔 · 緋夜女公爵","black-crimson velvet duchess gown, sculpted corset bodice, ruby choker, lace gloves, small gold horn hairpiece, long court train","moonlit gothic manor balcony, red roses climbing stone railings, distant storm sky","leaning on the balcony rail with one hand holding a crimson rose fan, dress train falling down the steps","crimson rose petals, candle bokeh, subtle wing-shaped shadow, velvet night haze"],
   ["v633_succubus_02","魅魔 · 黑鑽歌劇名伶","black diamond opera gown, feathered shoulder cape, crystal microphone brooch, long satin gloves, jeweled hair comb","old opera house stage, red curtains, golden spotlight, empty velvet seats","standing under a single spotlight with one arm extended in a theatrical finale gesture","stage haze, black feathers, gold dust, dramatic curtain shadows"],
-  ["v633_succubus_03","魅魔 · 月蝕婚紗契約","black-red gothic bridal gown, layered tulle veil, obsidian tiara, ruby waist chain, lace sleeves","ruined cathedral during lunar eclipse, black flowers, red candle aisle","holding a contract ribbon and lifting the veil slightly beside the altar","eclipse halo, candle smoke, floating veil, dark rose particles"],
+  ["v633_succubus_03","魅魔 · 月蝕婚紗誓約","black-red gothic bridal gown, layered tulle veil, obsidian tiara, ruby waist chain, lace sleeves","ruined cathedral during lunar eclipse, black flowers, red candle aisle","holding a crimson silk ribbon and lifting the veil slightly beside the altar","eclipse halo, candle smoke, floating veil, dark rose particles"],
   ["v633_succubus_04","魅魔 · 酒紅天鵝絨酒館","wine-red velvet cocktail dress, black fur-trimmed capelet, rose-gold earrings, lace ankle boots","luxury midnight lounge, velvet sofa, crystal glasses, dark mirror wall","seated sideways on a velvet sofa, one hand holding a glass, cape draped elegantly","glass reflections, crimson vapor, warm candle bokeh, smoky lounge glow"],
-  ["v633_succubus_05","魅魔 · 紫焰地下鐵女王","black-purple leather couture coat, chrome belt, violet stockings, glossy boots, horn-shaped headphones","abandoned subway platform, violet emergency lights, wet reflective floor","walking along the platform edge with coat swinging and one hand touching a glowing ticket","purple flame mist, neon reflection, sparks from rail, cinematic rain haze"],
-  ["v633_succubus_06","魅魔 · 玫瑰賭場荷官","black rose dealer suit dress, red satin bow tie, lace cuffs, jeweled cards, slim waistcoat","dark casino table, green felt, golden lamps, blurred masked guests","leaning over the card table while sliding one glowing card forward","card sparkle, red smoke, chandelier bokeh, glossy table reflections"],
+  ["v633_succubus_05","魅魔 · 紫焰地下鐵女王","black-purple leather couture coat, chrome belt, violet stockings, glossy boots, horn-shaped headphones","abandoned subway platform, violet emergency lights, wet reflective floor","walking along the platform edge with coat swinging and one hand touching a glowing amethyst pendant","purple flame mist, neon reflection, sparks from rail, cinematic rain haze"],
+  ["v633_succubus_06","魅魔 · 玫瑰夜宴舞姬","black rose velvet suit dress, red satin bow tie, lace cuffs, jeweled rose brooch, slim waistcoat","dark ballroom table setting, emerald velvet cloth, golden lamps, blurred masked guests","leaning beside the velvet table while sliding a black rose forward","rose sparkle, red smoke, chandelier bokeh, glossy table reflections"],
   ["v633_succubus_07","魅魔 · 黑羽電梯廣告","glossy black mini-gown with long structured coat, diamond ear cuff, stiletto boots, subtle horn hairpins","luxury hotel elevator with mirrored walls and gold panels","standing in a mirrored elevator, one hand adjusting earring, coat opening in a clean fashion pose","mirror reflections, gold strip light, perfume-ad gloss, black feather particles"],
   ["v633_succubus_08","魅魔 · 血色花房採香師","dark botanical couture dress, thorn embroidery, burgundy corset, rose gloves, glass perfume vial","night greenhouse, black roses, wet glass ceiling, candlelit plant tables","holding a perfume vial near flowers while turning toward camera through leaves","rose vapor, wet glass highlights, thorn shadows, firefly-like red motes"],
-  ["v633_succubus_09","魅魔 · 魔法律師審判席","black courtroom couture suit, crimson cape collar, silver chain belt, ruby pen, sharp heels","infernal court hall, dark wood judge bench, red stained-glass windows","standing beside a trial desk, one hand presenting a glowing contract scroll","red legal seals, paper sparks, stained-glass light, controlled smoke"],
-  ["v633_succubus_10","魅魔 · 黑船夜港密使","black nautical corset coat, crimson scarf, gold buttons, thigh-high boots, jeweled spyglass","foggy old harbor, black ship, wet pier, lantern reflections","walking down the pier with spyglass in one hand and cloak trailing behind","harbor fog, lantern bokeh, sea spray, red contract glow"],
+  ["v633_succubus_09","魅魔 · 魔法花窗女王","black ceremonial couture suit, crimson cape collar, silver chain belt, ruby brooch, sharp heels","infernal ceremonial hall, dark wood dais, red stained-glass windows","standing beside a carved darkwood table, one hand presenting a glowing rose scroll","red rose seals, paper sparks, stained-glass light, controlled smoke"],
+  ["v633_succubus_10","魅魔 · 黑船夜港旅人","black nautical corset coat, crimson scarf, gold buttons, thigh-high boots, jeweled opera glass","foggy old harbor, black ship, wet pier, lantern reflections","walking down the pier with an opera glass in one hand and cloak trailing behind","harbor fog, lantern bokeh, sea spray, red rose glow"],
   ["v633_succubus_11","魅魔 · 鏡廳雙生幻影","silver-black mirror gown, asymmetric lace sleeve, crystal waist chain, obsidian hairpin","cracked palace mirror hall, candle rows, black marble floor","turning between mirrors while touching one cracked reflection with fingertips","mirror shards, candle reflections, violet mist, duplicate silhouettes kept abstract"],
   ["v633_succubus_12","魅魔 · 午夜圖書館禁書","dark academia lace blouse, black corset skirt, velvet cape, gold glasses chain, antique key","forbidden library tower, floating books, spiral stairs, moonlit window","opening a forbidden book on a high desk, one hand holding an antique key","floating pages, purple runes, dust motes, moonbeam through bookshelves"],
   ["v633_succubus_13","魅魔 · 紅絲帶馬戲團","black-red circus ringmaster dress, high collar jacket, ribbon top hat, cane, striped stockings","midnight circus tent, red spotlights, empty ring, velvet ropes","standing in the circus ring holding a cane diagonally, ribbons spiraling behind","red ribbon trails, spotlight haze, gold confetti, dark carnival glow"],
@@ -6514,20 +6886,20 @@ const SUCCUBUS_STYLE_EXPANSION_V633=[
   ["v633_succubus_26","魅魔 · 黑白棋局女王","black-white chess couture gown, checkerboard cape, pearl crown, satin gloves","giant chessboard hall, marble columns, red sunset window","moving a black queen chess piece while standing between oversized chess pieces","marble reflections, chess-piece shadows, gold dusk light, subtle red smoke"],
   ["v633_succubus_27","魅魔 · 暗香花魁夜行","black-red oiran-inspired couture kimono, gold obi, hairpins, lace fan, platform sandals","lantern-lit night street, red paper umbrellas, wet stone path","walking under lanterns while holding a lace fan near the shoulder","lantern bokeh, umbrella silhouettes, silk sleeve motion, crimson mist"],
   ["v633_succubus_28","魅魔 · 星艦黑玫瑰艦長","black sci-fi captain gown, crimson shoulder armor, holographic cape, chrome horn headset","starship bridge, red alert lights, giant window to nebula","commanding from the bridge with one hand on holographic controls","red alert glow, hologram lines, nebula light, cape motion"],
-  ["v633_succubus_29","魅魔 · 破曉契約逃亡","black travel corset dress, torn crimson cloak, leather gloves, ankle boots, glowing letter","old city gate at dawn, fog, carriage wheels, scattered red petals","running through the gate while clutching a glowing letter, cloak flying behind","dawn fog, motion fabric, petal streaks, warm backlight"],
+  ["v633_succubus_29","魅魔 · 破曉紅斗篷遠行","black travel corset dress, torn crimson cloak, leather gloves, ankle boots, glowing rose brooch","old city gate at dawn, fog, carriage wheels, scattered red petals","running through the gate while holding a glowing rose brooch, cloak flying behind","dawn fog, motion fabric, petal streaks, warm backlight"],
   ["v633_succubus_30","魅魔 · 黑羽王冠終章","black feather couture gown, obsidian crown, ruby collar, long gloves, dramatic cape","vast dark throne hall, floating black feathers, violet flame columns","standing center-frame with both arms slightly open, cape and feathers forming a crown silhouette","black feather storm, violet flame, throne glow, cinematic final-poster atmosphere"]
 ];
 SUCCUBUS_STYLE_EXPANSION_V633.forEach(([id,n,o,s,prop,fx])=>{
   if(P[id])return;
   P[id]={
     n,cat:"succubus_series",mk:"succubus_alluring",
-    char:"adult succubus-inspired dark couture heroine, alluring but tasteful, powerful feminine presence, confident gaze, clear recognizable face",
+    char:"adult succubus-inspired dark couture heroine, alluring but tasteful, powerful feminine presence, confident gaze, clear recognizable face, head naturally small relative to full body, eight-head runway proportion, no oversized head, no bobblehead distortion",
     o,s,prop,fx,
     l:"glamorous red-violet cinematic beauty light, clear face key light, polished rim light, rich shadows with readable facial identity",
-    cam:"full-body or three-quarter cinematic editorial composition, outfit and environment readable, face sharp, realistic nine-head fashion body proportion for full-body framing",
+    cam:"vertical full-body dark couture editorial composition, camera pulled back enough to show complete outfit, torso, and legs, outfit and environment readable, face sharp but not enlarged, realistic eight-head adult fashion body proportion, long neck and balanced shoulders, no beauty-head close crop",
     col:"black, crimson, wine red, violet, rose gold, obsidian, pearl highlights",
-    q:"ultra realistic premium dark fantasy travel portrait, high-end couture styling, detailed fabric and jewelry, coherent anatomy, cinematic polish, 8K HDR",
-    neg:"overly explicit styling, cheap costume, hidden face, messy text, watermark, childlike body, exact copyrighted character face"
+    q:"ultra realistic premium dark fantasy full-body travel portrait, high-end couture styling, detailed fabric and jewelry, coherent adult anatomy, natural smaller head-to-body ratio, cinematic polish, 8K HDR",
+    neg:"overly explicit styling, cheap costume, hidden face, messy text, watermark, childlike body, exact copyrighted character face, oversized head, bobblehead, giant face, short torso, compressed body, head-dominant close-up crop"
   };
 });
 
@@ -6561,10 +6933,71 @@ function appendExtraStyleCards(){
 }
 appendExtraStyleCards();
 
+const FAVORITE_KEY_V648="rb_favorites";
+const RECENT_KEY_V648="rb_recents";
+function readStoredListV648(key){
+  try{
+    const raw=localStorage.getItem(key);
+    const parsed=raw?JSON.parse(raw):[];
+    return Array.isArray(parsed)?parsed.filter(Boolean):[];
+  }catch(e){return []}
+}
+function writeStoredListV648(key,list){
+  try{localStorage.setItem(key,JSON.stringify([...new Set(list)].filter(Boolean)))}catch(e){}
+}
+function getFavoritesV648(){return readStoredListV648(FAVORITE_KEY_V648)}
+function getRecentsV648(){return readStoredListV648(RECENT_KEY_V648).slice(0,10)}
+function setFavoritesV648(list){writeStoredListV648(FAVORITE_KEY_V648,list)}
+function setRecentsV648(list){writeStoredListV648(RECENT_KEY_V648,list.slice(0,10))}
+function isFavoriteV648(pid){return getFavoritesV648().includes(pid)}
+function toggleFavV648(pid){
+  if(!pid)return;
+  const favs=getFavoritesV648();
+  const next=favs.includes(pid)?favs.filter(x=>x!==pid):[pid,...favs];
+  setFavoritesV648(next);
+  syncFavoriteButtonsV648();
+  updateCategoryCounts();
+  applyPresetFilters();
+}
+function recordRecentV648(pid){
+  if(!pid)return;
+  setRecentsV648([pid,...getRecentsV648().filter(x=>x!==pid)]);
+  updateCategoryCounts();
+}
+function ensurePresetMemoryUIV648(){
+  document.querySelectorAll(".preset-card").forEach(card=>{
+    if(!card.dataset.pid)return;
+    if(!card.querySelector(".fav-btn")){
+      const btn=document.createElement("button");
+      btn.type="button";
+      btn.className="fav-btn";
+      btn.textContent="★";
+      btn.title="收藏 / 取消收藏";
+      btn.setAttribute("aria-label","收藏此風格");
+      card.appendChild(btn);
+    }
+  });
+  syncFavoriteButtonsV648();
+}
+function syncFavoriteButtonsV648(){
+  const favs=getFavoritesV648();
+  document.querySelectorAll(".preset-card").forEach(card=>{
+    const on=favs.includes(card.dataset.pid);
+    card.classList.toggle("favorited",on);
+    const btn=card.querySelector(".fav-btn");
+    if(btn){
+      btn.textContent=on?"★":"☆";
+      btn.title=on?"取消收藏":"加入收藏";
+      btn.setAttribute("aria-pressed",on?"true":"false");
+    }
+  });
+}
+ensurePresetMemoryUIV648();
+
 const CATEGORY_GROUPS_V641={
   classical:["myth","xianxia","hanfu","oriental"],
   figure:["changxiangsi","daji_series","ninefox_series","change_series","xuannv_series","nuwa_series","mazu_series","xishi_series","zhaojun_series","diaochan_series","yang_guifei_series","succubus_series","queen_series","demon_lord_series"],
-  fantasy:["bigscene","fantasy","myth_angel","darkfantasy","dark_gothic","underwater","animegame","cos_fantasy"],
+  fantasy:["bigscene","fantasy","myth_angel","darkfantasy","dark_gothic","underwater","animegame","cos_fantasy","img_ref"],
   modern:["modern","citywalk","studio","dramanovel","japanese"],
   travel:["landmark","travel","world_culture","indian","nature"]
 };
@@ -6673,10 +7106,14 @@ function updatePresetCount(){
 }
 function applyPresetFilters(){
   const q=(document.getElementById("preset-search")?.value||"").trim().toLowerCase();
+  const favs=getFavoritesV648();
+  const recents=getRecentsV648();
   let shown=0;
   document.querySelectorAll(".preset-card").forEach(c=>{
-    const superOk=categoryBelongsToSuperV641(c.dataset.cat||"");
-    const catOk=superOk&&(activeCat==="all"||c.dataset.cat===activeCat);
+    const pid=c.dataset.pid||"";
+    const specialOk=activeCat==="__fav__"?favs.includes(pid):activeCat==="__recent__"?recents.includes(pid):null;
+    const superOk=specialOk!==null?true:categoryBelongsToSuperV641(c.dataset.cat||"");
+    const catOk=specialOk!==null?specialOk:superOk&&(activeCat==="all"||c.dataset.cat===activeCat);
     const searchOk=!q||cardSearchText(c).includes(q);
     c.classList.toggle("visible",catOk);
     c.classList.toggle("hide-search",!searchOk);
@@ -6688,7 +7125,7 @@ function applyPresetFilters(){
 function updateCategoryCounts(){
   document.querySelectorAll(".cat-btn").forEach(btn=>{
     const cat=btn.dataset.cat;
-    const count=cat==="all"?document.querySelectorAll(".preset-card").length:document.querySelectorAll(`.preset-card[data-cat="${cat}"]`).length;
+    const count=cat==="__fav__"?getFavoritesV648().length:cat==="__recent__"?getRecentsV648().length:cat==="all"?document.querySelectorAll(".preset-card").length:document.querySelectorAll(`.preset-card[data-cat="${cat}"]`).length;
     const label=btn.textContent.replace(/\s*\(\d+\)$/,"");
     btn.textContent=`${label} (${count})`;
   });
@@ -6723,18 +7160,43 @@ document.querySelectorAll(".density-btn").forEach(btn=>btn.classList.toggle("on"
 applyPresetFilters();
 
 // random
-document.getElementById("random-btn").addEventListener("click",()=>{
-  const pid=ALL_IDS[Math.floor(Math.random()*ALL_IDS.length)];
-  document.querySelectorAll(".preset-card").forEach(c=>{c.classList.remove("selected");c.classList.add("visible")});
+function showRandomToastV651(name){
+  let toast=document.getElementById("random-toast");
+  if(!toast){
+    toast=document.createElement("div");
+    toast.id="random-toast";
+    toast.className="random-toast";
+    document.body.appendChild(toast);
+  }
+  toast.textContent=`已套用：${name}`;
+  toast.classList.add("show");
+  clearTimeout(showRandomToastV651.timer);
+  showRandomToastV651.timer=setTimeout(()=>toast.classList.remove("show"),1800);
+}
+document.getElementById("random-btn")?.addEventListener("click",()=>{
+  const cards=[...document.querySelectorAll(".preset-card[data-pid]")].filter(card=>P[card.dataset.pid]);
+  if(!cards.length)return;
+  const card=cards[Math.floor(Math.random()*cards.length)];
+  const pid=card.dataset.pid;
+  const search=document.getElementById("preset-search");
+  if(search)search.value="";
+  activeCat="all";
+  presetVisibleLimit=Math.max(presetVisibleLimit,480);
   document.querySelectorAll(".cat-btn").forEach(x=>x.classList.remove("active"));
   document.querySelector('.cat-btn[data-cat="all"]')?.classList.add("active");
   if(typeof setSuperCategoryV641==="function")setSuperCategoryV641("all");
-  const card=document.querySelector(`.preset-card[data-pid="${pid}"]`);
-  if(card){card.classList.add("selected");card.scrollIntoView({behavior:"smooth",block:"nearest"})}
-  selPID=pid;manualMK=false;autoMK(pid);
+  applyPresetFilters();
+  card.classList.remove("hide-search","hide-page");
+  card.classList.add("visible");
+  card.click();
+  card.scrollIntoView({behavior:"smooth",block:"center"});
+  const name=P[pid]?.n||card.querySelector(".name")?.textContent?.trim()||"隨機風格";
   const btn=document.getElementById("random-btn");
-  btn.innerHTML=`🎲 已選：${P[pid].n} ✨`;
-  setTimeout(()=>btn.innerHTML='🎲 隨機幫我選一個風格 <span class="rbadge">選擇困難專用</span>',2500);
+  if(btn){
+    btn.innerHTML=`🎲 已選：${name} ✨`;
+    setTimeout(()=>btn.innerHTML='🎲 隨機幫我選一個風格 <span class="rbadge">選擇困難專用</span>',2500);
+  }
+  showRandomToastV651(name);
 });
 
 function autoMK(pid){if(manualMK)return;const p=P[pid];if(!p)return;selMK=p.mk;document.querySelectorAll(".mk-card").forEach(c=>c.classList.toggle("selected",c.dataset.mk===selMK));document.getElementById("auto-makeup-tag").textContent="✦ 自動配妝："+p.n}
@@ -6742,8 +7204,28 @@ function autoMK(pid){if(manualMK)return;const p=P[pid];if(!p)return;selMK=p.mk;d
 // preset select
 document.querySelectorAll(".preset-card").forEach(c=>c.addEventListener("click",()=>{
   document.querySelectorAll(".preset-card").forEach(x=>x.classList.remove("selected"));
-  c.classList.add("selected");selPID=c.dataset.pid;manualMK=false;autoMK(selPID);
+  c.classList.add("selected");selPID=c.dataset.pid;manualMK=false;autoMK(selPID);recordRecentV648(selPID);
 }));
+
+document.getElementById("preset-grid")?.addEventListener("click",e=>{
+  const fav=e.target.closest(".fav-btn");
+  if(fav){
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    const card=fav.closest(".preset-card");
+    toggleFavV648(card?.dataset.pid);
+    return;
+  }
+  const card=e.target.closest(".preset-card");
+  if(!card)return;
+  document.querySelectorAll(".preset-card").forEach(x=>x.classList.remove("selected"));
+  card.classList.add("selected");
+  selPID=card.dataset.pid;
+  manualMK=false;
+  autoMK(selPID);
+  recordRecentV648(selPID);
+});
 
 // makeup
 document.querySelectorAll(".mk-card").forEach(c=>c.
@@ -6831,7 +7313,7 @@ function addKeywordChip(g,v,selected=false,fromPreset=false){
   return chip;
 }
 const EXPANDED_KEYWORDS={
-  scene:["命運重逢張力","儀式感開場","戰後安靜瞬間","禁忌契約成立","女王審判壓迫","魅惑邀請感","逃亡前一秒","秘密任務執行中","盛大登場瞬間","復仇回歸氣場","清冷孤高情緒","溫柔治癒氛圍","夢境迷路感","節慶歡騰情緒","史詩決戰前夕","黑暗童話敘事","戀愛電影凝視","孤獨守夜感","加冕典禮張力","未知冒險啟程"],
+  scene:["命運重逢張力","儀式感開場","戰後安靜瞬間","禁忌誓約氛圍","女王威壓氣場","魅惑邀舞感","遠行前一秒","神秘夜巡進行中","盛大登場瞬間","復仇回歸氣場","清冷孤高情緒","溫柔治癒氛圍","夢境迷路感","節慶歡騰情緒","史詩決戰前夕","黑暗童話敘事","戀愛電影凝視","孤獨守夜感","加冕典禮張力","未知冒險啟程"],
   outfit:["黑絲絨高訂禮服","白金天使羽翼裙","珍珠精靈長裙","異域刺繡披肩","印度珠寶紗麗","摩洛哥藍色長袍","佛朗明哥紅裙","蒸汽龐克皮革外套","魔法學院披風","賽博貓耳耳機","機甲駕駛服","高級珠寶晚禮服","戶外斗篷長裙","水光珍珠紗裙","唐制披帛漢服","韓服粉彩裙襬","日式淡色和服","黑白時裝西裝裙"],
   fx:["黑羽飄落","珍珠光塵","聖光羽毛","星塵符文","彩色玻璃燈影","沙金塵粒","全息 HUD 光屏","漂浮魔法信件","蒸汽齒輪煙霧","水面折射光","花瓣雨","霓虹倒影","香水玻璃反光","水晶泡泡","天燈升空","燭光煙霧","龍影環繞","極光粒子"],
   light:["低調黑紅輪廓光","珍珠白柔光","神聖體積光","金色沙漠夕陽","市集暖燈光","霓虹藍紫邊光","專業柔光箱","雨夜反射光","月光銀藍逆光","森林晨霧散射光","海邊日落逆光","玻璃花房漫射光","高級珠寶聚光","咖啡廳午後光"],
@@ -6855,7 +7337,7 @@ const SIMILAR_EXTENSION_KEYWORDS={
 Object.entries(SIMILAR_EXTENSION_KEYWORDS).forEach(([group,items])=>items.forEach(v=>addKeywordChip(group,v,false,true)));
 const V611_KEYWORD_BANK={
   location:["雲海祭壇","仙門劍台","長安朱雀街","白牆黑瓦庭院","民國公館","精品商圈","霓虹巷口","無縫白棚","地標廣場","葡萄園丘陵","文化節廣場","粉紅宮殿拱廊","京都竹林","高山花海","巨型城門","雲端圖書館","雲端聖門","黑森林月夜","古堡宴會廳","水族館藍廊","魔法學院大廳","魔法郵局"],
-  scene:["上古神話儀式感","命運重逢張力","復仇歸來氣場","女王審判壓迫感","清冷孤高白月光","盛大登場瞬間","戰後沉默餘韻","暗黑誘惑邀請","禁忌契約成立","秘密任務進行中","逃亡追逐電影感","節慶熱鬧歡騰","浪漫凝視瞬間","離別前的回眸","夢境迷路氛圍","神聖降臨威嚴","魔法覺醒瞬間","高級廣告情緒","都市夜歸故事感","史詩決戰前夕","溫柔治癒日常","懸疑調查氛圍"],
+  scene:["上古神話儀式感","命運重逢張力","復仇歸來氣場","女王威壓登場","清冷孤高白月光","盛大登場瞬間","戰後沉默餘韻","暗黑夜宴邀舞","禁忌誓約氛圍","神秘夜巡進行中","遠行追逐電影感","節慶熱鬧歡騰","浪漫凝視瞬間","離別前的回眸","夢境迷路氛圍","神聖降臨威嚴","魔法覺醒瞬間","高級廣告情緒","都市夜歸故事感","史詩決戰前夕","溫柔治癒日常","懸疑探尋氛圍"],
   outfit:["上古祭司金紋禮袍","仙俠飄帶劍袍","朝代制式漢服","水墨絲緞長裙","影劇女主定制造型","高訂時裝禮服","都市風衣街拍裝","商業廣告造型服","地標旅行長裙","異國度假紗裙","民族高訂融合服","南亞珠寶紗麗","和服浴衣或韓服","戶外斗篷長裙","史詩戰袍鎧甲","夢境蓬裙禮服","白金天使羽翼袍","暗黑魔法長袍","哥德蕾絲禮服","珍珠水紗長裙","遊戲角色戰鬥服","COS 主題角色服"],
   fx:["青銅神光粒子","御劍流光","花瓣與衣袖飄動","水墨煙霧層次","電影海報光暈","雜誌閃光反射","雨夜霓虹倒影","棚拍反光板高光","地標晨霧光點","沙塵與陽光粒子","節慶彩帶飄散","金粉與香料煙霧","櫻花或銀杏飄落","風吹草浪","巨龍或旗幟遠景","水晶閃光","白羽與聖光","黑霧與符文","燭火與黑羽","水波與珍珠光","能量 HUD 特效","角色道具光效"],
   light:["祭壇金色逆光","仙氣冷白輪廓光","古典窗格柔光","水墨漫射光","電影主光加邊光","時尚棚拍硬光","霓虹雨夜反射光","商業高光輪廓","旅行晨昏自然光","度假金色夕陽","節慶暖色燈光","宮殿金銅光","日韓柔粉自然光","戶外逆光","史詩體積光","夢境粉彩光","白金聖光","暗月冷光","哥德燭光","水下藍綠光","舞台電光","角色海報主光"],
@@ -6995,7 +7477,7 @@ function normalizeKeywordCombinationLayout(){
     box.append(title,chips,row);
     custom.insertBefore(box,summary);
   };
-  createGroup("prop","🧰 道具物件",["長劍","油紙傘","團扇","花束","燈籠","琵琶","古琴","卷軸","酒杯","手持面具道具","香水瓶","珠寶盒","旅行帽","手提箱","魔法書","權杖","塔羅牌","科技裝置"],"自訂道具物件...");
+  createGroup("prop","🧰 道具物件",["長劍","油紙傘","團扇","花束","燈籠","琵琶","古琴","卷軸","酒杯","手持面具道具","香水瓶","珠寶盒","旅行帽","手提箱","魔法書","權杖","星象牌道具","科技裝置"],"自訂道具物件...");
   createGroup("camera","📷 鏡頭構圖",["全身大景","半身電影感","低角度仰拍","俯拍廣角","前景花葉框景","對稱構圖","三分法構圖","動態斜角構圖","長焦壓縮背景","廣角環境人像","雜誌封面留白","海報中心構圖","近距離情緒特寫","背影遠景","人物小景大"],"自訂鏡頭構圖...");
   const order=[
     ["chips-location","📍 地點類型"],
@@ -7023,10 +7505,10 @@ const KEYWORD_EXPANSION_V640={
   location:["雪地森林","雪山觀景台","冰湖湖畔","霧氣溫泉","雨後石板街","海邊礁石","斷崖海岸","沙漠公路","火山黑沙地","風車草原","麥田小路","花海山坡","竹林小徑","楓葉神社參道","銀杏大道","櫻花河岸","古城城牆","老街騎樓","港口碼頭","地鐵出口","天台邊緣","美術館白牆","高級酒店大廳","玻璃空橋","機場候機廳","廢墟劇場","溫室花房","水族館藍廊","教堂彩窗","古堡長廊"],
   weather:["初雪飄落","暴雪遠景","雨後濕地反光","細雨薄霧","濃霧清晨","黃昏微風","海風強烈","沙塵夕陽","櫻花雨","楓葉飄落","銀杏落葉滿地","螢火蟲夜晚","夏日逆光熱浪","冬季冷空氣","高原雲影","海面水氣","山谷雲霧","霓虹雨夜","雪後晴天","藍調時刻"],
   light:["雪地反射補光","雨夜霓虹反射光","夕陽側逆光","清晨低角度柔光","林間斑駁光","水面反射光","玻璃窗邊柔光","彩窗投影光","棚拍大柔光箱","黑棚輪廓光","高級珠寶聚光","車燈逆光","路燈暖光","電影藍橙對比光","月光冷邊光","火光閃爍光","燭光低照度","舞台追光","廣告硬光","美妝眼神光不改眼型"],
-  scene:["久別重逢","戰後歸來","加冕前夜","逃亡途中","秘密任務","禁忌告白","離別車站","盛裝赴宴","孤身守城","女王審判","暗夜交易","雪夜等待","雨中回眸","初戀電影感","復仇歸來","神明降臨","魔法覺醒","命運召喚","儀式開始","終章前夕","公路遠行","城市夜歸","高級廣告感","雜誌封面感","史詩預告片感"],
+  scene:["久別重逢","戰後歸來","加冕前夜","遠行途中","神秘夜巡","禁忌告白","離別車站","盛裝赴宴","孤身守城","女王登場","暗夜花宴","雪夜等待","雨中回眸","初戀電影感","復仇歸來","神明降臨","魔法覺醒","命運召喚","儀式開始","終章前夕","公路遠行","城市夜歸","高級廣告感","雜誌封面感","史詩預告片感"],
   outfit:["雪地白色毛呢斗篷","黑色長風衣","紅色絲絨長裙","白色緞面禮服","金線刺繡漢服","淺色羊毛披肩","皮革腰封長裙","高訂羽毛披肩","亮面雨衣外套","都市西裝套裝","機場風衣大衣","度假亞麻白裙","海邊飄逸罩衫","沙漠民族披肩","騎士皮革長靴","鎧甲披風戰袍","暗黑蕾絲禮服","霓虹科技外套","白襯衫牛仔大片","精品黑裙","珠寶晚宴禮服","棚拍美妝肩紗"],
-  prop:["透明雨傘","竹傘","紅色燈籠","復古皮箱","車票","信封","玫瑰","梅枝","折扇","長劍","匕首","權杖","魔法書","塔羅牌","香水瓶","珠寶盒","相機","咖啡杯","酒杯","手持面具道具","羽毛扇","絲巾","披肩","古琴","琵琶"],
-  pose:["迎風行走","回眸轉身","披風甩開","提裙上階","倚靠欄杆","伸手接雪","撐傘回頭","手扶帽沿","持劍低垂","長劍指地","揮劍收招","雙手捧光","打開信封","翻開書頁","端起茶杯","坐姿側身","斜靠窗邊","從車門下車","走過斑馬線","站在風口","低角度英雄站姿","舞台轉身","雙手整理耳環","手扶披肩","遠望地平線"],
+  prop:["透明雨傘","竹傘","紅色燈籠","復古皮箱","行李牌","花箋","玫瑰","梅枝","折扇","長劍","匕首","權杖","魔法書","星象牌道具","香水瓶","珠寶盒","相機","咖啡杯","酒杯","手持面具道具","羽毛扇","絲巾","披肩","古琴","琵琶"],
+  pose:["迎風行走","回眸轉身","披風甩開","提裙上階","倚靠欄杆","伸手接雪","撐傘回頭","手扶帽沿","持劍低垂","長劍指地","揮劍收招","雙手捧光","展開花箋","翻開書頁","端起茶杯","坐姿側身","斜靠窗邊","從車門下車","走過斑馬線","站在風口","低角度英雄站姿","舞台轉身","雙手整理耳環","手扶披肩","遠望地平線"],
   camera:["全身環境人像","三分之二身","半身肖像","近距離情緒特寫","低角度英雄構圖","高角度俯拍","鳥瞰裙擺構圖","長焦壓縮背景","廣角大景人像","前景花葉框景","門框構圖","窗框構圖","反射構圖","對稱中軸構圖","留白封面構圖","海報中心構圖","動態斜角構圖","背影遠景","人小景大","圓形拱門框景"],
   fx:["雪花前景散景","雨滴玻璃反光","霧氣層次","花瓣飄落","楓葉旋風","銀杏葉雨","水面波光","火星粒子","燭煙飄散","霓虹倒影","絲帶飛舞","裙擺動態拖影","魔法符文環","光羽飄落","星塵粒子","黑羽飄落","珠寶高光閃爍","玻璃折射","風沙粒子","電影膠片顆粒"]
 };
@@ -7051,24 +7533,24 @@ const KEYWORD_EXPANSION_V647={
     "古裝劇朱紅大袖正裝","深宮翠綠妃子常服","軍師謀士長衫羽扇","白衣古墓女俠裝","黑衣刺客緊身夜行裝","民國絲絨旗袍外套","復仇千金黑色長裙","梨園名伶水袖戲服"
   ],
   scene:[
-    "深海王座加冕","水下遺跡覺醒","沉船寶藏重現","潮汐退去前的告別","月光照進水面那刻","人魚與陸地的契約",
+    "深海王座加冕","水下遺跡覺醒","沉船珍珠花園","潮汐退去前的告別","月光照進水面那刻","人魚與陸地的誓約",
     "恆河晨祭祈願","宮殿婚禮前夜","香料市集偶遇","彩粉節人群中回眸","湖宮晚宴入場","神廟燭火誓言",
-    "深宮密信被發現","雨夜客棧江湖相逢","民國舞會暗號交換","多年後的復仇歸來","梨園登台前一刻","古墓機關開啟","宮廷審判前夜","江湖決戰後沉默"
+    "深宮花箋被發現","雨夜客棧江湖相逢","民國舞會眼神重逢","多年後的復仇歸來","梨園登台前一刻","古墓石門開啟","宮廷大殿前夜","江湖決戰後沉默"
   ],
   prop:[
     "珍珠權杖","珊瑚王冠","貝殼手包","水晶海螺","沉船金幣","藍色水母燈","海草飄帶",
     "金色手鐲","寶石額飾","香料布袋","孔雀羽扇","蓮花燭台","印度宮廷油燈",
-    "密信信封","玉佩令牌","羽扇","戲曲水袖","復古手槍道具","老式留聲機","卷宗檔案","紅色請帖"
+    "花箋信物","玉佩令牌","羽扇","戲曲水袖","復古道具手套","老式留聲機","故事卷宗","紅色花帖"
   ],
   light:[
     "水下藍綠光柱","水面波紋投影光","水族館藍色柔光","螢光海浪微光","冰洞藍紫透光",
     "印度宮殿金色晨光","神廟燭火金光","彩粉節柔霧逆光","市集布棚斑駁光",
-    "深宮燈籠側光","民國舞廳鎢絲燈","客棧窗邊雨夜光","古墓燭火低照度","審判大殿頂光"
+    "深宮燈籠側光","民國舞廳鎢絲燈","客棧窗邊雨夜光","古墓燭火低照度","宮殿大廳頂光"
   ],
   pose:[
     "水中漂浮回眸","雙手扶珊瑚王座","裙擺隨水流展開","指尖觸碰水面光紋","側身穿過水下光柱",
     "整理紗麗披肩","雙手捧蓮花油燈","彩粉節轉身微笑","扶著宮殿石柱回望","手持孔雀羽扇側身",
-    "拆開密信停頓","袖中藏信回眸","水袖甩開定格","扶欄遠望等人","低頭合上卷宗","雨夜推門入場"
+    "展開花箋停頓","袖中藏花回眸","水袖甩開定格","扶欄遠望等人","低頭合上卷宗","雨夜推門入場"
   ],
   camera:[
     "水下全身環境人像","水面上下分割構圖","藍廊長焦壓縮","王座中心對稱構圖","漂浮裙擺鳥瞰",
@@ -7105,7 +7587,6 @@ function buildProControlPrompt(){
   return [
     `Camera language: ${proControls.lens}.`,
     `Pose and action direction: ${proControls.action}. Follow this as an active pose instruction, not just mood words.${actionGuard}${roleGuard}`,
-    `Identity strength: ${proControls.identity}.`,
     "Action safety premise: keep the selected pose physically readable, balanced, and natural; hands, fingers, limbs, fabric motion, props, and camera angle must support the action without covering the face.",
     "Wardrobe integrity: complete outfit construction, clean skirt or sleeve drape, accessories attached logically to hair or clothing, fabric and jewelry may change freely as long as anatomy stays correct.",
     `Final image finish: ${proControls.finish}.`,
@@ -7171,13 +7652,13 @@ function buildRoleActionPrompt(p){
   const explicitAction=presetExplicitActionText(p);
   const rules=[
     [/魅魔|succubus|alluring|誘惑|酒廊|cabaret|boudoir|velvet|rose|玫瑰|黑羽夜宴|暗香舞會/i,[
-      "tasteful seductive power pose: slow confident walk toward camera, one shoulder angled, lace sleeve or dress train trailing, direct magnetic eye contact, one hand near a prop or collarbone without covering the face",
-      "alluring lounge or throne pose: seated diagonally with elegant crossed-leg silhouette, one hand resting on velvet armrest, other hand holding a glass, feather fan, contract ribbon, or rose, face clear and dominant",
-      "dark dance invitation pose: mid-turn with skirt and sleeves spiraling, hips and shoulders angled gracefully, gaze locked on camera, sensual but premium editorial, no vulgar body emphasis"
+      "tasteful seductive power pose: camera pulled back to full-body or knee-up fashion distance, slow confident walk toward camera, one shoulder angled, lace sleeve or dress train trailing, direct magnetic eye contact, one hand near a prop or collarbone without covering the face, head naturally small relative to the body",
+      "alluring lounge or throne pose: seated diagonally with elegant crossed-leg silhouette, full torso and legs readable, one hand resting on velvet armrest, other hand holding a glass, feather fan, silk ribbon, or rose, face clear but not enlarged",
+      "dark ballroom dance pose: full-body mid-turn with skirt and sleeves spiraling, hips and shoulders angled gracefully, gaze locked on camera, sensual but premium editorial, no vulgar body emphasis, no close-up crop"
     ]],
     [/魔王|demon lord|dark lord|overwhelming|霸權|王座|煉獄|深淵|黑城|abyss|infernal/i,[
       "overlord command action: low-angle cinematic pose, one hand raised issuing an order, cape opening like dark wings, magic or embers gathering behind, expression calm and absolute",
-      "rising from throne action: stepping down from a black throne or broken stair, long cape sweeping outward, one hand gripping sword, crystal orb, or contract scroll, face clear and intimidating",
+      "rising from throne action: stepping down from a black throne or broken stair, long cape sweeping outward, one hand gripping sword, crystal orb, or crimson sigil scroll, face clear and intimidating",
       "battlefield ruler pose: standing amid ash, banners, or ruins with weapon lowered beside the body, shoulders square, chin slightly lifted, quiet oppressive power rather than generic standing"
     ]],
     [/女王|queen|empress|王權|王冠|imperial|royal|sovereign|貴妃|guifei/i,[
@@ -7312,7 +7793,8 @@ document.getElementById("gen-btn").addEventListener("click",async()=>{
   }
 
   // ③ 妝容
-  const mkDesc = MK[selMK]||MK["warrior"];
+  const mk = MK[selMK]||MK["warrior"];
+  const mkDesc = Array.isArray(mk) ? mk[Math.floor(Math.random()*mk.length)] : mk;
 
   // ④ 文字指令
   let txtLine="";
@@ -7343,26 +7825,37 @@ document.getElementById("gen-btn").addEventListener("click",async()=>{
 
   // ⑥ 組合咒語
   // Legacy Chinese preview assembly removed; final output is built by buildEnglishPrompt().
-  const enResult = sanitizePolicySensitiveTerms(cleanEnglishPrompt(buildEnglishPrompt(p, customParts, mkDesc, selAngle, txtLine, extras, proPrompt)));
+  const enResult = sanitizePolicySensitiveTerms(cleanEnglishPrompt(buildEnglishPrompt(p, customParts, mkDesc, selAngle, txtLine, extras, proPrompt, selMK)));
   document.getElementById("result-text").textContent=enResult;
   resultBox.style.display="block";
   resultBox.scrollIntoView({behavior:"smooth",block:"start"});
 });
 
 // 建立全英文 Prompt
-function buildEnglishPrompt(p, customParts, mkDesc, selAngle, txtLine, extras, proPrompt){
+function buildEnglishPrompt(p, customParts, mkDesc, selAngle, txtLine, extras, proPrompt, selectedMakeupKey){
   const parts=[];
-  const TRAVEL_STYLING_BOOST="Professional travel-portrait styling upgrade: makeup should look like a real paid travel photoshoot makeover, more polished and more visible than everyday makeup, with defined eye makeup, refined eyeliner, curled lashes, layered eyeshadow, blush, contour, luminous base, polished lips, and camera-ready skin while still preserving the uploaded person's original facial structure. Costume styling must feel abundant and ceremonial: layered fabrics, embroidered trims, waist ornaments, earrings, necklaces, bracelets, tassels, hairpins, floral hair inserts, crowns, combs, beads, ribbons, veils, shawls, hand props, and matching accessories. Do not simplify the outfit or leave the hair plain; build a complete head-to-toe travel photoshoot look with rich but coherent accessories.";
+  const TRAVEL_STYLING_BOOST="Professional travel-portrait styling upgrade: makeup and styling should look like a real paid travel photoshoot makeover while preserving the uploaded person's exact facial identity. Makeup is surface cosmetics only: color, texture, eyeliner, lashes, blush, lip finish, and lighting polish may change, but bone structure, face shape, eye shape, eye size, nose shape, lip shape, cheek volume, jawline, chin, smile structure, age impression, and skin identity must not be beautified or reshaped. Costume styling must feel abundant and ceremonial: layered fabrics, embroidered trims, waist ornaments, earrings, necklaces, bracelets, tassels, hairpins, floral hair inserts, crowns, combs, beads, ribbons, veils, shawls, hand props, and matching accessories. Do not simplify the outfit or leave the hair plain; build a complete head-to-toe travel photoshoot look with rich but coherent accessories.";
+  const BARE_FACE_LOCK="Bare-face mode hard lock: because the selected makeup is natural_clean / no-makeup, preserve the uploaded person's original bare face instead of applying beauty retouching. Keep real skin texture, pores, small blemishes, natural under-eye shadows, original brow density, real lip color, real nose bridge, real jawline, real cheek volume, natural facial asymmetry, and age impression. Do not create glass skin, Korean idol skin, clean-girl makeover, influencer beauty face, V-shaped face, enlarged eyes, higher nose bridge, smaller nose, sharper chin, thinner jaw, smaller face, smoother cheeks, whiter skin, doll-like lips, or studio beauty filter. Lighting may be cinematic, but the face must remain the same ordinary real person from the uploaded photo. Generate this as an unretouched candid documentary photograph taken on location, not a beauty campaign, not a social media beauty post, not a studio fashion shoot. The face must look like a real ordinary person photographed in real life, not a model or influencer prepared for camera.";
+  const BARE_FACE_STYLE_FILTER="Bare-face style filter: if any selected preset, character description, scene wording, quality wording, or style example says idol, celebrity, model, brand ambassador, advertisement, commercial campaign, fashion campaign, magazine beauty, clean beauty, perfect beauty, sweet idol, Korean idol, Japanese ad girl, influencer, or social-media-ready face, treat those words as mood or environment reference only and do not apply them to the face. Do not infer a more attractive face from role, location, costume, lens, or genre. The uploaded face remains ordinary, specific, and unchanged.";
+  const UNIVERSAL_FACE_STYLE_FILTER="Universal face-preservation filter: words such as princess, bride, bridal, goddess, heroine, celebrity, model, actor, diva, ambassador, campaign, advertisement, luxury editorial, beauty portrait, clear soft smile, sweet smile, delicate features, refined beauty, flawless base, sculpted contour, luminous base, camera-ready skin, high-end polish, and similar beauty or role words describe costume, mood, lighting, pose, and surface makeup only. They must not replace the uploaded face, invent a prettier face, force a new smile, change mouth corners, change cheek volume, enlarge eyes, shrink the nose, sharpen the chin, narrow the jaw, smooth skin identity, or make the person look like a different bride/model/influencer. If role or makeup conflicts with identity, preserve the uploaded face and adapt the styling around it.";
+  const MAKEUP_SURFACE_LOCK="Makeup application lock: apply makeup as paint, cosmetics, texture, and lighting on top of the exact uploaded face. Keep the person's original facial geometry and expression anatomy. Eyeliner must follow the original eye shape; lipstick must follow the original lip shape; contour must not change bone structure; blush/highlight must not change cheek volume; smile or romantic expression must remain subtle enough that the person is still recognizably the same.";
+  const isBareFaceMode=selectedMakeupKey==="natural_clean";
   const PROMPT_STRUCTURE_GUIDE="Prompt structure guide: after the identity and Action / Gesture priority locks, build the image from large environment to person. Establish the medium and overall tone first, then location, weather, time, lighting, and environmental perspective; then place the subject into that light; then add outfit, hair styling, props, action details, camera composition, effects, color, quality, and technical finish.";
-  const IDENTITY_LOCK_TEXT="Use the person in the uploaded photo as the sole identity reference. Preserve exact face shape, bone structure, eye shape, nose shape, lip shape, hairline, skin tone, age impression, and personal likeness with complete fidelity. Change only outfit, environment, lighting, makeup effect, camera, and body pose. Do not alter facial features, facial proportions, hairline, or identity. Do not shift the hairline. Do not blend with a celebrity or character face. Keep the face clearly visible and recognizable throughout; hair, props, shadow, veil, foreground elements, text, particles, and effects must frame the subject without covering the eyes, nose, mouth, face outline, or key facial features. Render detailed individual hair strands; hair must not merge into a blob or mass. Body proportion lock: for full-body, three-quarter body, wide epic, and environmental portraits, keep an adult realistic model proportion with a naturally smaller head relative to the body, long balanced neck, realistic shoulder width, long legs and coherent torso length; use an eight-to-nine-head fashion proportion when appropriate, never cute doll proportions. Avoid oversized head, big-head portrait distortion, childlike chibi ratio, short-body distortion, or distorted limb ratios. Hands must have correct finger count; all limbs must be anatomically coherent. The selected Action / Gesture must stay physically readable, balanced, and natural. Identity override: if any style element conflicts with the uploaded face, keep the uploaded face unchanged and adapt the style around it.";
-  const AVOID_LOCK="low quality, cartoon style, AI art style, cheap look, watermark, unreadable or messy text, text covering the face, face swap, face morphing, facial deformation, identity drift, replaced face, different person, altered facial proportions, altered age, changed face width, changed jawline, changed chin, changed cheekbones, changed nose, changed eye distance, changed eye shape, changed mouth shape, changed hairline, oversized head, big head, enlarged head, head too large for body, childlike chibi body ratio, cute doll proportions, short torso with large head, short body with large head, tiny shoulders, narrow collapsed shoulders, over-beautified different face, deformed hands, fused fingers, extra fingers, extra limbs, incoherent anatomy, impossible pose, broken outfit, cropped full-body composition when full-body is requested, hidden face, props covering face, foreground covering face, particles covering facial features, eye light changing eye shape";
+  const PHOTO_REFERENCE_GATE="MANDATORY FIRST STEP: Check the current ChatGPT message / conversation for an uploaded reference photo of the person. If no reference photo is attached or visible, STOP and ask the user to upload the person's photo first. Do not generate an image, do not invent a face, do not use a generic influencer/model face, and do not proceed from text alone.";
+  const IDENTITY_LOCK_TEXT="Use the person in the uploaded photo as the only character model and the sole identity reference. First analyze and lock the exact face shape, head shape, bone structure, eye shape, eye distance, nose shape, mouth and lip shape, jawline, chin, cheekbones, hairline, hairstyle impression, skin tone, skin texture, age impression, neck length, shoulder width, head size, body proportions, and personal likeness. The output must look like the same real person from the uploaded photo after changing outfit, environment, lighting, makeup effect, camera, and body pose only. Do not alter facial features, facial proportions, head shape, hairline, skin texture, age impression, identity, head size, or body structure. Do not beautify into a different internet-famous face, model face, celebrity face, doll face, AI influencer face, generic pretty face, Korean idol face, clean-girl face, or V-shaped beauty-filter face. Do not smooth the face into plastic skin or replace natural texture with glass skin. Do not blend with a celebrity or character face. Keep the face clearly visible and recognizable throughout; hair, props, shadow, veil, foreground elements, text, particles, and effects must frame the subject without covering the eyes, nose, mouth, face outline, or key facial features. Render detailed individual hair strands; hair must not merge into a blob or mass. Body proportion lock: for full-body, three-quarter body, wide epic, and environmental portraits, keep an adult realistic model proportion with a naturally smaller head relative to the body, long balanced neck, realistic shoulder width, long legs and coherent torso length; use an eight-head realistic adult fashion proportion when appropriate, never cute doll proportions. Avoid oversized head, big-head portrait distortion, childlike chibi ratio, short-body distortion, or distorted limb ratios. Hands must have correct finger count; all limbs must be anatomically coherent. The selected Action / Gesture must stay physically readable, balanced, and natural. Pose coherence lock: face angle, gaze direction, neck alignment, shoulder rotation, torso axis, and hip orientation must form one physically continuous and coherent pose - if the face turns to one side, the neck, shoulder, and upper body must naturally follow in anatomical sequence; arms must connect to the torso with natural joint angles and must not float, detach, or contradict the body stance; hands must relate naturally to what the pose demands; center of gravity must be plausibly balanced over the feet or support point; no spatial contradiction between the face direction and the body stance; no frozen stiff limbs in an otherwise dynamic pose; no disconnected or impossible joint angles. Identity override: if any style element conflicts with the uploaded face, keep the uploaded face unchanged and adapt the style around it.";
+  const AVOID_LOCK="low quality, cartoon style, AI art style, cheap look, watermark, unreadable or messy text, text covering the face, no uploaded photo reference, generating from text alone, face swap, face morphing, facial deformation, identity drift, replaced face, different person, generic influencer face, internet celebrity face, generic model face, AI influencer face, Korean idol face, clean girl face, beauty filter face, V-shaped face, over-beautified different face, celebrity face, doll face, plastic skin, glass skin, over-smoothed skin, poreless skin, altered facial proportions, altered age, changed face width, changed jawline, changed chin, changed cheekbones, changed nose, smaller nose, higher nose bridge, enlarged eyes, changed eye distance, changed eye shape, changed mouth shape, changed hairline, changed head shape, changed head size, changed body structure, oversized head, big head, enlarged head, head too large for body, childlike chibi body ratio, cute doll proportions, short torso with large head, short body with large head, tiny shoulders, narrow collapsed shoulders, deformed hands, fused fingers, extra fingers, extra limbs, incoherent anatomy, impossible pose, broken outfit, cropped full-body composition when full-body is requested, hidden face, props covering face, foreground covering face, particles covering facial features, eye light changing eye shape, disconnected arms, floating limbs, spatial contradiction between face direction and body stance, frozen stiff limbs, unnatural joint angles, broken pose flow, implausible center of gravity, face looking one direction while body faces another";
   const addPart=(label,value)=>{
     if(value===undefined||value===null)return;
     const cleaned=cleanEnglishLine(String(value));
     if(cleaned)parts.push(label?`${label}: ${cleaned}`:cleaned);
   };
   // ① Highest priority identity and action lock
+  addPart("Photo reference gate (absolute first instruction)",PHOTO_REFERENCE_GATE);
   addPart("Identity lock (highest priority)",IDENTITY_LOCK_TEXT);
+  addPart("Universal face-preservation filter",UNIVERSAL_FACE_STYLE_FILTER);
+  addPart("Makeup surface-only lock",MAKEUP_SURFACE_LOCK);
+  if(isBareFaceMode)addPart("Bare-face no-beauty-filter lock",BARE_FACE_LOCK);
+  if(isBareFaceMode)addPart("Bare-face preset/style filter",BARE_FACE_STYLE_FILTER);
   parts.push(PROMPT_STRUCTURE_GUIDE);
   addPart("Priority action, camera, and finish lock",proPrompt||buildProControlPrompt?.());
 
@@ -7372,9 +7865,10 @@ function buildEnglishPrompt(p, customParts, mkDesc, selAngle, txtLine, extras, p
     addPart("Style / medium / overall tone",presetEnglishCore(p));
     addPart("Large environment / location",completeEnglishField(p,"s",p.s));
     addPart("Environment lighting",completeEnglishField(p,"l",p.l));
-    addPart("Character style and atmosphere reference only, do not override uploaded face",completeEnglishField(p,"char",p.char));
-    addPart("Makeup",mkDesc);
-    addPart("Travel photoshoot makeup and accessory density",TRAVEL_STYLING_BOOST);
+    addPart("Character costume/story atmosphere only, never face replacement",completeEnglishField(p,"char",p.char));
+    addPart("Makeup surface design only",mkDesc);
+    if(!isBareFaceMode)addPart("Travel photoshoot makeup and accessory density",TRAVEL_STYLING_BOOST);
+    else addPart("Bare-face styling rule","Keep costume, hair, accessories, camera, and environment cinematic, but keep the face natural and unretouched from the uploaded photo.");
     addPart("Outfit",completeEnglishField(p,"o",p.o));
     addPart("Props",p.prop);
     if(roleActionPrompt) parts.push(`Action integration: Action / Gesture is the physical pose and movement source. Props describe handheld or story objects. Composition describes framing, lens angle, and subject placement. Keep the face readable within this action.`);
@@ -7390,8 +7884,9 @@ function buildEnglishPrompt(p, customParts, mkDesc, selAngle, txtLine, extras, p
   } else {
     if(customParts){
       const get=g=>[...document.querySelectorAll(`.chip.on[data-g="${g}"]`)].map(x=>x.textContent).join(", ")||"not specified";
-      parts.push(`Makeup: ${mkDesc}`);
-      parts.push(`Travel photoshoot makeup and accessory density: ${TRAVEL_STYLING_BOOST}`);
+      parts.push(`Makeup surface design only: ${mkDesc}`);
+      if(!isBareFaceMode)parts.push(`Travel photoshoot makeup and accessory density: ${TRAVEL_STYLING_BOOST}`);
+      else parts.push("Bare-face styling rule: Keep costume, hair, accessories, camera, and environment cinematic, but keep the face natural and unretouched from the uploaded photo.");
       if(get("location")!=="not specified") parts.push(`Location type: ${get("location")}`);
       if(get("weather")!=="not specified") parts.push(`Weather / environment: ${get("weather")}`);
       parts.push(`Lighting: ${get("light")}`);
@@ -7526,8 +8021,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let matched = 0;
     cards.forEach(card => {
       const data = [card.textContent, card.dataset.cat || '', card.dataset.pid || ''].join(' ').toLowerCase();
-      const superOk = typeof categoryBelongsToSuperV641 === 'function' ? categoryBelongsToSuperV641(card.dataset.cat || '') : true;
-      const catOk = superOk && (robustCat === 'all' || card.dataset.cat === robustCat);
+      const pid = card.dataset.pid || '';
+      const favs = typeof getFavoritesV648 === 'function' ? getFavoritesV648() : [];
+      const recents = typeof getRecentsV648 === 'function' ? getRecentsV648() : [];
+      const specialOk = robustCat === '__fav__' ? favs.includes(pid) : robustCat === '__recent__' ? recents.includes(pid) : null;
+      const superOk = specialOk !== null ? true : (typeof categoryBelongsToSuperV641 === 'function' ? categoryBelongsToSuperV641(card.dataset.cat || '') : true);
+      const catOk = specialOk !== null ? specialOk : superOk && (robustCat === 'all' || card.dataset.cat === robustCat);
       const searchOk = !q || data.includes(q);
       const ok = catOk && searchOk;
       card.classList.toggle('visible', ok);
@@ -7560,3 +8059,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script></body>
 </html>
+
