@@ -3774,6 +3774,8 @@ CATEGORY_EXPANSION_V611.forEach(group=>{
   });
 });
 
+const REMOVED_STYLE_CATEGORIES_20260519=new Set(["indian","nuwa_series","mazu_series","dramanovel","modern","citywalk","studio","travel","world_culture","myth_angel"]);
+
 const SERIES_NAMING_PACKS_V622=[
   {re:/格鬥|遊戲|像素|地下城|寶箱|幻想牧場|魔法學院/,theme:"角色主線",stories:["入場任務","主線開啟","城堡存檔","寶箱現身","競技決賽","學院試煉","牧場黃昏","Boss 前夜","工會委託","祕境轉場","勝利結算","鐘樓決鬥","街機終演","冒險重啟","隱藏關卡","道具覺醒","隊伍集合","終章前夕","彩蛋開門","傳說達成"]},
   {re:/蒸汽朋克|蒸汽|發明家|工坊/,theme:"蒸汽工坊",stories:["齒輪開場","工坊爆光","飛艇試航","銅管煙霧","發明覺醒","鐘塔點火","藍圖展開","夜市機關","蒸汽列車","屋頂測試","黃銅實驗","機械鳥啟動","紅燈警報","古董儀表","飛行傘降落","城區停電","祕密引擎","雨夜修復","終章發明","黎明試車"]},
@@ -3819,6 +3821,8 @@ const DUPLICATE_AUTO_PREFIX_CATS_V622=(()=>{
 function renameAutoSeriesItemsV622(){
   const counters={};
   Object.entries(P).forEach(([id,p])=>{
+    if(REMOVED_STYLE_CATEGORIES_20260519.has(p?.cat))return;
+    if(REMOVED_STYLE_CATEGORIES_20260519.has(p?.cat))return;
     if(!id.startsWith("v616_")||!p?.n)return;
     const parts=String(p.n).split(/\s*·\s*/);
     if(parts.length<2)return;
@@ -4316,7 +4320,7 @@ function topupAllCategoriesToThirtyV624(){
 topupAllCategoriesToThirtyV624();
 (function refreshAutoSeriesCountsV642(){
   const counts=categoryCountsV624();
-  AUTO_SERIES_CATEGORIES_V620.forEach(s=>{s.count=counts[s.cat]||s.count||0});
+  AUTO_SERIES_CATEGORIES_V620.filter(s=>!REMOVED_STYLE_CATEGORIES_20260519.has(s.baseCat)&&!REMOVED_STYLE_CATEGORIES_20260519.has(s.cat)).forEach(s=>{s.count=counts[s.cat]||s.count||0});
 })();
 
 const BIG_SCENE_PRESETS_V646={
@@ -4596,9 +4600,165 @@ const IMAGE_REFERENCE_PRESETS_V652={
     cam:"vertical epic throne portrait, low-angle queen composition, face sharp, body proportions realistic, no oversized head",
     col:"obsidian black, antique gold, deep jade, moonlight amber",
     q:"ultra realistic mythic empress throne portrait, high-end dark fantasy couture, detailed gold ornament, 8K HDR",
-    neg:"overly explicit pose, distorted legs, face swap, hidden face, broken dragon anatomy, watermark"}
+    neg:"overly explicit pose, distorted legs, face swap, hidden face, broken dragon anatomy, watermark"},
+  ref_arctic_aurora_pony_bouquet:{n:"冰岸極光白紗 · 小馬花束回眸",cat:"img_ref",mk:"celestial_pearl",
+    char:"adult arctic travel bride heroine, wind-tossed long hair, gentle over-shoulder gaze, clear recognizable face, quiet romantic courage",
+    o:"ivory translucent lace gown with layered gauze train, delicate floral embroidery, soft crown or tiny ice-crystal hairpiece, barefoot or pale sandals, bouquet of small white wildflowers",
+    s:"black volcanic ice beach at blue-hour sunset, floating ice chunks on dark reflective water, snowy mountains in the distance, green aurora curtains across a starry sky, small Icelandic pony companion standing behind",
+    prop:"walking through shallow icy water while turning back toward camera, bouquet held low at one side, gauze train streaming across wet stones, pony placed behind the subject without touching the body",
+    fx:"aurora ribbons, wet ice sparkle, cold sea foam, wind-blown hair strands, crystalline water reflections, tiny star points, mist around the mountains",
+    l:"low sun near horizon plus cool aurora rim light, bright readable face fill, silver-blue water reflections, warm edge light on lace",
+    cam:"vertical cinematic travel poster, three-quarter to full-body over-shoulder framing, environment dominates but face remains sharp, pony and aurora visible",
+    col:"deep arctic blue, emerald aurora green, ivory lace, silver ice, warm sunset gold",
+    q:"ultra realistic arctic bridal travel editorial, dramatic aurora landscape, detailed lace and wet ice, natural skin texture, 8K HDR",
+    neg:"horse covering the face, frozen stiff pose, hidden feet, warped pony anatomy, oversized head, harsh flash, muddy ice, watermark"},
+  ref_jewel_music_box_champagne:{n:"香檳珠寶盒公主 · 花海禮盒",cat:"img_ref",mk:"wedding",
+    char:"adult champagne dream princess, soft bright smile, polished romantic expression, clear face, elegant gift-box fantasy presence",
+    o:"champagne ivory tulle dress with beaded corset, sheer opera gloves, crystal ankle-strap heels, pearl earrings, delicate ribbon hair styling",
+    s:"oversized ornate open jewelry box shaped like a luxury music box, cream-gold floral room, white roses and hydrangeas, pearls, crystal heart ornaments, perfume bottles and warm fairy lights inside the box",
+    prop:"sitting inside the open jewelry box with one hand touching the raised lid or silk bow, one leg crossed elegantly, other hand resting on the box edge, small teddy bear and glass perfume props nearby",
+    fx:"champagne sparkle dust, glowing pearls, soft rose bokeh, faceted crystal reflections, warm haze from tiny lights, floating flower petals",
+    l:"warm golden practical lights from inside the box, soft beauty key light, creamy high-key highlights, gentle rim on hair and tulle",
+    cam:"vertical luxury gift-box fantasy editorial, slightly high angle showing the open lid, full seated pose and legs readable, face centered and clear",
+    col:"champagne gold, ivory cream, pearl white, soft blush, crystal silver",
+    q:"ultra realistic luxury princess gift-box portrait, ornate jewelry-box set design, detailed pearls and tulle, commercial fantasy quality, 8K HDR",
+    neg:"childlike body, toy-like plastic face, distorted legs, box lid cutting through body, messy text, cheap decorations, watermark"},
+  ref_blue_red_palace_fan:{n:"藍紅宮廷湖畔 · 珠釵團扇",cat:"img_ref",mk:"v611_hanfu",
+    char:"adult classical Chinese court lady, calm gentle smile, dignified gaze, clear natural face, poised historical portrait presence",
+    o:"deep blue embroidered cloak with white fur trim over red floral hanfu, layered ivory sleeves, ornate high updo with red peony, gold filigree hairpins, pearl tassels, layered ruby and pearl necklace",
+    s:"classical lakeside Chinese garden in daylight, pavilion and curved roof architecture reflected in still water, soft trees and distant stone bridge, elegant palace travel-photo atmosphere",
+    prop:"standing by the lake holding a round embroidered silk fan at chest height with both hands, shoulders relaxed, jewelry and tassels hanging cleanly",
+    fx:"soft lake reflections, gentle breeze moving tassels, embroidery shimmer, pearl highlights, shallow pavilion bokeh",
+    l:"clean natural daylight with soft face fill, mild sky reflection from the water, controlled highlights on pearl jewelry",
+    cam:"medium vertical portrait, upper body to waist framing, lake and pavilion recognizable behind, face and fan sharp, hands natural",
+    col:"royal blue, cinnabar red, pearl white, antique gold, garden green",
+    q:"ultra realistic classical garden hanfu portrait, detailed embroidery and hair ornaments, refined historical travel editorial, 8K",
+    neg:"cheap costume, wrong dynasty mashup, fan covering face, broken tassels, deformed hands, over-smoothed skin, watermark"},
+  ref_summer_sea_hair_splash:{n:"仲夏海水髮甩 · 逆光水環",cat:"img_ref",mk:"outdoor_glow",
+    char:"adult energetic summer seaside portrait subject, natural real face, closed-eye or profile expression, athletic relaxed body language",
+    o:"simple opaque white ribbed crop top or modest swim-safe tank, light gray drawstring shorts, wet hair, minimal jewelry, clean beach styling",
+    s:"clear turquoise ocean at bright noon, low horizon line, open blue sky, sun high in the frame, sparkling water surface, waist-deep shallow sea",
+    prop:"dynamic hair-flip motion with head arched back, hands low in the water, body in profile, water forming a circular arc above the head",
+    fx:"frozen water splash ring, glittering sun reflections, droplets suspended in air, wet hair strands, sea spray, clean summer transparency",
+    l:"strong backlit sun with controlled face and body exposure, high-key blue sky, sparkling specular water highlights, no harsh blown-out skin",
+    cam:"vertical dynamic action portrait, low water-level camera, profile upper-body composition, splash arc framing the subject without covering the face",
+    col:"turquoise sea, white sunlight, pale blue sky, clean gray, silver water sparkle",
+    q:"ultra realistic high-speed summer sea photography, crisp water droplets, natural anatomy, outdoor editorial freshness, 8K",
+    neg:"unsafe wardrobe, transparent clothing, splash covering face, broken neck pose, warped water arc, plastic skin, extra limbs, watermark"},
+  ref_pink_jewel_box_bunny:{n:"粉晶珠寶盒甜心 · 玩偶燭光",cat:"img_ref",mk:"character_pop",
+    char:"adult pink fantasy sweetheart, soft cute smile, clear lively eyes, polished playful expression, mature fashion-doll editorial mood",
+    o:"pink ruffled tulle dress with floral applique bodice, off-shoulder puff sleeves, crystal necklace, flower headband, pink jeweled heels",
+    s:"open pink velvet jewel box with ornate gold filigree and large crystal gem, candlelit fantasy room, chandeliers, crystal teapot, pink plush rabbit dolls, roses and petals scattered around",
+    prop:"sitting inside the jewel box with one hand resting near the face, one hand on the box edge, legs angled elegantly, plush rabbit companion placed beside the subject",
+    fx:"rose-pink glitter dust, chandelier bokeh, candle glow, floating petals, crystal refractions, velvet sparkle, glass teapot highlights",
+    l:"warm candle and chandelier light, soft pink face key light, glittering rim light on hair, creamy high dynamic range",
+    cam:"vertical fantasy product-editorial composition, slightly high angle, seated full-body visible, ornate lid and box details frame the face",
+    col:"rose pink, blush, champagne gold, warm candle amber, crystal white",
+    q:"ultra realistic pink jewelry-box fantasy portrait, detailed ruffles, plush props, chandelier sparkle, commercial fairytale polish, 8K HDR",
+    neg:"childlike body, distorted plush animals, clutter covering face, overexposed candles, broken legs, messy text, watermark"},
+  ref_afternoon_tea_salon:{n:"皇家下午茶花園 · 甜點桌逆光",cat:"img_ref",mk:"soft_daily",
+    char:"adult warm afternoon-tea hostess, bright natural smile, clear friendly face, elegant approachable lifestyle presence",
+    o:"soft floral tea dress with refined neckline and modest coverage, pearl earrings, delicate necklace, natural wavy hair, polished cafe styling",
+    s:"luxury European-style afternoon tea salon, marble table crowded with scones, cakes, macarons, strawberries, floral teapot, teacup, champagne flute, roses, chandeliers, arched windows and garden sunlight",
+    prop:"leaning gently toward the dessert table with one hand near the hair and the other near a strawberry cake, direct warm eye contact, desserts arranged as rich foreground layers",
+    fx:"sparkling dust in sunbeams, pastry gloss, champagne bubbles, rose petals on table, chandelier bokeh, soft salon haze",
+    l:"golden window backlight from arched windows, soft fill on face, warm chandelier glow, bright romantic highlights",
+    cam:"vertical lifestyle editorial table portrait, foreground desserts large and detailed, subject framed between tea stand and flowers, face sharp",
+    col:"warm gold, rose pink, cream marble, strawberry red, pearl white",
+    q:"ultra realistic luxury afternoon tea lifestyle portrait, detailed desserts and tableware, natural skin, high-end magazine quality, 8K",
+    neg:"messy food, unreadable menu text, brand logos, distorted fingers, clutter covering face, exaggerated beauty filter, watermark"},
+  ref_city_gold_dress_cat:{n:"城市金裙夜景 · 江畔貓伴",cat:"img_ref",mk:"editorial",
+    char:"adult sleek city-night fashion muse, confident gaze, long dark hair, clear recognizable face, modern luxury attitude",
+    o:"metallic gold fitted cocktail dress with tasteful coverage, minimal gold jewelry, polished evening heels, sleek manicure, contemporary night-out styling",
+    s:"riverfront skyline at night with tall illuminated towers, city lights reflecting on dark water, willow branches hanging overhead, stone or wood promenade, calm urban travel mood",
+    prop:"standing near the river holding a clear glass near the lips, one knee slightly bent or one leg posed near a calm orange-white cat companion at the lower edge, city skyline behind",
+    fx:"city bokeh, water reflections, willow leaf foreground framing, metallic dress highlights, subtle night breeze in hair, soft lens sparkle",
+    l:"mixed skyline neon and warm promenade light, controlled face flash fill, gold dress specular highlights, dark blue night contrast",
+    cam:"wide horizontal or vertical crop-ready fashion travel composition, subject on one third, skyline and cat companion both visible, face sharp",
+    col:"midnight blue, metallic gold, city white lights, willow green, warm cat orange",
+    q:"ultra realistic luxury city-night travel editorial, reflective water skyline, polished metallic fabric, natural skin texture, 8K",
+    neg:"cat covering feet, distorted skyline, harsh flash, unsafe wardrobe, bent glass, extra fingers, watermark"},
+  ref_violet_peony_fairy:{n:"紫牡丹花海仙子 · 巨花回眸",cat:"img_ref",mk:"night_flower",
+    char:"adult violet flower fairy muse, gentle over-shoulder smile, luminous eyes, clear recognizable face, romantic fantasy poise",
+    o:"layered violet and lavender tulle gown with floral shoulder clusters, gold vine embroidery, translucent sleeve ribbons, purple flower hairpiece and dangling earrings",
+    s:"surreal giant purple peony garden, enormous blooming flowers surrounding the subject, ornate gold vine frame edges, dreamy mist and distant floral depth",
+    prop:"turning over the shoulder while seated or standing among giant petals, one arm relaxed along the gown, fabric flowing diagonally through the flower bed",
+    fx:"floating purple petals, gold dust, soft magical mist, sparkling dew on petals, translucent fabric trails, fantasy bloom glow",
+    l:"warm backlight through purple flowers, soft face key light, magenta-violet rim, glittering highlights on gold embroidery",
+    cam:"vertical romantic fantasy portrait, three-quarter body, giant peony beside the face for scale, gown filling foreground without hiding anatomy",
+    col:"violet, lavender, magenta, rose gold, pearl highlights",
+    q:"ultra realistic violet peony fairy portrait, high-detail floral couture, cinematic fantasy garden depth, 8K HDR",
+    neg:"flower covering face, oversaturated purple, distorted petals, plastic skin, broken hands, noisy glitter, watermark"},
+  ref_sunlit_garden_lace:{n:"日光花園蕾絲 · 玫瑰坐姿",cat:"img_ref",mk:"outdoor_glow",
+    char:"adult sunlit garden muse, calm direct gaze, natural real skin, soft relaxed expression, elegant vacation portrait mood",
+    o:"ivory floral lace sundress with opaque lining, delicate thin straps, silver sandals, small pendant necklace, natural loose hair",
+    s:"sunny Mediterranean-style garden terrace, brick path, climbing roses, potted pink flowers, leafy arbor, distant lake or hillside softly visible",
+    prop:"seated on a garden path with one knee raised and legs extended diagonally, one hand resting on the ground for balance, flowers framing foreground and sides",
+    fx:"dappled sunlight through leaves, soft flower foreground blur, pale petal scatter, warm garden haze, natural breeze in hair",
+    l:"bright morning sunlight with leaf-filtered shadows, soft face fill, high-key airy exposure, realistic skin highlights",
+    cam:"vertical seated garden portrait, low-to-medium camera angle, legs create diagonal composition, face centered and clear, flowers frame but do not cover subject",
+    col:"ivory, soft pink, fresh green, sunlit beige, lake blue hints",
+    q:"ultra realistic romantic garden travel portrait, natural daylight, detailed lace and flowers, relaxed editorial quality, 8K",
+    neg:"transparent dress, awkward leg anatomy, overexposed face, flattened garden depth, extra toes, hidden hands, watermark"},
+  ref_astrology_oracle:{n:"紫晶星盤占卜師 · 星辰命運",cat:"img_ref",mk:"oracle_gold",
+    char:"adult silver-haired astrology oracle, calm penetrating gaze, mysterious but gentle expression, clear face visible through a translucent star veil",
+    o:"deep purple star-embroidered robe with black corset belt, sheer constellation veil, braided silver hair, gold star earrings, celestial waist ornament",
+    s:"dark astrology chamber filled with brass astrolabes, constellation rings, crystal balls, candles, star maps, purple nebula-like backdrop and circular zodiac diagrams",
+    prop:"holding a small bronze celestial sphere in one hand while the other hand draws glowing constellation lines above a star chart table",
+    fx:"glowing star lines, floating zodiac circles, purple nebula dust, candle flame points, crystal ball reflections, subtle magical lens flares",
+    l:"low-key purple-blue mystical light, warm candle accents, clear face key through veil, gold rim light on brass instruments",
+    cam:"vertical mystical poster portrait, upper body and hands visible, astrology table in foreground, optional clean vertical title area at left only when typography mode is enabled",
+    col:"deep purple, amethyst, antique gold, silver hair, candle amber, cosmic black",
+    q:"ultra realistic celestial oracle portrait, detailed astrolabe props, fantasy editorial lighting, natural skin and hair strands, 8K HDR",
+    neg:"messy unreadable text, veil hiding identity, extra hands, distorted celestial instruments, muddy purple shadows, watermark"},
+  ref_gold_dragon_armor:{n:"金龍戰甲女武神 · 雷雲神龍",cat:"img_ref",mk:"dragon_lady",
+    char:"adult dragon-warrior goddess, fierce calm eyes, silver-white windblown hair, clear recognizable face, heroic sovereign energy",
+    o:"ornate gold-and-ivory dragon scale armor dress with layered battle skirt, crown of gold horns, armored gauntlets, thigh and boot armor, red inner cape fabric, ceremonial sword",
+    s:"stormy heavenly battlefield above ruined pillars and clouds, enormous golden dragon curling behind the subject, lightning cracks through dark clouds, divine war atmosphere",
+    prop:"standing or floating in a powerful full-body pose, one hand gripping a glowing dragon sword pointed downward, cape and hair blown by storm wind, dragon head near shoulder but not covering face",
+    fx:"gold lightning, dragon-scale sparks, blazing sword energy, flying fabric strips, cloud backlight, embers, divine halo glare",
+    l:"explosive golden backlight from storm clouds, strong rim on armor edges, controlled clear face light, high contrast cinematic glow",
+    cam:"vertical epic full-body fantasy poster, low-angle heroic framing, dragon forms an S-curve around subject, complete body proportions visible",
+    col:"molten gold, ivory armor, storm gray, ember orange, deep red cape",
+    q:"ultra realistic epic dragon-warrior fantasy poster, intricate armor, coherent dragon anatomy, cinematic lightning, 8K HDR",
+    neg:"dragon covering face, broken armor anatomy, extra limbs, oversized head, unreadable weapon, cheap CGI, watermark"},
+  ref_ink_blue_qipao:{n:"藍黑潑墨旗袍 · 水墨肖像",cat:"img_ref",mk:"editorial",
+    char:"adult ink-painting fashion muse, subtle confident smile, long black hair, clear pale face, modern Chinese editorial mystery",
+    o:"blue-black-and-white qipao with ink-splatter floral pattern, high collar frog-button detail, sleek fitted silhouette with tasteful coverage, minimal earrings",
+    s:"abstract white studio background exploding with black, gray, and deep cobalt ink splashes, paint drips and watercolor clouds surrounding the figure",
+    prop:"close three-quarter pose with one shoulder angled, hair sweeping across one side, body turned slightly away while face looks into camera",
+    fx:"ink splash bursts, watercolor bleed, paint drips, high-contrast brush texture, blue-black smoke-like pigment clouds, glossy hair highlights",
+    l:"high-contrast editorial studio light, bright face key, crisp rim on hair, deep ink shadows, clean white negative space",
+    cam:"vertical close-to-medium fashion portrait, face and qipao collar sharp, ink splashes frame the body without covering eyes or mouth",
+    col:"cobalt blue, ink black, white paper, cool gray, porcelain skin tones",
+    q:"ultra realistic Chinese ink fashion editorial portrait, painterly splash background, detailed qipao texture, natural skin, 8K",
+    neg:"ink covering face, random messy text, warped qipao seams, over-smoothed skin, extra arms, watermark"},
+  ref_sakura_book_fox_shrine:{n:"櫻書九尾狐神 · 鳥居月夜",cat:"img_ref",mk:"fox_noir",
+    char:"adult pink fox shrine maiden, delicate calm gaze, clear face, soft serious expression, fox-ear headdress and long hair, mystical folklore presence",
+    o:"pink-white embroidered kimono or hanfu-fusion shrine robe, translucent layered sleeves, cherry blossom hair ornaments, fox-ear headpiece, gold tassels, luminous nine-tail shaped silk trails",
+    s:"a giant open storybook becomes a miniature shrine world, red torii gate, full moon, waterfalls, lanterns, cherry blossom trees, scroll panels, tiny temple architecture rising from the pages, two white fox companions at the sides",
+    prop:"seated in the open book world with one hand near the collar and the other resting on layered fabric, fox companions sitting symmetrically, tails glowing behind the subject",
+    fx:"glowing pink nine tails, floating cherry petals, lantern sparkle, moon halo, book-page particles, miniature waterfall mist, magical paper-edge depth",
+    l:"moonlit pink lantern glow, strong backlight through translucent tails, soft face key, warm lantern accents balanced with cool night sky",
+    cam:"vertical fantasy book-diorama composition, subject centered in the open book, torii and full moon aligned behind, foxes and book pages visible without crowding the face",
+    col:"sakura pink, moon white, lantern amber, shrine red, soft gold, night violet",
+    q:"ultra realistic storybook fox-spirit shrine portrait, rich miniature world detail, luminous tails and petals, 8K HDR",
+    neg:"crowded unreadable calligraphy, foxes blocking face, childlike body, tail clutter, broken book perspective, watermark"},
+  ref_sakura_sword_vortex:{n:"櫻花劍氣旋渦 · 水袖拔刀",cat:"img_ref",mk:"xianxia",
+    char:"adult white-robed swordswoman, intense focused gaze, clear face, dynamic martial presence, long hair whipping in motion",
+    o:"white and pale pink xianxia robe with embroidered floral patterns, long flowing sleeves, structured waist belt, hair ornaments, lightweight battle skirt layers",
+    s:"warm Japanese-Chinese wooden interior with paper screens and hanging lanterns, night sakura petals blowing through the room, magical circular sword-energy tunnel around the subject",
+    prop:"lunging forward while drawing or thrusting a glowing sword toward camera, both hands holding the hilt naturally, sleeves and hair pulled by the circular vortex",
+    fx:"spiraling cherry blossom vortex, pink-white sword light trail, circular water-like energy ring, flying petals, motion streaks, lantern glow, fabric arcs",
+    l:"warm interior lantern light mixed with cool pink sword glow, sharp face key, bright rim along sword and sleeves, controlled motion blur away from face",
+    cam:"vertical dynamic action poster, sword creates strong foreground diagonal, circular vortex frames the face, full torso and hand grip readable",
+    col:"sakura pink, warm lantern amber, ivory white, dark wood, silver sword glow",
+    q:"ultra realistic xianxia sword-action portrait, crisp face with dynamic petals and energy, coherent hands and weapon direction, 8K HDR",
+    neg:"sword covering eyes, wrong grip, extra fingers, impossible arm twist, messy vortex hiding body, cheap anime flatness, watermark"}
 };
 Object.entries(IMAGE_REFERENCE_PRESETS_V652).forEach(([id,p])=>{if(!P[id])P[id]=p});
+
+Object.keys(P).forEach(id=>{if(REMOVED_STYLE_CATEGORIES_20260519.has(P[id]?.cat))delete P[id]});
 
 const ALL_IDS=Object.keys(P);
 let selPID="warrior",selMK="warrior",selAngle="4:5 social portrait format",activeTab="preset",manualMK=false,txtMode="off",txtStyle="travel_photo",txtPlacement="auto",txtType="theme";
@@ -4834,10 +4994,10 @@ ensurePresetMemoryUIV648();
 
 const CATEGORY_GROUPS_V641={
   classical:["myth","xianxia","hanfu","oriental"],
-  figure:["changxiangsi","daji_series","ninefox_series","change_series","xuannv_series","nuwa_series","mazu_series","xishi_series","zhaojun_series","diaochan_series","yang_guifei_series","succubus_series","queen_series","demon_lord_series"],
+  figure:["changxiangsi","daji_series","ninefox_series","change_series","xuannv_series","xishi_series","zhaojun_series","diaochan_series","yang_guifei_series","succubus_series","queen_series","demon_lord_series"],
   fantasy:["bigscene","fantasy","myth_angel","darkfantasy","dark_gothic","underwater","animegame","cos_fantasy","img_ref"],
-  modern:["modern","citywalk","studio","dramanovel","japanese"],
-  travel:["landmark","travel","world_culture","indian","nature"]
+  modern:["japanese"],
+  travel:["landmark","nature"]
 };
 const BASE_CATEGORY_PARENT_BY_CAT_V641=Object.fromEntries(Object.entries(CATEGORY_GROUPS_V641).flatMap(([group,cats])=>cats.map(cat=>[cat,group])));
 const CATEGORY_PARENT_BY_CAT_V641=Object.assign({},BASE_CATEGORY_PARENT_BY_CAT_V641,Object.fromEntries((Array.isArray(AUTO_SERIES_CATEGORIES_V620)?AUTO_SERIES_CATEGORIES_V620:[]).map(s=>[s.cat,BASE_CATEGORY_PARENT_BY_CAT_V641[s.baseCat]||"figure"])));
@@ -4873,7 +5033,7 @@ function appendAutoSeriesCategoryButtonsV620(){
     world_culture:"文化",xianxia:"仙俠"
   };
   const labelCounts=AUTO_SERIES_CATEGORIES_V620.reduce((acc,s)=>{acc[s.label]=(acc[s.label]||0)+1;return acc},{});
-  AUTO_SERIES_CATEGORIES_V620.forEach(s=>{
+  AUTO_SERIES_CATEGORIES_V620.filter(s=>!REMOVED_STYLE_CATEGORIES_20260519.has(s.baseCat)&&!REMOVED_STYLE_CATEGORIES_20260519.has(s.cat)).forEach(s=>{
     if(document.querySelector(`.cat-btn[data-cat="${s.cat}"]`))return;
     const btn=document.createElement("div");
     btn.className="cat-btn series-auto";
