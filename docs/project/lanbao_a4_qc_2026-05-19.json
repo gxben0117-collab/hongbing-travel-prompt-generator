@@ -1,0 +1,54 @@
+{
+  "date": "2026-05-19",
+  "output_dir": "C:/Users/User/Documents/Codex/藍寶輸出圖",
+  "batch_pattern": "_a4_book_",
+  "issues": {
+    "head_body_ratio_mismatch": [
+      "07_31_IMG_2924_single_low_angle_queen_travel_output_a4_book_low_angle_queen_travel_output",
+      "10_4888224540_a5677478da_c_a4_book_low_angle_queen_travel_output",
+      "12_54235377706_046938f019_c_a4_book_wide_full_scene_travel_output",
+      "14_54235388056_a3f720d91d_c_a4_book_wide_full_scene_travel_output",
+      "17_54235622988_a8e15ceae1_c_a4_book_low_angle_queen_travel_output",
+      "18_54235798985_e0b2537af7_c_a4_book_fashion_full_travel_output",
+      "25_54735069008_da9a9f444e_c_a4_book_fashion_full_travel_output",
+      "27_54735083839_b3acf94504_c_a4_book_fashion_full_travel_output",
+      "43_IMG_1971_a4_book_wide_full_scene_travel_output",
+      "45_IMG_2882_a4_book_wide_full_scene_travel_output",
+      "46_IMG_2883_a4_book_wide_full_scene_travel_output",
+      "47_IMG_2884_a4_book_low_angle_queen_travel_output",
+      "50_IMG_2898_a4_book_low_angle_queen_travel_output",
+      "51_IMG_2899_a4_book_fashion_full_travel_output",
+      "53_IMG_2906_a4_book_wide_full_scene_travel_output",
+      "58_IMG_2924_a4_book_wide_full_scene_travel_output",
+      "60_IMG_2932_a4_book_fashion_full_travel_output",
+      "68_IMG_2951_a4_book_low_angle_queen_travel_output"
+    ],
+    "head_body_pose_weird": [
+      "10_4888224540_a5677478da_c_a4_book_low_angle_queen_travel_output",
+      "26_54735083739_bccf8c10f0_c_a4_book_fashion_full_travel_output",
+      "25_54735069008_da9a9f444e_c_a4_book_fashion_full_travel_output",
+      "27_54735083839_b3acf94504_c_a4_book_fashion_full_travel_output"
+    ],
+    "identity_drift": [
+      "22_54734846991_ce6da767d4_c_a4_book_low_angle_queen_travel_output",
+      "32_54898003236_d4799cae82_c_a4_book_fashion_full_travel_output",
+      "33_54898003746_cfbd66fc44_c_a4_book_low_angle_queen_travel_output",
+      "55_IMG_2919_a4_book_low_angle_queen_travel_output",
+      "56_IMG_2920_a4_book_low_angle_queen_travel_output",
+      "61_IMG_2938_a4_book_fashion_full_travel_output",
+      "66_IMG_2947_a4_book_low_angle_queen_travel_output"
+    ],
+    "fake_face_color_mismatch": [
+      "49_IMG_2896_a4_book_wide_full_scene_travel_output",
+      "52_IMG_2902_a4_book_low_angle_queen_travel_output",
+      "58_IMG_2924_a4_book_wide_full_scene_travel_output"
+    ]
+  },
+  "recommended_prompt_fixes": {
+    "composition": "vary subject scale and placement; avoid fixed centered two-thirds portrait framing",
+    "anatomy": "Natural human proportions, head size anatomically proportional to body, realistic neck length, balanced shoulder width, no oversized head, no doll-like head, no pasted face, coherent body pose.",
+    "identity": "Preserve the exact recognizable face identity from the reference image, same facial structure, same eyes, nose, mouth, and face shape. Do not beautify into a different person. Match face color, skin tone, lighting direction, and grain with the body and environment.",
+    "source_cleanup": "Use original photos only as source references; avoid using prior generated outputs as new source images.",
+    "style_direction": "Keep the travel blockbuster feeling: beautiful, glamorous, cinematic, scene-rich, magazine-grade. Preserve sci-fi, cyberpunk, fantasy, xianxia, starry sky, futuristic city, mythic palace, grand nature, and high-fashion travel styles. Avoid erotic styling without making the image plain or conservative."
+  }
+}

@@ -93,3 +93,34 @@ index.template.html
 1. 測試 `dist/index.html` 功能是否正常（隨機、生成、妝容選擇、分類篩選）
 2. 確認 GitHub Pages 部署流程（使用 dist/index.html 或 CI 自動 copy）
 3. 下一步功能開發建議：生成紀錄、咒語字數顯示、我的自訂預設
+# 紅兵旅拍大片生成器 - 模組化重構交接
+
+## 2026-05-19 Codex v6.73 接手確認
+
+Claude 在 2026-05-18 拆出的模組化流程已確認可用。Codex 已將乾淨版本升至 `v6.73`，並用 `npm.cmd run build` 重建。
+
+目前乾淨接手點：
+
+- Source of truth: `index.template.html` + `src/styles.css` + `src/data.js` + `src/app.js`
+- Build script: `scripts/build.mjs`
+- Build output: `dist/index.html`
+- Main entry: `index.html`
+- Clean snapshot: `versions/index_v6.73.html`
+- SHA256 for `index.html`, `dist/index.html`, and `versions/index_v6.73.html`:
+  `CB241022A06E157FB979CF7744D3DE2B5A3617AB336E076368D6233925668C2B`
+
+Verification performed:
+
+- `npm.cmd run build` passed.
+- `node --check src/data.js` passed.
+- `node --check src/app.js` passed.
+- Static feature checks passed for generate button, result box, copy buttons, clear button, default `warrior` preset, `buildEnglishPrompt`, `PHOTO_REFERENCE_GATE`, `AUTO_QUALITY_V670`, and clipboard fallback.
+- `index.html` contains 364 `preset-card` entries.
+
+Important note:
+
+- `versions/index_v6.72.html` is preserved as history, but it appears to contain mojibake text in several visible Chinese strings.
+- Use `v6.73` as the clean base for future work.
+- Do not overwrite old files in `versions/`; create a new `versions/index_v6.XX.html` for each release.
+
+---
