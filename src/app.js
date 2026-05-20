@@ -327,76 +327,76 @@ function buildPrompt() {
   const aspectRatio = getSelectedAspectRatio();
   const extraNotes = els.extraNotes.value.trim();
 
-  const commonParts = [
-    "Use the uploaded person photo as the only identity reference.",
-    "Keep the face recognizably unchanged: no face swap, no beauty-filter face, no idolized replacement, no altered jawline, no enlarged eyes, no plastic skin.",
-    "Keep anatomy coherent with realistic adult proportions, natural hands, complete limbs, and readable posture.",
-    `Output format: ${aspectRatio.prompt}.`,
-    `Makeup and styling direction: ${sample(makeup.prompt)}.`,
-  ];
+  const IDENTITY_LOCK_TEXT = "Use the uploaded photo as the only identity reference. Lock exact face shape, bone structure, eye shape, nose shape, lip shape, jawline, hairline, skin tone, skin texture, and age impression. Change only outfit, environment, lighting, makeup effect, and body pose — do not alter any facial features, proportions, or personal likeness. Do not beautify into a different face: no generic influencer, model, celebrity, idol, AI influencer, clean-girl, doll, or V-shaped beauty-filter face. Do not apply glass skin or plastic skin. Keep the face fully visible: hair, props, veil, particles, and effects must frame the subject without covering eyes, nose, mouth, or face outline. Hair must render as individual strands, not merged blobs. Body proportion: adult realistic eight-head proportion with correct head-to-body ratio, realistic shoulder width, and full limb length. Hands must have correct finger count; all joints must be anatomically coherent. Pose coherence: face angle, neck, shoulder, torso, and hips must form one continuous physical pose with plausible center of gravity — no disconnected arms, floating limbs, or face-body direction contradiction. Identity override: if any style element conflicts with the uploaded face, keep the face unchanged and adapt the style around it.";
+
+  const UNIVERSAL_FACE_STYLE_FILTER = "Universal face-preservation filter: words such as princess, bride, bridal, goddess, heroine, celebrity, model, actor, diva, ambassador, campaign, advertisement, luxury editorial, beauty portrait, clear soft smile, sweet smile, delicate features, refined beauty, flawless base, sculpted contour, luminous base, camera-ready skin, high-end polish, and similar beauty or role words describe costume, mood, lighting, pose, and surface makeup only. They must not replace the uploaded face, invent a prettier face, force a new smile, change mouth corners, change cheek volume, enlarge eyes, shrink the nose, sharpen the chin, narrow the jaw, smooth skin identity, or make the person look like a different bride/model/influencer. If role or makeup conflicts with identity, preserve the uploaded face and adapt the styling around it.";
+
+  const TRAVEL_STYLING_BOOST = "Professional travel-portrait styling upgrade: makeup and styling should look like a real paid travel photoshoot makeover while preserving the uploaded person's exact facial identity. Makeup is surface cosmetics only: color, texture, eyeliner, lashes, blush, lip finish, and lighting polish may change, but bone structure, face shape, eye shape, eye size, nose shape, lip shape, cheek volume, jawline, chin, smile structure, age impression, and skin identity must not be beautified or reshaped. Costume styling must feel abundant and ceremonial: layered fabrics, embroidered trims, waist ornaments, earrings, necklaces, bracelets, tassels, hairpins, floral hair inserts, crowns, combs, beads, ribbons, veils, shawls, hand props, and matching accessories. Do not simplify the outfit or leave the hair plain; build a complete head-to-toe travel photoshoot look with rich but coherent accessories.";
+
+  const PROMPT_STRUCTURE_GUIDE = "Prompt structure guide: after the identity and Action / Gesture priority locks, build the image from large environment to person. Establish the medium and overall tone first, then location, weather, time, lighting, and environmental perspective; then place the subject into that light; then add outfit, hair styling, props, action details, camera composition, effects, color, quality, and technical finish.";
+
+  const AVOID_LOCK = "low quality, cartoon style, AI art style, watermark, face swap, identity drift, replaced face, different person, generic influencer face, model face, celebrity face, AI influencer face, Korean idol face, beauty filter face, V-shaped face, doll face, plastic skin, glass skin, over-smoothed skin, altered facial proportions, changed jawline, changed nose, changed eye shape, changed hairline, oversized head, big head, chibi body ratio, doll proportions, deformed hands, fused fingers, extra fingers, incoherent anatomy, hidden face, props covering face, particles covering facial features, disconnected arms, floating limbs, spatial contradiction between face and body, broken pose flow, implausible center of gravity";
+
+  const parts = [];
+  parts.push(`Identity lock (highest priority): ${IDENTITY_LOCK_TEXT}`);
+  parts.push(`Universal face-preservation filter: ${UNIVERSAL_FACE_STYLE_FILTER}`);
+  parts.push(PROMPT_STRUCTURE_GUIDE);
+  parts.push(`Makeup surface design only: ${sample(makeup.prompt)}.`);
+  parts.push(`Travel photoshoot makeup and accessory density: ${TRAVEL_STYLING_BOOST}`);
+  parts.push(`Output format: ${aspectRatio.prompt}.`);
 
   if (state.activeTab === "preset") {
     const preset = PRESET_MAP.get(state.selectedPresetId);
     if (!preset) return "";
 
-    const promptParts = [
-      ...commonParts,
-      `Style direction: ${preset.scene}.`,
-      `Location: ${preset.location}.`,
-      `Story mood: ${preset.story}.`,
-      `Outfit: ${preset.outfit}.`,
-      `Pose and body action: ${preset.pose}.`,
-      `Camera language: ${preset.camera}.`,
-      `Lighting: ${preset.lighting}.`,
-      `Props: ${preset.prop}.`,
-      `Atmosphere effect: ${preset.effect}.`,
-      `Color and finish: ${preset.quality}.`,
-    ];
+    parts.push(`Style / medium / overall tone: ${preset.scene}.`);
+    parts.push(`Large environment / location: ${preset.location}.`);
+    parts.push(`Character story atmosphere: ${preset.story}.`);
+    parts.push(`Outfit: ${preset.outfit}.`);
+    parts.push(`Action / Gesture priority: ${preset.pose}.`);
+    parts.push("Action integration: Action / Gesture is the physical pose and movement source. Keep the uploaded person's face visible and recognizable.");
+    parts.push("Prop and effect safety: props, foreground framing, atmospheric particles, hair, veil, smoke, rain, snow, and visual effects must stay around the body or frame edge, not across the face or key facial features.");
+    parts.push(`Composition: ${preset.camera}.`);
+    parts.push(`Environment lighting: ${preset.lighting}.`);
+    parts.push(`Props: ${preset.prop}.`);
+    parts.push(`Visual effects: ${preset.effect}.`);
+    parts.push(`Quality: ${preset.quality}.`);
 
     if (state.selectedTextMode !== "off") {
-      promptParts.push(
+      parts.push(
         `Typography: generate ${TEXT_MODE_MAP.get(state.selectedTextMode)?.prompt || "short editorial"} text, ${TEXT_PLACEMENT_MAP.get(state.selectedTextPlacement)?.prompt}, with ${TEXT_TYPE_MAP.get(state.selectedTextType)?.prompt}, styled as ${textStyle.prompt}.`
       );
       if (state.selectedTextMode === "custom" && els.customText.value.trim()) {
-        promptParts.push(`Use the exact text content: "${els.customText.value.trim()}".`);
+        parts.push(`Use the exact text content: "${els.customText.value.trim()}".`);
       }
     }
 
     if (extraNotes) {
-      promptParts.push(`Special requirements: ${extraNotes}.`);
+      parts.push(`Special requirements: ${extraNotes}.`);
     }
 
-    promptParts.push(
-      "Avoid low-detail AI look, duplicate limbs, obscured face, unreadable hands, broken costume physics, and generic influencer beauty."
-    );
-
-    return promptParts.join("\n");
+    parts.push(`Avoid: ${AVOID_LOCK}`);
+    return parts.join("\n");
   }
 
   const customParts = generateCustomPromptData();
-  const promptParts = [
-    ...commonParts,
-    ...customParts.map((part) => `${part.label}: ${part.values.join(", ")}.`),
-  ];
+  customParts.forEach((part) => parts.push(`${part.label}: ${part.values.join(", ")}.`));
 
   if (state.selectedTextMode !== "off") {
-    promptParts.push(
+    parts.push(
       `Typography: generate ${TEXT_MODE_MAP.get(state.selectedTextMode)?.prompt || "short editorial"} text, ${TEXT_PLACEMENT_MAP.get(state.selectedTextPlacement)?.prompt}, with ${TEXT_TYPE_MAP.get(state.selectedTextType)?.prompt}, styled as ${textStyle.prompt}.`
     );
     if (state.selectedTextMode === "custom" && els.customText.value.trim()) {
-      promptParts.push(`Use the exact text content: "${els.customText.value.trim()}".`);
+      parts.push(`Use the exact text content: "${els.customText.value.trim()}".`);
     }
   }
 
   if (extraNotes) {
-    promptParts.push(`Special requirements: ${extraNotes}.`);
+    parts.push(`Special requirements: ${extraNotes}.`);
   }
 
-  promptParts.push(
-    "Build the image from large environment to subject detail; keep the face visible and preserve identity over all styling choices."
-  );
-
-  return promptParts.join("\n");
+  parts.push(`Avoid: ${AVOID_LOCK}`);
+  return parts.join("\n");
 }
 
 async function copyResult() {
