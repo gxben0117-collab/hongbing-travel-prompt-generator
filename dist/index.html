@@ -312,9 +312,20 @@ textarea {
 }
 
 .preset-card.is-selected {
-  border-color: var(--accent);
-  box-shadow: 0 14px 26px rgba(183, 91, 46, 0.16);
-  background: linear-gradient(180deg, rgba(255, 249, 244, 1), rgba(248, 238, 230, 1));
+  border-color: transparent;
+  background: var(--text);
+  box-shadow: 0 14px 30px rgba(34, 29, 23, 0.30);
+  transform: translateY(-2px);
+}
+
+.preset-card.is-selected .preset-card__eyebrow,
+.preset-card.is-selected .preset-card__summary,
+.preset-card.is-selected .preset-card__tags {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.preset-card.is-selected .preset-card__title {
+  color: #fff;
 }
 
 .preset-card__eyebrow,
