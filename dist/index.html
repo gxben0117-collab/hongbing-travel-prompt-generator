@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
@@ -248,9 +248,7 @@ h2{font-size:18px;font-weight:600;margin-bottom:2px}
 
   <!-- 風格設定 -->
   <div class="section-label">風格設定</div>
-  <div class="tab-bar">
     <div class="tab active" data-tab="preset">⚡ 預設風格</div>
-    <div class="tab" data-tab="custom">🎛 關鍵字組合</div>
   </div>
 
   <!-- PRESET TAB -->
@@ -1844,99 +1842,6 @@ h2{font-size:18px;font-weight:600;margin-bottom:2px}
       <button class="density-btn" type="button" data-density="compact">緊湊</button>
       <button class="density-btn" type="button" data-density="roomy">詳細</button>
     </div>
-  </div>
-
-  <!-- CUSTOM TAB -->
-  <div class="tab-panel" id="tab-custom">
-    <div class="preset-import">
-      <div class="preset-import-title">✦ 從預設風格拆解成關鍵字</div>
-      <div class="preset-import-row">
-        <select id="preset-import-select"></select>
-        <button type="button" id="preset-import-btn">匯入並選取</button>
-        <button type="button" class="alt" id="custom-random-btn">隨機生成風格</button>
-      </div>
-      <div class="preset-import-note">可匯入任一預設風格拆成要素，也可以隨機混搭不同風格的場景、服裝、特效、光影與姿勢，創造新的出圖方向。</div>
-    </div>
-    <div class="kw-group">
-      <div class="kw-group-title">🎬 氛圍劇情</div>
-      <div class="chips" id="chips-scene">
-        <div class="chip" data-g="scene">霸氣登場</div><div class="chip" data-g="scene">宿命重逢</div><div class="chip" data-g="scene">禁忌誓約</div><div class="chip" data-g="scene">戰後沉默</div><div class="chip" data-g="scene">王權壓迫感</div><div class="chip" data-g="scene">甜美心動瞬間</div><div class="chip" data-g="scene">危險誘惑</div><div class="chip" data-g="scene">清冷孤高</div><div class="chip" data-g="scene">神聖降臨</div><div class="chip" data-g="scene">復仇宣言</div><div class="chip" data-g="scene">離別前一刻</div><div class="chip" data-g="scene">神秘夜巡中</div><div class="chip" data-g="scene">慵懶高級感</div><div class="chip" data-g="scene">遠行追逐感</div><div class="chip" data-g="scene">儀式感祈願</div><div class="chip" data-g="scene">深夜私語</div><div class="chip" data-g="scene">勝利凱旋</div><div class="chip" data-g="scene">命運轉折點</div><div class="chip" data-g="scene">夢境般溫柔</div><div class="chip" data-g="scene">黑暗童話感</div><div class="chip" data-g="scene">史詩決戰前夕</div><div class="chip" data-g="scene">華麗登台瞬間</div><div class="chip" data-g="scene">戀愛電影感</div><div class="chip" data-g="scene">孤獨守望</div><div class="chip" data-g="scene">女王登場感</div><div class="chip" data-g="scene">魔法覺醒瞬間</div><div class="chip" data-g="scene">節慶熱鬧氛圍</div><div class="chip" data-g="scene">懸疑探尋感</div><div class="chip" data-g="scene">公路遠行感</div><div class="chip" data-g="scene">高級廣告感</div>
-      </div>
-      <div class="custom-row"><input type="text" id="input-scene" placeholder="自訂氛圍劇情..."><button onclick="addC('scene','input-scene')">+ 加入</button></div>
-    </div>
-    <div class="kw-group">
-      <div class="kw-group-title">👗 服裝</div>
-      <div class="chips" id="chips-outfit">
-        <div class="chip" data-g="outfit">紅黑妖狐禮袍</div><div class="chip" data-g="outfit">白色廣寒仙裙</div><div class="chip" data-g="outfit">戰甲女將</div><div class="chip" data-g="outfit">唐制漢服</div><div class="chip" data-g="outfit">黑金宮廷禮服</div><div class="chip" data-g="outfit">白金仙裙仙帶</div><div class="chip" data-g="outfit">婚紗雪紡</div><div class="chip" data-g="outfit">高訂 Haute Couture</div><div class="chip" data-g="outfit">哥德蕾絲</div><div class="chip" data-g="outfit">暗黑金屬鎧甲</div><div class="chip" data-g="outfit">魔法少女蓬裙</div><div class="chip" data-g="outfit">精靈魔法袍</div><div class="chip" data-g="outfit">彼岸花纏繞</div><div class="chip" data-g="outfit">簡約黑色修身裙</div><div class="chip" data-g="outfit">日本和服浴衣</div><div class="chip" data-g="outfit">印度紗麗</div><div class="chip" data-g="outfit">波斯肚皮舞衣</div><div class="chip" data-g="outfit">俠客勁裝劍袍</div><div class="chip" data-g="outfit">天使白色羽翼袍</div><div class="chip" data-g="outfit">人魚尾巴貝殼胸衣</div><div class="chip" data-g="outfit">運動潮流服裝</div><div class="chip" data-g="outfit">黃金聖衣鎧甲</div><div class="chip" data-g="outfit">魔王黑色禮袍</div><div class="chip" data-g="outfit">都市職業OL裝</div><div class="chip" data-g="outfit">獸娘COS服裝</div><div class="chip" data-g="outfit">天使白羽翼袍</div><div class="chip" data-g="outfit">惡魔黑蕾絲禮服</div><div class="chip" data-g="outfit">龍娘女僕裝</div>
-      </div>
-      <div class="custom-row"><input type="text" id="input-outfit" placeholder="自訂服裝..."><button onclick="addC('outfit','input-outfit')">+ 加入</button></div>
-    </div>
-    <div class="kw-group">
-      <div class="kw-group-title">✨ 特效</div>
-      <div class="chips" id="chips-fx">
-        <div class="chip" data-g="fx">九條狐狸尾巴</div><div class="chip" data-g="fx">月光粒子</div><div class="chip" data-g="fx">環繞火焰</div><div class="chip" data-g="fx">裙擺炸開</div><div class="chip" data-g="fx">花瓣飄落</div><div class="chip" data-g="fx">禁術倒影</div><div class="chip" data-g="fx">符文光粒子</div><div class="chip" data-g="fx">雷電電弧</div><div class="chip" data-g="fx">煙霧繚繞</div><div class="chip" data-g="fx">沙塵粒子</div><div class="chip" data-g="fx">水下漂浮</div><div class="chip" data-g="fx">彼岸花纏繞</div><div class="chip" data-g="fx">魔法陣光紋</div><div class="chip" data-g="fx">能量煙霧施法</div><div class="chip" data-g="fx">獸耳尾巴</div><div class="chip" data-g="fx">多畫面拼接海報</div><div class="chip" data-g="fx">錦鯉游過</div><div class="chip" data-g="fx">巨龍環繞</div><div class="chip" data-g="fx">天使羽翼展開</div><div class="chip" data-g="fx">發光水母群</div><div class="chip" data-g="fx">漫天蝴蝶飛舞</div><div class="chip" data-g="fx">絲帶飛天飄舞</div><div class="chip" data-g="fx">劍氣光芒</div><div class="chip" data-g="fx">煙火爆炸夜空</div><div class="chip" data-g="fx">彩色煙霧爆炸</div><div class="chip" data-g="fx">惡魔翅膀展開</div><div class="chip" data-g="fx">聖劍聖光爆發</div><div class="chip" data-g="fx">小宇宙能量爆炸</div><div class="chip" data-g="fx">龍焰噴射</div><div class="chip" data-g="fx">黑紫魔力暴走</div><div class="chip" data-g="fx">獸耳毛茸茸質感</div><div class="chip" data-g="fx">破碎黑翼飄散</div><div class="chip" data-g="fx">狐狸火焰</div>
-      </div>
-    </div>
-    <div class="kw-group">
-      <div class="kw-group-title">☀️ 光線</div>
-      <div class="chips" id="chips-light">
-        <div class="chip" data-g="light">夕陽橙紅體積光</div><div class="chip" data-g="light">月光銀藍</div><div class="chip" data-g="light">暖橙燈籠夜景</div><div class="chip" data-g="light">格窗切割光</div><div class="chip" data-g="light">霓虹光污染</div><div class="chip" data-g="light">逆光輪廓光</div><div class="chip" data-g="light">神聖天光體積光</div><div class="chip" data-g="light">冷藍漫射光</div>
-      </div>
-    </div>
-
-    <div class="kw-group">
-      <div class="kw-group-title">📍 地點類型</div>
-      <div class="chips" id="chips-location">
-        <div class="chip" data-g="location">古鎮古城</div>
-        <div class="chip" data-g="location">宮殿廟宇</div>
-        <div class="chip" data-g="location">歐洲街道</div>
-        <div class="chip" data-g="location">日韓街頭</div>
-        <div class="chip" data-g="location">沙漠草原</div>
-        <div class="chip" data-g="location">海灘湖畔</div>
-        <div class="chip" data-g="location">都市夜景</div>
-        <div class="chip" data-g="location">雪地山林</div>
-        <div class="chip" data-g="location">博物館展廳</div>
-        <div class="chip" data-g="location">花園莊園</div>
-        <div class="chip" data-g="location">便利店街頭</div>
-        <div class="chip" data-g="location">古典閣樓庭院</div><div class="chip" data-g="location">竹林翠綠</div><div class="chip" data-g="location">江南拱橋水鄉</div><div class="chip" data-g="location">純白攝影棚</div><div class="chip" data-g="location">水下黑暗靈境</div><div class="chip" data-g="location">地獄熔岩洞穴</div><div class="chip" data-g="location">古老魔法森林</div><div class="chip" data-g="location">魔法城堡星空</div><div class="chip" data-g="location">日本神社鳥居</div><div class="chip" data-g="location">印度金色神廟</div><div class="chip" data-g="location">波斯宮殿拱頂</div><div class="chip" data-g="location">東京霓虹街道</div><div class="chip" data-g="location">巴黎街角咖啡館</div><div class="chip" data-g="location">城市高樓天台</div><div class="chip" data-g="location">溫泉雪景庭院</div><div class="chip" data-g="location">深海珊瑚宮殿</div><div class="chip" data-g="location">宇宙星空聖域</div><div class="chip" data-g="location">魔族黑暗王城</div><div class="chip" data-g="location">現代辦公大樓</div><div class="chip" data-g="location">落地窗咖啡館</div><div class="chip" data-g="location">天堂聖殿雲海</div><div class="chip" data-g="location">廢墟最終戰場</div><div class="chip" data-g="location">萬里長城山脊</div><div class="chip" data-g="location">黃山雲海峰頂</div><div class="chip" data-g="location">懸崖絕壁邊緣</div><div class="chip" data-g="location">梯田日出山谷</div><div class="chip" data-g="location">天空之鏡鹽湖</div><div class="chip" data-g="location">極光雪原曠野</div><div class="chip" data-g="location">火山熔岩大地</div><div class="chip" data-g="location">宇宙星雲深空</div><div class="chip" data-g="location">瀑布仙境峽谷</div><div class="chip" data-g="location">沙漠星空曠野</div><div class="chip" data-g="location">竹海翠綠山林</div><div class="chip" data-g="location">秋楓萬山紅遍</div><div class="chip" data-g="location">海上孤立神廟</div><div class="chip" data-g="location">文明廢墟遺跡</div>
-      </div>
-      <div class="custom-row"><input type="text" id="input-location" placeholder="自訂地點..."><button onclick="addC('location','input-location')">+ 加入</button></div>
-    </div>
-
-    <div class="kw-group">
-      <div class="kw-group-title">🌤 天氣氛圍</div>
-      <div class="chips" id="chips-weather">
-        <div class="chip" data-g="weather">黃金時刻晴天</div>
-        <div class="chip" data-g="weather">陰天柔光</div>
-        <div class="chip" data-g="weather">煙雨濛濛</div>
-        <div class="chip" data-g="weather">大雪飄落</div>
-        <div class="chip" data-g="weather">霓虹夜晚</div>
-        <div class="chip" data-g="weather">清晨薄霧</div>
-        <div class="chip" data-g="weather">日落逆光</div>
-        <div class="chip" data-g="weather">星空銀河夜</div>
-        <div class="chip" data-g="weather">雨後積水倒影</div><div class="chip" data-g="weather">溫泉水霧蒸騰</div><div class="chip" data-g="weather">煙火夜空</div><div class="chip" data-g="weather">熱帶豔陽</div><div class="chip" data-g="weather">桃花春日</div><div class="chip" data-g="weather">雲海翻騰</div><div class="chip" data-g="weather">極光滿天</div><div class="chip" data-g="weather">銀河星空夜</div><div class="chip" data-g="weather">火山噴發煙塵</div><div class="chip" data-g="weather">晨霧繚繞山谷</div>
-      </div>
-    </div>
-
-    <div class="kw-group">
-      <div class="kw-group-title">💃 動作姿態</div>
-      <div class="chips" id="chips-pose">
-        <div class="chip" data-g="pose">奔跑裙擺飛揚</div>
-        <div class="chip" data-g="pose">回眸微笑</div>
-        <div class="chip" data-g="pose">靜思遠眺</div>
-        <div class="chip" data-g="pose">舞動裙擺旋轉</div>
-        <div class="chip" data-g="pose">倚靠建築側身</div>
-        <div class="chip" data-g="pose">持道具站立</div>
-        <div class="chip" data-g="pose">低頭沉思</div>
-        <div class="chip" data-g="pose">仰頭閉眼</div>
-        <div class="chip" data-g="pose">行走中側臉</div>
-        <div class="chip" data-g="pose">坐姿優雅</div><div class="chip" data-g="pose">水中漂浮</div><div class="chip" data-g="pose">伸手向前施法</div><div class="chip" data-g="pose">手撥前景植物</div><div class="chip" data-g="pose">騎龍俯衝大景</div><div class="chip" data-g="pose">反彈琵琶舞姿</div><div class="chip" data-g="pose">雙手合十祈禱</div><div class="chip" data-g="pose">持劍出鞘決鬥</div><div class="chip" data-g="pose">天使羽翼展開站立</div><div class="chip" data-g="pose">魔王俯視眾生</div><div class="chip" data-g="pose">勇者聖劍指天</div><div class="chip" data-g="pose">OL自信行走</div><div class="chip" data-g="pose">獸娘賣萌撒嬌</div><div class="chip" data-g="pose">星矢小宇宙爆發</div><div class="chip" data-g="pose">背影眺望遠方</div><div class="chip" data-g="pose">懸崖邊緣俯瞰</div><div class="chip" data-g="pose">仰望星空/極光</div><div class="chip" data-g="pose">人物渺小融入大景</div><div class="chip" data-g="pose">行走在大景之中</div>
-      </div>
-    </div>
-
-    <div style="background:#fafaf8;border:1px solid #e5e5e5;border-radius:8px;padding:10px 12px;margin-top:.5rem">
-      <div style="font-size:11px;color:#888;margin-bottom:6px">已選關鍵字（點擊移除）</div>
-      <div id="selected-summary" style="font-size:12px;color:#aaa;min-height:24px">尚未選擇</div>
     </div>
   </div>
 
@@ -7497,289 +7402,6 @@ window.setTxtType=function(t){
   document.getElementById("ttype-"+t)?.classList.add("on");
 };
 
-// text style
-document.querySelectorAll(".ts-card").forEach(c=>c.addEventListener("click",()=>{
-  document.querySelectorAll(".ts-card").forEach(x=>x.classList.remove("selected"));c.classList.add("selected");txtStyle=c.dataset.ts;
-  const styleWrap=document.getElementById("custom-style-wrap");
-  if(styleWrap) styleWrap.classList.toggle("show",txtStyle==="custom_style"&&txtMode!=="off");
-}));
-
-function bindChip(chip){
-  chip.addEventListener("click",()=>{chip.classList.toggle("on");updateSum()});
-}
-function addKeywordChip(g,v,selected=false,fromPreset=false){
-  if(!v)return null;
-  const container=document.getElementById("chips-"+g);
-  if(!container)return null;
-  const value=String(v).trim();
-  if(!value)return null;
-  const existing=[...container.querySelectorAll(".chip")].find(x=>x.textContent===value);
-  if(existing){
-    if(selected)existing.classList.add("on");
-    if(fromPreset)existing.classList.add("from-preset");
-    return existing;
-  }
-  const chip=document.createElement("div");
-  chip.className="chip"+(selected?" on":"")+(fromPreset?" from-preset":"");
-  chip.dataset.g=g;
-  chip.textContent=value;
-  chip.title=value;
-  bindChip(chip);
-  container.appendChild(chip);
-  return chip;
-}
-const EXPANDED_KEYWORDS={
-  scene:["命運重逢張力","儀式感開場","戰後安靜瞬間","禁忌誓約氛圍","女王威壓氣場","魅惑邀舞感","遠行前一秒","神秘夜巡進行中","盛大登場瞬間","復仇回歸氣場","清冷孤高情緒","溫柔治癒氛圍","夢境迷路感","節慶歡騰情緒","史詩決戰前夕","黑暗童話敘事","戀愛電影凝視","孤獨守夜感","加冕典禮張力","未知冒險啟程"],
-  outfit:["黑絲絨高訂禮服","白金天使羽翼裙","珍珠精靈長裙","異域刺繡披肩","印度珠寶紗麗","摩洛哥藍色長袍","佛朗明哥紅裙","蒸汽龐克皮革外套","魔法學院披風","賽博貓耳耳機","機甲駕駛服","高級珠寶晚禮服","戶外斗篷長裙","水光珍珠紗裙","唐制披帛漢服","韓服粉彩裙襬","日式淡色和服","黑白時裝西裝裙"],
-  fx:["黑羽飄落","珍珠光塵","聖光羽毛","星塵符文","彩色玻璃燈影","沙金塵粒","全息 HUD 光屏","漂浮魔法信件","蒸汽齒輪煙霧","水面折射光","花瓣雨","霓虹倒影","香水玻璃反光","水晶泡泡","天燈升空","燭光煙霧","龍影環繞","極光粒子"],
-  light:["低調黑紅輪廓光","珍珠白柔光","神聖體積光","金色沙漠夕陽","市集暖燈光","霓虹藍紫邊光","專業柔光箱","雨夜反射光","月光銀藍逆光","森林晨霧散射光","海邊日落逆光","玻璃花房漫射光","高級珠寶聚光","咖啡廳午後光"],
-  location:["古堡聖堂","世界文化市集","雲端神殿","精靈森林","海島白牆","沙漠神殿","都市天台","專業棚拍","魔法學院","太空港","雨林瀑布","雪山木屋","玻璃花房","韓國宮殿","日本街巷","歐洲咖啡街"],
-  weather:["血月夜色","晨霧柔光","金色黃昏","雨夜霓虹","雪夜冷光","海風晴天","沙漠熱浪","玻璃雨滴","櫻花季晴天","秋日落葉","極光寒夜","天燈夜祭"],
-  pose:["手持面具回眸","披風迎風站立","坐在王座側身凝視","提裙走下階梯","手扶帽沿看向遠方","手持魔杖施法","手持香水瓶近景","倚靠古堡窗邊","走過市集回頭","站在水面倒影中央","天台低角度仰拍","雙手展開迎風","手持透明傘回眸","拿著相機旅行感"]
-};
-function appendExpandedKeywords(){
-  Object.entries(EXPANDED_KEYWORDS).forEach(([group,items])=>items.forEach(v=>addKeywordChip(group,v,false,true)));
-}
-appendExpandedKeywords();
-const SIMILAR_EXTENSION_KEYWORDS={
-  scene:["同主題更強情緒張力","同角色另一段故事","更像電影開場的一幕","更像結局前一秒","更偏浪漫氛圍","更偏危險誘惑","更偏孤獨史詩感","更偏神聖儀式感","更偏高級廣告情緒","更偏暗黑懸疑敘事"],
-  outfit:["原風格保留但增加披風","原風格保留但增加珠寶頭冠","原服裝延伸成典禮造型","原服裝延伸成旅拍行走造型","原服裝延伸成戰鬥感造型","原服裝延伸成節慶版本"],
-  fx:["同風格延伸特效","月光銀霧粒子","節慶燈火散景","史詩風沙與旗幟","前景框景增加層次，不遮臉","背景遠景壓縮透視","原主題元素加強但不重複"],
-  light:["月夜版冷色輪廓光","節慶版暖燈混合光","史詩版大景逆光","同主題不同光影版本","強化臉部主光","遠景環境光層次"],
-  location:["同主題第二場景","同角色遠景場地","同世界觀延伸地點","月夜場地","節慶場地","史詩戰場或山河場地"],
-  weather:["月夜薄霧","節慶暖夜","史詩風暴雲","遠景塵霧","花瓣風起","冷灰陰天","雨後反光"],
-  pose:["同角色不同姿態","月夜靜態凝視","節慶行走回眸","史詩低角度站姿","遠景奔跑構圖","近景半身情緒","披風張開站姿"]
-};
-Object.entries(SIMILAR_EXTENSION_KEYWORDS).forEach(([group,items])=>items.forEach(v=>addKeywordChip(group,v,false,true)));
-const V611_KEYWORD_BANK={
-  location:["雲海祭壇","仙門劍台","長安朱雀街","白牆黑瓦庭院","民國公館","精品商圈","霓虹巷口","無縫白棚","地標廣場","葡萄園丘陵","文化節廣場","粉紅宮殿拱廊","京都竹林","高山花海","巨型城門","雲端圖書館","雲端聖門","黑森林月夜","古堡宴會廳","水族館藍廊","魔法學院大廳","魔法郵局"],
-  scene:["上古神話儀式感","命運重逢張力","復仇歸來氣場","女王威壓登場","清冷孤高白月光","盛大登場瞬間","戰後沉默餘韻","暗黑夜宴邀舞","禁忌誓約氛圍","神秘夜巡進行中","遠行追逐電影感","節慶熱鬧歡騰","浪漫凝視瞬間","離別前的回眸","夢境迷路氛圍","神聖降臨威嚴","魔法覺醒瞬間","高級廣告情緒","都市夜歸故事感","史詩決戰前夕","溫柔治癒日常","懸疑探尋氛圍"],
-  outfit:["上古祭司金紋禮袍","仙俠飄帶劍袍","朝代制式漢服","水墨絲緞長裙","影劇女主定制造型","高訂時裝禮服","都市風衣街拍裝","商業廣告造型服","地標旅行長裙","異國度假紗裙","民族高訂融合服","南亞珠寶紗麗","和服浴衣或韓服","戶外斗篷長裙","史詩戰袍鎧甲","夢境蓬裙禮服","白金天使羽翼袍","暗黑魔法長袍","哥德蕾絲禮服","珍珠水紗長裙","遊戲角色戰鬥服","COS 主題角色服"],
-  fx:["青銅神光粒子","御劍流光","花瓣與衣袖飄動","水墨煙霧層次","電影海報光暈","雜誌閃光反射","雨夜霓虹倒影","棚拍反光板高光","地標晨霧光點","沙塵與陽光粒子","節慶彩帶飄散","金粉與香料煙霧","櫻花或銀杏飄落","風吹草浪","巨龍或旗幟遠景","水晶閃光","白羽與聖光","黑霧與符文","燭火與黑羽","水波與珍珠光","能量 HUD 特效","角色道具光效"],
-  light:["祭壇金色逆光","仙氣冷白輪廓光","古典窗格柔光","水墨漫射光","電影主光加邊光","時尚棚拍硬光","霓虹雨夜反射光","商業高光輪廓","旅行晨昏自然光","度假金色夕陽","節慶暖色燈光","宮殿金銅光","日韓柔粉自然光","戶外逆光","史詩體積光","夢境粉彩光","白金聖光","暗月冷光","哥德燭光","水下藍綠光","舞台電光","角色海報主光"],
-  weather:["金色晨霧","月夜薄霧","春日花雨","江南細雨","電影煙霧","城市雨後","霓虹濕街","棚拍乾淨空氣","旅行晴空","沙漠熱風","節慶夜色","香料市集暖霧","櫻花季晴光","山谷清晨","暴風雲層","夢境星霧","天堂雲光","黑森林霧氣","古堡夜色","水下光波","遊戲舞台煙霧","劇場微塵"],
-  pose:["正面海報站姿","三分之二回眸","手持道具特寫","行走抓拍","衣袖或裙擺飛揚","坐姿高級肖像","低角度英雄站姿","側身看向遠方","手扶帽飾或髮飾","雙手整理披風","站在門廊中央","背光轉身回頭","靠近水面倒影","走下石階","手持花束或書卷","展開翅膀或披帛","站在巨大地標前","半身商業近景","全身旅行大片","電影海報中心構圖"]
-};
-Object.entries(V611_KEYWORD_BANK).forEach(([group,items])=>items.forEach(v=>addKeywordChip(group,v,false,true)));
-function populatePresetImport(){
-  const sel=document.getElementById("preset-import-select");
-  if(!sel)return;
-  sel.innerHTML="";
-  ALL_IDS.forEach(id=>{
-    const p=P[id];
-    if(!p)return;
-    const opt=document.createElement("option");
-    opt.value=id;
-    opt.textContent=p.n || id;
-    sel.appendChild(opt);
-  });
-}
-function importPresetToKeywords(pid){
-  const p=P[pid];
-  if(!p)return;
-  document.querySelectorAll(".chip.on").forEach(c=>c.classList.remove("on"));
-  addKeywordChip("location",p.s,true,true);
-  addKeywordChip("outfit",p.o,true,true);
-  addKeywordChip("fx",p.fx,true,true);
-  addKeywordChip("light",p.l,true,true);
-  if(p.prop)addKeywordChip("pose",p.prop,true,true);
-  if(p.cam)addKeywordChip("camera",p.cam,true,true);
-  if(p.col)addKeywordChip("weather",p.col,true,true);
-  if(p.char)addKeywordChip("scene",p.char,true,true);
-  else if(p.n)addKeywordChip("scene",p.n+" 的角色情緒與故事張力",true,true);
-  selMK=p.mk||selMK;
-  document.querySelectorAll(".mk-card").forEach(c=>c.classList.toggle("selected",c.dataset.mk===selMK));
-  document.getElementById("auto-makeup-tag").textContent="✦ 已匯入風格配妝："+(p.n||pid);
-  manualMK=false;
-  updateSum();
-}
-function pickRandom(arr){
-  return arr[Math.floor(Math.random()*arr.length)];
-}
-function randomPresetValue(key){
-  const values=ALL_IDS.map(id=>P[id]?.[key]).filter(Boolean);
-  return values.length?pickRandom(values):"";
-}
-function randomCustomStyle(){
-  document.querySelectorAll(".chip.on").forEach(c=>c.classList.remove("on"));
-  const mkSource=P[pickRandom(ALL_IDS)];
-  if(mkSource?.mk){
-    selMK=mkSource.mk;
-    document.querySelectorAll(".mk-card").forEach(c=>c.classList.toggle("selected",c.dataset.mk===selMK));
-    document.getElementById("auto-makeup-tag").textContent="✦ 隨機混搭配妝："+(mkSource.n||selMK);
-  }
-  addKeywordChip("location",randomPresetValue("s"),true,true);
-  addKeywordChip("scene",randomPresetValue("char"),true,true);
-  addKeywordChip("outfit",randomPresetValue("o"),true,true);
-  addKeywordChip("fx",randomPresetValue("fx"),true,true);
-  addKeywordChip("light",randomPresetValue("l"),true,true);
-  const prop=randomPresetValue("prop");
-  const cam=randomPresetValue("cam");
-  if(prop)addKeywordChip("pose",prop,true,true);
-  if(cam)addKeywordChip("camera",cam,true,true);
-  const col=randomPresetValue("col");
-  if(col)addKeywordChip("weather",col,true,true);
-  manualMK=false;
-  updateSum();
-}
-populatePresetImport();
-const presetImportBtn=document.getElementById("preset-import-btn");
-if(presetImportBtn){
-  presetImportBtn.addEventListener("click",()=>{
-    const sel=document.getElementById("preset-import-select");
-    if(sel)importPresetToKeywords(sel.value);
-  });
-}
-const customRandomBtn=document.getElementById("custom-random-btn");
-if(customRandomBtn){
-  customRandomBtn.addEventListener("click",()=>{
-    randomCustomStyle();
-    customRandomBtn.textContent="已隨機生成 ✨";
-    setTimeout(()=>customRandomBtn.textContent="隨機生成風格",1600);
-  });
-}
-
-// chips
-document.querySelectorAll(".chip").forEach(bindChip);
-function addC(g,id){
-  const inp=document.getElementById(id);const v=inp.value.trim();if(!v)return;
-  addKeywordChip(g,v,true,false);inp.value="";updateSum();
-}
-window.addC=addC;
-function updateSum(){
-  const all=[...document.querySelectorAll(".chip.on")].map(c=>c.textContent);
-  const el=document.getElementById("selected-summary");
-  if(!all.length){el.textContent="尚未選擇";return;}
-  el.innerHTML="";
-  all.forEach(t=>{
-    const span=document.createElement("span");
-    span.textContent=t+" ×";
-    span.style.cssText="display:inline-block;background:#fff;border:1px solid #ddd;border-radius:12px;padding:2px 8px;margin:2px;font-size:11px;cursor:pointer";
-    span.addEventListener("click",()=>{
-      document.querySelectorAll(".chip").forEach(c=>{if(c.textContent===t)c.classList.remove("on")});
-      updateSum();
-    });
-    el.appendChild(span);
-  });
-}
-
-function normalizeKeywordCombinationLayout(){
-  const custom=document.getElementById("tab-custom");
-  const summary=document.getElementById("selected-summary")?.parentElement;
-  if(!custom||!summary)return;
-  const createGroup=(group,label,items,placeholder)=>{
-    const id="chips-"+group;
-    if(document.getElementById(id))return;
-    const box=document.createElement("div");
-    box.className="kw-group";
-    const title=document.createElement("div");
-    title.className="kw-group-title";
-    title.textContent=label;
-    const chips=document.createElement("div");
-    chips.className="chips";
-    chips.id=id;
-    items.forEach(v=>{
-      const chip=document.createElement("div");
-      chip.className="chip";
-      chip.dataset.g=group;
-      chip.textContent=v;
-      chip.title=v;
-      bindChip(chip);
-      chips.appendChild(chip);
-    });
-    const row=document.createElement("div");
-    row.className="custom-row";
-    row.innerHTML=`<input type="text" id="input-${group}" placeholder="${placeholder}"><button onclick="addC('${group}','input-${group}')">+ 加入</button>`;
-    box.append(title,chips,row);
-    custom.insertBefore(box,summary);
-  };
-  createGroup("prop","🧰 道具物件",["長劍","油紙傘","團扇","花束","燈籠","琵琶","古琴","卷軸","酒杯","手持面具道具","香水瓶","珠寶盒","旅行帽","手提箱","魔法書","權杖","星象牌道具","科技裝置"],"自訂道具物件...");
-  createGroup("camera","📷 鏡頭構圖",["全身大景","半身電影感","低角度仰拍","俯拍廣角","前景花葉框景","對稱構圖","三分法構圖","動態斜角構圖","長焦壓縮背景","廣角環境人像","雜誌封面留白","海報中心構圖","近距離情緒特寫","背影遠景","人物小景大"],"自訂鏡頭構圖...");
-  const order=[
-    ["chips-location","📍 地點類型"],
-    ["chips-weather","🌤 天氣環境"],
-    ["chips-light","☀️ 光線設計"],
-    ["chips-scene","🎬 氛圍劇情"],
-    ["chips-outfit","👗 服裝造型"],
-    ["chips-prop","🧰 道具物件"],
-    ["chips-pose","💃 動作姿態"],
-    ["chips-camera","📷 鏡頭構圖"],
-    ["chips-fx","✨ 視覺特效"]
-  ];
-  order.forEach(([id,label])=>{
-    const chips=document.getElementById(id);
-    const group=chips?.closest(".kw-group");
-    if(!group)return;
-    const title=group.querySelector(".kw-group-title");
-    if(title)title.textContent=label;
-    custom.insertBefore(group,summary);
-  });
-}
-normalizeKeywordCombinationLayout();
-
-const KEYWORD_EXPANSION_V640={
-  location:["雪地森林","雪山觀景台","冰湖湖畔","霧氣溫泉","雨後石板街","海邊礁石","斷崖海岸","沙漠公路","火山黑沙地","風車草原","麥田小路","花海山坡","竹林小徑","楓葉神社參道","銀杏大道","櫻花河岸","古城城牆","老街騎樓","港口碼頭","地鐵出口","天台邊緣","美術館白牆","高級酒店大廳","玻璃空橋","機場候機廳","廢墟劇場","溫室花房","水族館藍廊","教堂彩窗","古堡長廊"],
-  weather:["初雪飄落","暴雪遠景","雨後濕地反光","細雨薄霧","濃霧清晨","黃昏微風","海風強烈","沙塵夕陽","櫻花雨","楓葉飄落","銀杏落葉滿地","螢火蟲夜晚","夏日逆光熱浪","冬季冷空氣","高原雲影","海面水氣","山谷雲霧","霓虹雨夜","雪後晴天","藍調時刻"],
-  light:["雪地反射補光","雨夜霓虹反射光","夕陽側逆光","清晨低角度柔光","林間斑駁光","水面反射光","玻璃窗邊柔光","彩窗投影光","棚拍大柔光箱","黑棚輪廓光","高級珠寶聚光","車燈逆光","路燈暖光","電影藍橙對比光","月光冷邊光","火光閃爍光","燭光低照度","舞台追光","廣告硬光","美妝眼神光不改眼型"],
-  scene:["久別重逢","戰後歸來","加冕前夜","遠行途中","神秘夜巡","禁忌告白","離別車站","盛裝赴宴","孤身守城","女王登場","暗夜花宴","雪夜等待","雨中回眸","初戀電影感","復仇歸來","神明降臨","魔法覺醒","命運召喚","儀式開始","終章前夕","公路遠行","城市夜歸","高級廣告感","雜誌封面感","史詩預告片感"],
-  outfit:["雪地白色毛呢斗篷","黑色長風衣","紅色絲絨長裙","白色緞面禮服","金線刺繡漢服","淺色羊毛披肩","皮革腰封長裙","高訂羽毛披肩","亮面雨衣外套","都市西裝套裝","機場風衣大衣","度假亞麻白裙","海邊飄逸罩衫","沙漠民族披肩","騎士皮革長靴","鎧甲披風戰袍","暗黑蕾絲禮服","霓虹科技外套","白襯衫牛仔大片","精品黑裙","珠寶晚宴禮服","棚拍美妝肩紗"],
-  prop:["透明雨傘","竹傘","紅色燈籠","復古皮箱","行李牌","花箋","玫瑰","梅枝","折扇","長劍","匕首","權杖","魔法書","星象牌道具","香水瓶","珠寶盒","相機","咖啡杯","酒杯","手持面具道具","羽毛扇","絲巾","披肩","古琴","琵琶"],
-  pose:["迎風行走","回眸轉身","披風甩開","提裙上階","倚靠欄杆","伸手接雪","撐傘回頭","手扶帽沿","持劍低垂","長劍指地","揮劍收招","雙手捧光","展開花箋","翻開書頁","端起茶杯","坐姿側身","斜靠窗邊","從車門下車","走過斑馬線","站在風口","低角度英雄站姿","舞台轉身","雙手整理耳環","手扶披肩","遠望地平線"],
-  camera:["全身環境人像","三分之二身","半身肖像","近距離情緒特寫","低角度英雄構圖","高角度俯拍","鳥瞰裙擺構圖","長焦壓縮背景","廣角大景人像","前景花葉框景","門框構圖","窗框構圖","反射構圖","對稱中軸構圖","留白封面構圖","海報中心構圖","動態斜角構圖","背影遠景","人小景大","圓形拱門框景"],
-  fx:["雪花前景散景","雨滴玻璃反光","霧氣層次","花瓣飄落","楓葉旋風","銀杏葉雨","水面波光","火星粒子","燭煙飄散","霓虹倒影","絲帶飛舞","裙擺動態拖影","魔法符文環","光羽飄落","星塵粒子","黑羽飄落","珠寶高光閃爍","玻璃折射","風沙粒子","電影膠片顆粒"]
-};
-Object.entries(KEYWORD_EXPANSION_V640).forEach(([group,items])=>items.forEach(v=>addKeywordChip(group,v,false,true)));
-
-const KEYWORD_EXPANSION_V644={
-  outfit:["全身珠寶極繁主義禮服","彩虹漸層薄紗長裙","宇宙星空緊身閃衣","透視網紗疊穿長裙","珊瑚貝殼海洋裙","白色加冕感長袍","中式藏青盤扣長衫","義大利印花絲巾洋裝","哥德蕾絲高領束身裙","極簡白色包臀裙","印度紗麗金邊版","藏族節慶彩色邦典裙","夏威夷花裙度假套裝","未來感金屬縫合緊身服","棚拍白色羽毛大裙擺"],
-  scene:["第一次踏上異鄉","最後一天的旅途","在異國迷路的午後","火車窗邊發呆出神","清晨獨自走過市場","陌生人對視的一秒","多年後的街頭重逢","分手後的平靜散步","等一個不知道會不會來的人","寫了很久才敢寄出的信","世界末日前的最後夜晚","新的神明降臨人間","歷史轉折的那一刻","封印解除的瞬間","百年後再度甦醒","城市裡唯一一個清醒的人","換了一個新城市生活","大雨中忘了帶傘","深夜一個人吃拉麵","商業發表前最後一個深呼吸"],
-  location:["北京天壇圜丘祈年殿","上海外灘萬國建築群","廈門鼓浪嶼海邊礁石","武漢黃鶴樓江邊遠眺","泉州古城刺桐紅磚","奢華遊艇甲板海景","透明天頂植物溫室","摩洛哥馬賽克游泳池","私人圖書館木梯書牆","歌劇院包廂紅絲絨","雨後玫瑰花牆特寫","向日葵田小徑人像","楓樹隧道金紅葉頂","油菜花田黃金色海","薰衣草田直條遠景","白樺林藍天垂直感","廢棄溫泉石硫磺地"]
-};
-Object.entries(KEYWORD_EXPANSION_V644).forEach(([group,items])=>items.forEach(v=>addKeywordChip(group,v,false,true)));
-
-const KEYWORD_EXPANSION_V647={
-  location:[
-    "水底宮殿珊瑚石柱","深海藍光廢墟","水族館巨型藍廊","螢光海灣夜景","鏡面潮池礁石","冰洞藍光岩穴","透明藍海水下花園","沉船甲板珊瑚群",
-    "印度泰姬陵晨霧","印度粉紅城市宮殿","印度恆河晨祭河階","印度藍城焦特布爾小巷","印度湖宮水上露台","印度神廟石雕長廊","香料市集金色巷弄","彩粉節街道廣場",
-    "江湖客棧木質二樓","深宮御花園回廊","秦淮河畫舫岸邊","老上海公館客廳","民國舞廳旋轉樓梯","地下古墓石棺密室","長安夜市燈火長街","太廟祭壇石階廣場"
-  ],
-  outfit:[
-    "深海人魚珊瑚尾裙","珍珠水母薄紗長裙","海藍貝殼珠鏈禮服","透明水紋歐根紗長裙","水下白紗飄帶禮服","黑珊瑚女王長裙",
-    "印度紗麗金邊版","珠寶紗麗女神造型","金銅刺繡舞姬套裝","孔雀藍宮廷紗裙","香料市集薄紗披肩","紅唇印度公主禮服",
-    "古裝劇朱紅大袖正裝","深宮翠綠妃子常服","軍師謀士長衫羽扇","白衣古墓女俠裝","黑衣刺客緊身夜行裝","民國絲絨旗袍外套","復仇千金黑色長裙","梨園名伶水袖戲服"
-  ],
-  scene:[
-    "深海王座加冕","水下遺跡覺醒","沉船珍珠花園","潮汐退去前的告別","月光照進水面那刻","人魚與陸地的誓約",
-    "恆河晨祭祈願","宮殿婚禮前夜","香料市集偶遇","彩粉節人群中回眸","湖宮晚宴入場","神廟燭火誓言",
-    "深宮花箋被發現","雨夜客棧江湖相逢","民國舞會眼神重逢","多年後的復仇歸來","梨園登台前一刻","古墓石門開啟","宮廷大殿前夜","江湖決戰後沉默"
-  ],
-  prop:[
-    "珍珠權杖","珊瑚王冠","貝殼手包","水晶海螺","沉船金幣","藍色水母燈","海草飄帶",
-    "金色手鐲","寶石額飾","香料布袋","孔雀羽扇","蓮花燭台","印度宮廷油燈",
-    "花箋信物","玉佩令牌","羽扇","戲曲水袖","復古道具手套","老式留聲機","故事卷宗","紅色花帖"
-  ],
-  light:[
-    "水下藍綠光柱","水面波紋投影光","水族館藍色柔光","螢光海浪微光","冰洞藍紫透光",
-    "印度宮殿金色晨光","神廟燭火金光","彩粉節柔霧逆光","市集布棚斑駁光",
-    "深宮燈籠側光","民國舞廳鎢絲燈","客棧窗邊雨夜光","古墓燭火低照度","宮殿大廳頂光"
-  ],
-  pose:[
-    "水中漂浮回眸","雙手扶珊瑚王座","裙擺隨水流展開","指尖觸碰水面光紋","側身穿過水下光柱",
-    "整理紗麗披肩","雙手捧蓮花油燈","彩粉節轉身微笑","扶著宮殿石柱回望","手持孔雀羽扇側身",
-    "展開花箋停頓","袖中藏花回眸","水袖甩開定格","扶欄遠望等人","低頭合上卷宗","雨夜推門入場"
-  ],
-  camera:[
-    "水下全身環境人像","水面上下分割構圖","藍廊長焦壓縮","王座中心對稱構圖","漂浮裙擺鳥瞰",
-    "宮殿拱門框景","市集人群前景虛化","神廟長廊透視構圖","湖宮倒影構圖",
-    "劇本海報留白","門縫偷看構圖","走廊縱深構圖","舞台追光中心構圖","雨夜窗框構圖"
-  ],
-  fx:[
-    "水下懸浮氣泡","魚群剪影前景","水母螢光粒子","水面波紋折射","海底浮游微粒","珊瑚光點",
-    "彩粉節粉霧飛散","金色香料粉塵","燭火煙霧上升","孔雀羽毛飄落","宮殿金箔反光",
-    "紙張飛散","雨滴窗面反光","戲台煙霧","紅燈籠散景","墨色轉場陰影","舊電影膠片刮痕"
-  ]
-};
-Object.entries(KEYWORD_EXPANSION_V647).forEach(([group,items])=>items.forEach(v=>addKeywordChip(group,v,false,true)));
 
 // size cards
 document.querySelectorAll(".size-card").forEach(card=>card.addEventListener("click",()=>{
@@ -7994,18 +7616,9 @@ document.getElementById("gen-btn").addEventListener("click",async()=>{
   resultBox.style.display="none";
 
   // ② 取得風格資料
-  let p=null, customParts=null;
-  if(activeTab==="preset"){
-    p=P[selPID];
-    if(p)p._id=selPID;
-    if(!p){
-      document.getElementById("result-text").textContent="請先選擇一個風格！";
+  let p=null;
       resultBox.style.display="block";return;
     }
-  } else {
-    const get=g=>[...document.querySelectorAll(`.chip.on[data-g="${g}"]`)].map(x=>x.textContent).join("、")||"未指定";
-    customParts={scene:get("scene"),outfit:get("outfit"),fx:get("fx"),light:get("light"),
-      location:get("location"),weather:get("weather"),prop:get("prop"),pose:get("pose"),camera:get("camera")};
   }
 
   // ③ 妝容
@@ -8041,14 +7654,14 @@ document.getElementById("gen-btn").addEventListener("click",async()=>{
 
   // ⑥ 組合咒語
   // Legacy Chinese preview assembly removed; final output is built by buildEnglishPrompt().
-  const enResult = sanitizePolicySensitiveTerms(cleanEnglishPrompt(buildEnglishPrompt(p, customParts, mkDesc, selAngle, txtLine, extras, proPrompt, selMK)));
+  const enResult = sanitizePolicySensitiveTerms(cleanEnglishPrompt(buildEnglishPrompt(p, mkDesc, selAngle, txtLine, extras, proPrompt, selMK)));
   document.getElementById("result-text").textContent=enResult;
   resultBox.style.display="block";
   resultBox.scrollIntoView({behavior:"smooth",block:"start"});
 });
 
 // 建立全英文 Prompt
-function buildEnglishPrompt(p, customParts, mkDesc, selAngle, txtLine, extras, proPrompt, selectedMakeupKey){
+function buildEnglishPrompt(p, mkDesc, selAngle, txtLine, extras, proPrompt, selectedMakeupKey){
   const parts=[];
   const TRAVEL_STYLING_BOOST="Professional travel-portrait styling upgrade: makeup and styling should look like a real paid travel photoshoot makeover while preserving the uploaded person's exact facial identity. Makeup is surface cosmetics only: color, texture, eyeliner, lashes, blush, lip finish, and lighting polish may change, but bone structure, face shape, eye shape, eye size, nose shape, lip shape, cheek volume, jawline, chin, smile structure, age impression, and skin identity must not be beautified or reshaped. Costume styling must feel abundant and ceremonial: layered fabrics, embroidered trims, waist ornaments, earrings, necklaces, bracelets, tassels, hairpins, floral hair inserts, crowns, combs, beads, ribbons, veils, shawls, hand props, and matching accessories. Do not simplify the outfit or leave the hair plain; build a complete head-to-toe travel photoshoot look with rich but coherent accessories.";
   const BARE_FACE_LOCK="Bare-face mode hard lock: because the selected makeup is natural_clean / no-makeup, preserve the uploaded person's original bare face instead of applying beauty retouching. Keep real skin texture, pores, small blemishes, natural under-eye shadows, original brow density, real lip color, real nose bridge, real jawline, real cheek volume, natural facial asymmetry, and age impression. Do not create glass skin, Korean idol skin, clean-girl makeover, influencer beauty face, V-shaped face, enlarged eyes, higher nose bridge, smaller nose, sharper chin, thinner jaw, smaller face, smoother cheeks, whiter skin, doll-like lips, or studio beauty filter. Lighting may be cinematic, but the face must remain the same ordinary real person from the uploaded photo. Generate this as an unretouched candid documentary photograph taken on location, not a beauty campaign, not a social media beauty post, not a studio fashion shoot. The face must look like a real ordinary person photographed in real life, not a model or influencer prepared for camera.";
@@ -8129,28 +7742,6 @@ function buildEnglishPrompt(p, customParts, mkDesc, selAngle, txtLine, extras, p
     parts.push("Prop and effect safety: props, foreground framing, atmospheric particles, hair, veil, smoke, rain, snow, and visual effects must stay around the body or frame edge, not across the face or key facial features.");
     if(p.cam) addPart("Composition",completeEnglishField(p,"cam",p.cam));
     else parts.push(`Output size: ${selAngle}`);
-    addPart("Visual effects",completeEnglishField(p,"fx",p.fx));
-    addPart("Color tone",completeEnglishField(p,"col",p.col,28));
-    addPart("Auto quality by preset category",AUTO_QUALITY_V670[p.cat]);
-    addPart("Quality",completeEnglishField(p,"q",p.q));
-    addPart("",txtLine);
-    addPart("Special requirements",extras);
-    addPart("Avoid",AVOID_LOCK);
-  } else {
-    if(customParts){
-      const get=g=>[...document.querySelectorAll(`.chip.on[data-g="${g}"]`)].map(x=>x.textContent).join(", ")||"not specified";
-      parts.push(`Makeup surface design only: ${mkDesc}`);
-      if(!isBareFaceMode)parts.push(`Travel photoshoot makeup and accessory density: ${TRAVEL_STYLING_BOOST}`);
-      else parts.push("Bare-face styling rule: Keep costume, hair, accessories, camera, and environment cinematic, but keep the face natural and unretouched from the uploaded photo.");
-      if(get("location")!=="not specified") parts.push(`Location type: ${get("location")}`);
-      if(get("weather")!=="not specified") parts.push(`Weather / environment: ${get("weather")}`);
-      parts.push(`Lighting: ${get("light")}`);
-      parts.push(`Atmosphere / story: ${get("scene")}`);
-      parts.push(`Outfit styling: ${get("outfit")}`);
-      if(get("prop")!=="not specified") parts.push(`Props / objects: ${get("prop")}`);
-      if(get("pose")!=="not specified") parts.push(`Action / Gesture: ${get("pose")}. Use this as the clean physical action element, including body direction, hand placement, and camera framing where applicable. Keep the uploaded person's face visible and recognizable unless the selected action is intentionally a back-view composition.`);
-      if(get("camera")!=="not specified") parts.push(`Camera composition: ${get("camera")}`);
-      parts.push(`Visual effects: ${get("fx")}`);
       parts.push("Prop and effect safety: props, foreground framing, atmospheric particles, hair, veil, smoke, rain, snow, and visual effects must stay around the body or frame edge, not across the face or key facial features.");
       parts.push(`Output size: ${selAngle}`);
       if(txtLine) parts.push(txtLine);
