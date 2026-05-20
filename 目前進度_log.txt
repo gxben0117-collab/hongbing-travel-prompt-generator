@@ -1,0 +1,59 @@
+紅兵旅拍大片生成器 目前進度 log
+更新時間：2026-05-20 14:45:00
+
+【目前主專案】
+紅兵旅拍大片生成器
+
+【目前主任務】
+V7.01 上架 — 龍蝦版大量新增風格範例已合併並發布
+
+【目前最新基線版本】
+v7.01
+
+【目前已經做完的事】
+1. 合併龍蝦版（龍蝦的家/紅兵旅拍大片生成器）的最新內容至主版本：
+   - src/data.js：大量新增 preset，從約 26 個擴充至約 37 個
+   - src/app.js：修正 presetDetail hidden 屬性切換 bug
+   - src/styles.css：新增 mobile media query 改善
+   - index.html / index.template.html：V7.01 版本號
+
+2. 新增分類：cinematic_epic（電影感史詩）
+   - 冰島冰川史詩旅拍
+   - 撒哈拉金色沙丘旅拍
+
+3. 各分類新增 preset：
+   - world_landmark：6 → 8（+2）
+   - travel_nature：2 → 5（+3）
+   - travel_city：3 → 5（+2）
+   - world_culture：2 → 3（+1）
+   - cinematic_romance：1 → 2（+1）
+   - editorial_cover：1 → 2（+1）
+
+4. 修正 build.mjs：script tag 縮排對齊問題（導致 JS 未被正確 inline）
+
+5. 重新 build dist/index.html（73,126 chars）
+
+6. 版本快照：versions/index_v7.01.html
+
+7. Git commit + push 上架
+
+【目前已完成的正式版本】
+- v6.78, v6.79, v6.80（去重版本）
+- v7.00（模組化重構版）
+- v7.01（大量 preset 擴充版，已上架）
+
+【目前版本檔】
+- versions/index_v7.01.html
+
+【目前驗證結果】
+v7.01 已通過：
+- node --check src/data.js ✅
+- node --check src/app.js ✅
+- node scripts/build.mjs ✅（73,126 chars）
+
+【目前 dist/index.html SHA256】
+a1b3621163dfef67909037712233248d3505f3ab36bab9a1c3e5209a50dd8efe
+
+【下一步預定】
+1. 視需求繼續調整 preset 內容
+2. 若有新分類需求可繼續擴充 cinematic_epic 群組

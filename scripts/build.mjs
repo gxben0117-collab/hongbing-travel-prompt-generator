@@ -10,7 +10,7 @@ const bundledScript = `${data}\n\n${app}`;
 
 const bundled = html
   .replace('  <link rel="stylesheet" href="./src/styles.css">', `<style>\n${css}\n</style>`)
-  .replace('<script src="./src/data.js"></script>\n<script src="./src/app.js"></script>', `<script>\n${bundledScript}\n</script>`);
+  .replace('  <script src="./src/data.js"></script>\n  <script src="./src/app.js"></script>', `<script>\n${bundledScript}\n</script>`);
 
 await mkdir("dist", { recursive: true });
 await writeFile("dist/index.html", bundled, "utf8");
